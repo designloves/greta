@@ -24,7 +24,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#ffe8f5 0%,#f0e6ff 40%,#e8f5ff 100%);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;}
- 
+
 /* Bg floaties */
 .bg-floaties{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
 .floatie{position:absolute;opacity:0.18;user-select:none;animation:floatUp linear infinite;}
@@ -33,11 +33,11 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#ffe8f5 0
 .c1{width:320px;height:200px;background:rgba(255,183,197,0.38);top:-60px;left:-80px;}
 .c2{width:280px;height:180px;background:rgba(212,184,240,0.32);bottom:40px;right:-60px;}
 .c3{width:240px;height:160px;background:rgba(189,224,254,0.32);top:40%;left:60%;}
- 
+
 /* Card */
 .card{position:relative;z-index:10;background:var(--card-bg);border-radius:36px;padding:32px 36px 28px;width:min(500px,94vw);box-shadow:0 8px 40px var(--shadow),0 2px 0 rgba(255,255,255,0.9) inset;border:2.5px solid rgba(255,183,197,0.7);text-align:center;}
 .card::before{content:'';position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:80%;height:6px;background:linear-gradient(90deg,var(--pink),var(--lilac),var(--sky),var(--mint),var(--yellow),var(--pink));border-radius:99px;}
- 
+
 /* Header */
 .header-row{display:flex;align-items:center;justify-content:space-between;}
 .avatar-wrap{position:relative;width:54px;height:54px;flex-shrink:0;}
@@ -50,11 +50,11 @@ h1{font-family:'Baloo 2',cursive;font-size:1.9rem;font-weight:800;background:lin
 .subtitle{font-size:0.75rem;font-weight:700;color:var(--text-soft);}
 .lists-btn{background:linear-gradient(135deg,#f0d6ff,#ffd6f0);border:2px solid var(--lilac);color:var(--lilac-deep);border-radius:18px;padding:8px 14px;font-family:'Nunito',sans-serif;font-size:0.8rem;font-weight:800;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;display:flex;align-items:center;gap:5px;white-space:nowrap;box-shadow:0 3px 10px rgba(180,142,224,0.25);}
 .lists-btn:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 6px 18px rgba(180,142,224,0.38);}
- 
+
 /* Topic badge */
 .topic-badge{display:none;align-items:center;gap:5px;background:linear-gradient(90deg,rgba(255,183,197,0.4),rgba(212,184,240,0.4));border:1.5px solid rgba(255,183,197,0.8);border-radius:99px;padding:4px 14px;font-size:0.75rem;font-weight:800;color:var(--text);margin:10px auto 0;width:fit-content;}
 .topic-badge.visible{display:inline-flex;}
- 
+
 /* Progress */
 .progress-wrap{background:rgba(212,184,240,0.2);border-radius:99px;height:10px;margin:18px 0 16px;overflow:hidden;border:1.5px solid rgba(212,184,240,0.4);}
 .progress-bar{height:100%;background:linear-gradient(90deg,var(--pink-deep),var(--lilac-deep),#9b7bd4);border-radius:99px;transition:width 0.5s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;}
@@ -62,7 +62,7 @@ h1{font-family:'Baloo 2',cursive;font-size:1.9rem;font-weight:800;background:lin
 @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 .score-row{display:flex;justify-content:space-between;margin-bottom:18px;gap:6px;}
 .score-pill{flex:1;background:white;border:2px solid rgba(255,183,197,0.6);border-radius:99px;padding:5px 10px;font-size:0.78rem;font-weight:800;color:var(--text);box-shadow:0 2px 8px var(--shadow);}
- 
+
 /* Quiz */
 .prompt-label{font-size:0.7rem;font-weight:800;letter-spacing:2px;color:var(--text-soft);text-transform:uppercase;margin-bottom:6px;}
 .swedish-word{font-family:'Baloo 2',cursive;font-size:2.3rem;font-weight:800;color:var(--text);margin-bottom:20px;min-height:52px;line-height:1.15;}
@@ -74,7 +74,7 @@ input[type="text"]:focus{border-color:var(--pink-deep);transform:scale(1.01);box
 input.correct{border-color:var(--mint-deep)!important;background:rgba(181,234,215,0.2)!important;color:var(--green-soft)!important;}
 input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0.08)!important;color:var(--red-soft)!important;animation:shake 0.4s ease;}
 @keyframes shake{0%,100%{transform:translateX(0) scale(1.01);}20%{transform:translateX(-8px) scale(1.01);}40%{transform:translateX(8px) scale(1.01);}60%{transform:translateX(-5px) scale(1.01);}80%{transform:translateX(5px) scale(1.01);}}
- 
+
 /* Buttons */
 .btn{width:100%;padding:13px;border-radius:20px;border:none;cursor:pointer;font-family:'Baloo 2',cursive;font-size:1.15rem;font-weight:700;letter-spacing:0.5px;background:linear-gradient(135deg,var(--pink-deep),var(--lilac-deep));color:white;transition:transform 0.15s,box-shadow 0.15s,opacity 0.15s;box-shadow:0 5px 18px rgba(255,143,171,0.4);position:relative;overflow:hidden;}
 .btn::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);transition:left 0.4s;}
@@ -84,13 +84,13 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
 .btn:disabled{opacity:0.45;cursor:not-allowed;transform:none;}
 .btn-lilac{background:linear-gradient(135deg,var(--lilac-deep),#9b5fd4)!important;box-shadow:0 5px 18px rgba(180,142,224,0.4)!important;}
 .btn-lilac:hover{box-shadow:0 9px 24px rgba(180,142,224,0.55)!important;}
- 
+
 /* Feedback */
 .feedback{min-height:34px;margin:10px 0 2px;font-size:0.95rem;font-weight:800;border-radius:14px;padding:6px 14px;transition:all 0.25s;opacity:0;}
 .feedback.show{opacity:1;}
 .feedback.correct{color:var(--green-soft);background:rgba(181,234,215,0.4);border:1.5px solid rgba(94,203,161,0.3);}
 .feedback.wrong{color:var(--red-soft);background:rgba(255,112,150,0.1);border:1.5px solid rgba(255,112,150,0.25);}
- 
+
 /* Penalty */
 .penalty-box{display:none;margin-top:14px;background:rgba(255,112,150,0.06);border:2px solid rgba(255,112,150,0.25);border-radius:20px;padding:16px 18px;text-align:left;}
 .penalty-box.active{display:block;animation:popIn 0.3s cubic-bezier(.34,1.56,.64,1);}
@@ -104,12 +104,12 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
 .penalty-input{width:100%;background:white;border:2.5px solid rgba(255,112,150,0.3);border-radius:14px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;color:var(--text);outline:none;text-align:center;box-shadow:0 2px 8px var(--shadow);}
 .penalty-input:focus{border-color:var(--red-soft);box-shadow:0 0 0 3px rgba(255,112,150,0.15);}
 .penalty-input.good{border-color:var(--mint-deep)!important;color:var(--green-soft);}
- 
+
 /* Empty state */
 .empty-state{padding:28px 10px 16px;color:var(--text-soft);font-size:0.9rem;font-weight:700;line-height:1.7;}
 .empty-state strong{color:var(--lilac-deep);}
 .empty-kawaii{font-size:2.8rem;display:block;margin-bottom:10px;animation:wobble 3s ease-in-out infinite;}
- 
+
 /* Finish */
 .finish-screen{display:none;text-align:center;}
 .finish-screen.active{display:block;animation:popIn 0.4s cubic-bezier(.34,1.56,.64,1);}
@@ -118,7 +118,7 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
 .finish-stats{font-size:0.95rem;color:var(--text-soft);font-weight:700;margin-bottom:22px;}
 .stars{font-size:2.2rem;margin-bottom:14px;display:block;letter-spacing:4px;}
 .finish-btns{display:flex;gap:10px;}
- 
+
 /* Modal shared */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(90,62,107,0.45);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center;padding:16px;}
 .modal-overlay.active{display:flex;}
@@ -132,7 +132,7 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
 .btn-primary{flex:2;padding:12px;border-radius:16px;border:none;cursor:pointer;font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:700;background:linear-gradient(135deg,var(--pink-deep),var(--lilac-deep));color:white;transition:transform 0.15s,box-shadow 0.15s,opacity 0.15s;box-shadow:0 5px 18px rgba(255,143,171,0.4);}
 .btn-primary:hover{transform:translateY(-2px);}
 .btn-primary:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
- 
+
 /* Sets modal */
 .sets-modal-box{max-height:85vh;display:flex;flex-direction:column;}
 .sets-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
@@ -153,11 +153,11 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
 .set-share:hover{background:rgba(189,224,254,0.6);}
 .set-del{background:rgba(255,112,150,0.1);border:1.5px solid rgba(255,112,150,0.3);border-radius:12px;padding:7px 9px;font-size:0.9rem;cursor:pointer;transition:background 0.15s;}
 .set-del:hover{background:rgba(255,112,150,0.22);}
- 
+
 /* Toast */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#5a3e6b;color:white;padding:10px 22px;border-radius:99px;font-size:0.85rem;font-weight:800;opacity:0;transition:all 0.3s;z-index:999;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
- 
+
 /* Password modal */
 .pw-input-wrap{position:relative;margin-bottom:8px;}
 .pw-input{width:100%;background:white;border:2.5px solid rgba(212,184,240,0.7);border-radius:18px;padding:13px 46px 13px 18px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;color:var(--text);outline:none;transition:border-color 0.2s,box-shadow 0.2s;box-shadow:0 3px 10px var(--shadow);}
@@ -169,7 +169,7 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
 .pw-err.show{opacity:1;}
 .lockout-banner{background:rgba(255,112,150,0.1);border:1.5px solid rgba(255,112,150,0.3);border-radius:12px;padding:9px 14px;margin-bottom:12px;font-size:0.82rem;font-weight:800;color:var(--red-soft);display:none;}
 .lockout-banner.show{display:block;}
- 
+
 /* Paste modal */
 .paste-area{width:100%;min-height:160px;background:white;border:2.5px solid rgba(212,184,240,0.6);border-radius:18px;padding:14px 16px;font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:700;color:var(--text);outline:none;resize:vertical;line-height:1.6;box-shadow:0 3px 10px var(--shadow);transition:border-color 0.2s;}
 .paste-area:focus{border-color:var(--lilac-deep);box-shadow:0 0 0 4px rgba(180,142,224,0.15);}
@@ -179,7 +179,7 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
 .spinner{width:16px;height:16px;border:2.5px solid rgba(180,142,224,0.25);border-top-color:var(--lilac-deep);border-radius:50%;animation:spin 0.7s linear infinite;display:none;flex-shrink:0;}
 .spinner.active{display:block;}
 @keyframes spin{to{transform:rotate(360deg)}}
- 
+
 /* Screen fx */
 .flash{position:fixed;inset:0;pointer-events:none;z-index:100;opacity:0;}
 .flash.green{background:radial-gradient(ellipse at center,rgba(94,203,161,0.4) 0%,transparent 70%);}
@@ -195,7 +195,7 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
 </style>
 </head>
 <body>
- 
+
 <div class="bg-floaties" id="bgFloaties"></div>
 <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
 <div class="flash green" id="flashGreen"></div>
@@ -203,7 +203,7 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
 <div class="ring" id="ring"></div>
 <canvas id="confettiCanvas"></canvas>
 <div class="toast" id="toast"></div>
- 
+
 <!-- SETS MODAL -->
 <div class="modal-overlay" id="setsOverlay">
   <div class="modal-box sets-modal-box">
@@ -215,7 +215,7 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
     <button class="btn btn-lilac" id="setsNewBtn">✏️ Add a new list</button>
   </div>
 </div>
- 
+
 <!-- PASSWORD MODAL -->
 <div class="modal-overlay" id="pwOverlay">
   <div class="modal-box">
@@ -233,7 +233,7 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
     </div>
   </div>
 </div>
- 
+
 <!-- PASTE MODAL -->
 <div class="modal-overlay" id="pasteOverlay">
   <div class="modal-box">
@@ -250,7 +250,7 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
     </div>
   </div>
 </div>
- 
+
 <!-- MAIN CARD -->
 <div class="card">
   <div id="gameArea">
@@ -265,15 +265,15 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
       </div>
       <button class="lists-btn" id="openSetsBtn">📚 My lists</button>
     </div>
- 
+
     <div class="topic-badge" id="topicBadge">🌸 <span id="topicLabel"></span></div>
- 
+
     <div class="empty-state" id="emptyState">
       <span class="empty-kawaii">🌸</span>
       No word list loaded yet!<br>
       Tap <strong>My lists</strong> to pick one or add a new one.
     </div>
- 
+
     <div id="quizContent" style="display:none">
       <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
       <div class="score-row">
@@ -296,7 +296,7 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
       </div>
     </div>
   </div>
- 
+
   <div class="finish-screen" id="finishScreen">
     <span class="finish-deco" id="finishDeco">🌸</span>
     <div class="finish-title" id="finishTitle">You did it!</div>
@@ -308,34 +308,34 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
     </div>
   </div>
 </div>
- 
+
 <script>
 // ══════════════════════════════════════════
 //  CONFIG — set your Supabase function URL
 // ══════════════════════════════════════════
-const API = 'https://ivcnjkzuggwpxvnalbol.supabase.co/functions/v1/greta'; // https://xxxx.supabase.co/functions/v1/greta
- 
+const API = 'YOUR_SUPABASE_FUNCTION_URL'; // https://xxxx.supabase.co/functions/v1/greta
+
 // ══════════════════════════════════════════
 //  Game state
 // ══════════════════════════════════════════
 let vocab=[], currentTopic='', currentSetId=null;
 let order=[], current=0, score=0, wrongs=0;
 let penaltyCount=0, inPenalty=false, currentItem=null, confettiAnim=null;
- 
+
 const norm = s => s.toLowerCase().trim().replace(/[^a-zåäö ]/g,'');
 const checkAns = (inp, item) => {
   const n = norm(inp);
   return Array.isArray(item.en) ? item.en.some(e=>norm(e)===n) : norm(item.en)===n;
 };
 function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
- 
+
 // Check for ?set= share link on load
 function checkShareLink(){
   const params = new URLSearchParams(window.location.search);
   const setId = params.get('set');
   if(setId) loadSetById(setId);
 }
- 
+
 async function loadSetById(id){
   try {
     const res = await fetch(`${API}/sets/${id}`);
@@ -349,7 +349,7 @@ async function loadSetById(id){
     showToast('Could not load shared list 💦');
   }
 }
- 
+
 // ══════════════════════════════════════════
 //  Game
 // ══════════════════════════════════════════
@@ -369,7 +369,7 @@ function startGame(){
   document.getElementById('topicLabel').textContent=currentTopic;
   loadQ();
 }
- 
+
 function loadQ(){
   if(current>=order.length){ showFinish(); return; }
   currentItem=order[current]; inPenalty=false;
@@ -386,16 +386,16 @@ function loadQ(){
   document.getElementById('scoreWrong').textContent=wrongs;
   ai.focus();
 }
- 
+
 function fb(msg,type){ const el=document.getElementById('feedback'); el.textContent=msg; el.className=`feedback show ${type}`; }
- 
+
 function correctFx(){
   const f=document.getElementById('flashGreen'); f.classList.remove('animate'); void f.offsetWidth; f.classList.add('animate');
   const r=document.getElementById('ring'); r.classList.remove('pop'); void r.offsetWidth; r.classList.add('pop');
   spawnHearts(); launchConfetti();
 }
 function wrongFx(){ const f=document.getElementById('flashRed'); f.classList.remove('animate'); void f.offsetWidth; f.classList.add('animate'); }
- 
+
 function spawnHearts(){
   const em=['💕','💖','⭐','✨','🌸','💫','🎀'];
   for(let i=0;i<8;i++){
@@ -406,7 +406,7 @@ function spawnHearts(){
     document.body.appendChild(h); setTimeout(()=>h.remove(),1100);
   }
 }
- 
+
 function checkMain(){
   const val=document.getElementById('answerInput').value;
   if(!val.trim()) return;
@@ -427,7 +427,7 @@ function checkMain(){
     setTimeout(()=>startPenalty(correct), 3000);
   }
 }
- 
+
 function startPenalty(correct){
   inPenalty=true; penaltyCount=0;
   document.getElementById('feedback').className='feedback';
@@ -437,7 +437,7 @@ function startPenalty(correct){
   for(let i=0;i<5;i++){ const d=document.createElement('div'); d.className='dot'; dots.appendChild(d); }
   const pi=document.getElementById('penaltyInput'); pi.value=''; pi.className='penalty-input'; pi.disabled=false; pi.focus();
 }
- 
+
 document.getElementById('penaltyInput').addEventListener('input', function(){
   if(!inPenalty) return;
   const correct=Array.isArray(currentItem.en)?currentItem.en[0]:currentItem.en;
@@ -448,10 +448,10 @@ document.getElementById('penaltyInput').addEventListener('input', function(){
     setTimeout(()=>{ this.value=''; this.classList.remove('good'); if(penaltyCount>=5){ inPenalty=false; current++; loadQ(); } }, 300);
   }
 });
- 
+
 document.getElementById('checkBtn').addEventListener('click', checkMain);
 document.getElementById('answerInput').addEventListener('keydown', function(e){ if(e.key==='Enter'&&!this.disabled) checkMain(); });
- 
+
 function showFinish(){
   document.getElementById('gameArea').style.display='none';
   document.getElementById('finishScreen').classList.add('active');
@@ -462,10 +462,10 @@ function showFinish(){
   document.getElementById('finishStats').textContent=`${score} out of ${order.length} correct (${pct}%)`;
   launchConfetti();
 }
- 
+
 document.getElementById('restartBtn').addEventListener('click', startGame);
 document.getElementById('newListBtn').addEventListener('click', openSetsModal);
- 
+
 // ══════════════════════════════════════════
 //  Toast
 // ══════════════════════════════════════════
@@ -476,7 +476,7 @@ function showToast(msg, duration=2800){
   clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>t.classList.remove('show'), duration);
 }
- 
+
 // ══════════════════════════════════════════
 //  Sets modal
 // ══════════════════════════════════════════
@@ -504,26 +504,26 @@ async function loadAndRenderSets(){
         </div>
       </div>`;
     }).join('');
- 
+
     list.querySelectorAll('.set-play').forEach(btn=>btn.addEventListener('click', ()=>{
       loadSetById(btn.dataset.id).then(()=>closeSetsModal());
     }));
- 
+
     list.querySelectorAll('.set-share').forEach(btn=>btn.addEventListener('click', ()=>{
       const url=`${location.origin}${location.pathname}?set=${btn.dataset.id}`;
       navigator.clipboard.writeText(url).then(()=>showToast('Share link copied! 🔗'));
     }));
- 
+
     list.querySelectorAll('.set-del').forEach(btn=>btn.addEventListener('click', ()=>{
       if(!confirm(`Delete "${btn.dataset.topic}"?`)) return;
       deleteSet(btn.dataset.id, btn.dataset.topic);
     }));
- 
+
   } catch(e){
     list.innerHTML='<div class="set-empty">Could not load lists 💦<br>Check your API URL in the config.</div>';
   }
 }
- 
+
 async function deleteSet(id, topic){
   if(!sessionPassword){ openPwModal(()=>deleteSet(id,topic)); return; }
   try {
@@ -534,15 +534,15 @@ async function deleteSet(id, topic){
     loadAndRenderSets();
   } catch(e){ showToast('Could not delete 💦'); }
 }
- 
+
 function openSetsModal(){ document.getElementById('setsOverlay').classList.add('active'); loadAndRenderSets(); }
 function closeSetsModal(){ document.getElementById('setsOverlay').classList.remove('active'); }
- 
+
 document.getElementById('setsOverlay').addEventListener('click', function(e){ if(e.target===this) closeSetsModal(); });
 document.getElementById('setsClose').addEventListener('click', closeSetsModal);
 document.getElementById('setsNewBtn').addEventListener('click', ()=>{ closeSetsModal(); openPwModal(()=>openPasteModal()); });
 document.getElementById('openSetsBtn').addEventListener('click', openSetsModal);
- 
+
 // ══════════════════════════════════════════
 //  Password modal
 // ══════════════════════════════════════════
@@ -550,9 +550,9 @@ let sessionPassword='';
 let pwCallback=null;
 const MAX_ATTEMPTS=3, LOCKOUT_MS=30000;
 let failCount=0, lockedUntil=0, lockoutTimer=null;
- 
+
 function isLockedOut(){ return Date.now()<lockedUntil; }
- 
+
 function openPwModal(callback){
   pwCallback=callback||null;
   // If already authenticated this session, skip straight to callback
@@ -568,7 +568,7 @@ function openPwModal(callback){
   if(!isLockedOut()) setTimeout(()=>document.getElementById('pwInput').focus(),50);
 }
 function closePwModal(){ document.getElementById('pwOverlay').classList.remove('active'); }
- 
+
 function updateLockoutUI(){
   const banner=document.getElementById('lockoutBanner');
   const input=document.getElementById('pwInput');
@@ -581,12 +581,12 @@ function updateLockoutUI(){
     banner.classList.remove('show'); input.disabled=false; submit.disabled=false;
   }
 }
- 
+
 async function submitPassword(){
   if(isLockedOut()) return;
   const val=document.getElementById('pwInput').value.trim();
   if(!val) return;
- 
+
   // Verify by making a lightweight authenticated call
   try {
     const res=await fetch(`${API}/sets`,{headers:{'X-Password':val}});
@@ -615,7 +615,7 @@ async function submitPassword(){
     updateLockoutUI();
   }
 }
- 
+
 document.getElementById('pwSubmit').addEventListener('click', submitPassword);
 document.getElementById('pwInput').addEventListener('keydown', function(e){ if(e.key==='Enter') submitPassword(); });
 document.getElementById('pwToggle').addEventListener('click', function(){
@@ -624,7 +624,7 @@ document.getElementById('pwToggle').addEventListener('click', function(){
 });
 document.getElementById('pwCancel').addEventListener('click', closePwModal);
 document.getElementById('pwOverlay').addEventListener('click', function(e){ if(e.target===this) closePwModal(); });
- 
+
 // ══════════════════════════════════════════
 //  Paste modal
 // ══════════════════════════════════════════
@@ -636,86 +636,107 @@ function openPasteModal(){
   setTimeout(()=>document.getElementById('pasteArea').focus(),50);
 }
 function closePasteModal(){ document.getElementById('pasteOverlay').classList.remove('active'); }
- 
+
 document.getElementById('pasteArea').addEventListener('input', function(){
   document.getElementById('parseBtn').disabled=!this.value.trim();
 });
 document.getElementById('pasteCancel').addEventListener('click', closePasteModal);
 document.getElementById('pasteOverlay').addEventListener('click', function(e){ if(e.target===this) closePasteModal(); });
- 
+
 // ── Local parser — no API needed ──
+function isSwedish(s){ return /[åäöÅÄÖ]/.test(s); }
+function isLikelyEnglish(s){ return /^[a-zA-Z0-9 ',.\/()-]+$/.test(s); }
+function cleanLine(s){ return s.trim().replace(/^\d+[.)\s]+/, '').trim(); }
+
 function parseVocabText(raw) {
-  // Detects separator: dash, em-dash, equals, tab, multiple spaces
   const lines = raw.split(/\n/).map(l=>l.trim()).filter(Boolean);
   const pairs = [];
- 
+
+  // ── Format 1: inline pairs separated by - – = or tab ──
+  // e.g. "Killed - Dödad" or "World	Värld"
+  const inlinePairs = [];
   for (const line of lines) {
-    // Skip lines that look like headers, numbers alone, or page markers
     if (/^\d+\.?$/.test(line)) continue;
- 
-    // Try to split on common separators: " - ", " – ", " = ", "\t", "  +"
-    const match = line.match(
-      /^(.+?)\s*(?:[-–—=]|\t{1}|\s{2,})\s*(.+)$/
-    );
+    const match = line.match(/^(.+?)\s*(?:[-–—=]|\t)\s*(.+)$/);
     if (!match) continue;
- 
-    let [, left, right] = match;
-    left  = left.trim().replace(/^\d+[.)\s]+/, ''); // strip leading "1." "2)"
-    right = right.trim();
- 
-    if (!left || !right) continue;
-    if (left.length > 100 || right.length > 100) continue;
- 
-    // Heuristic: English is usually shorter and uses only ASCII
-    // Swap if left looks like Swedish (contains åäö or is longer)
-    const leftIsSwedish  = /[åäöÅÄÖ]/.test(left)  || left.length > right.length;
-    const rightIsSwedish = /[åäöÅÄÖ]/.test(right) || right.length > left.length;
- 
-    let sv, en;
-    if (leftIsSwedish && !rightIsSwedish) {
-      sv = left; en = right;
-    } else if (rightIsSwedish && !leftIsSwedish) {
-      sv = right; en = left;
-    } else {
-      // Default: treat left as source, right as English
-      sv = left; en = right;
+    let left  = cleanLine(match[1]);
+    let right = cleanLine(match[2]);
+    if (!left || !right || left.length > 100 || right.length > 100) continue;
+    const sv = isSwedish(left) ? left : isSwedish(right) ? right : left;
+    const en = isSwedish(left) ? right : isSwedish(right) ? left : right;
+    inlinePairs.push({ sv, en });
+  }
+  if (inlinePairs.length >= 2) return inlinePairs.slice(0, 20);
+
+  // ── Format 2: alternating lines ──
+  // English line, then Swedish line, repeating
+  // e.g: "Killed
+Dödad
+World
+Värld"
+  const cleaned = lines.map(cleanLine).filter(Boolean);
+
+  // Detect which line is English and which is Swedish by scanning first 6 lines
+  // Find the dominant pattern
+  let enFirstScore = 0; // even lines English, odd lines Swedish
+  let svFirstScore = 0; // even lines Swedish, odd lines English
+  for (let i = 0; i < Math.min(cleaned.length - 1, 8); i += 2) {
+    const a = cleaned[i], b = cleaned[i+1];
+    if (isLikelyEnglish(a) && isSwedish(b)) enFirstScore++;
+    if (isSwedish(a) && isLikelyEnglish(b)) svFirstScore++;
+  }
+
+  const altPairs = [];
+  if (enFirstScore > 0 || svFirstScore > 0) {
+    const enFirst = enFirstScore >= svFirstScore;
+    for (let i = 0; i + 1 < cleaned.length; i += 2) {
+      const a = cleaned[i], b = cleaned[i+1];
+      if (!a || !b || a.length > 100 || b.length > 100) continue;
+      altPairs.push(enFirst ? { sv: b, en: a } : { sv: a, en: b });
     }
- 
+  }
+  if (altPairs.length >= 2) return altPairs.slice(0, 20);
+
+  // ── Format 3: fallback — just try to pair consecutive non-empty lines ──
+  for (let i = 0; i + 1 < cleaned.length; i += 2) {
+    const a = cleaned[i], b = cleaned[i+1];
+    if (!a || !b) continue;
+    const sv = isSwedish(a) ? a : b;
+    const en = isSwedish(a) ? b : a;
     pairs.push({ sv, en });
   }
- 
   return pairs.slice(0, 20);
 }
- 
+
 function guessTopic(pairs) {
   // Use the most distinctive English word as a rough topic guess
   // Just return "Word list" + date as default — user can rename later
   const now = new Date();
   return `${now.toLocaleDateString('sv-SE')}`;
 }
- 
+
 document.getElementById('parseBtn').addEventListener('click', async ()=>{
   const text=document.getElementById('pasteArea').value.trim();
   if(!text) return;
- 
+
   document.getElementById('parseBtn').disabled=true;
   document.getElementById('parseStatus').style.opacity='1';
   document.getElementById('spinner').classList.add('active');
   document.getElementById('parseMsg').textContent='Greta is reading your list… 🌸';
- 
+
   // Parse locally — no API call
   const pairs = parseVocabText(text);
- 
+
   if(!pairs.length){
     document.getElementById('spinner').classList.remove('active');
     document.getElementById('parseMsg').textContent='💦 Could not find any word pairs. Try the format: Word - Translation';
     document.getElementById('parseBtn').disabled=false;
     return;
   }
- 
+
   const topic = guessTopic(pairs);
   document.getElementById('parseMsg').textContent=`Found ${pairs.length} pairs — saving… 🌸`;
- 
+
   try {
     // Save to DB
     const saveRes=await fetch(`${API}/sets`,{
@@ -725,22 +746,22 @@ document.getElementById('parseBtn').addEventListener('click', async ()=>{
     });
     const saved=await saveRes.json();
     if(!saveRes.ok) throw new Error(saved.error||'Save failed');
- 
+
     vocab=pairs.map(p=>({sv:p.sv, en:p.en}));
     currentTopic=topic;
     currentSetId=saved.id;
- 
+
     document.getElementById('spinner').classList.remove('active');
     document.getElementById('parseMsg').textContent=`✅ Saved ${pairs.length} words! Starting… 🎉`;
     setTimeout(()=>{ closePasteModal(); startGame(); }, 900);
- 
+
   } catch(e){
     document.getElementById('spinner').classList.remove('active');
     document.getElementById('parseMsg').textContent='💦 '+e.message;
     document.getElementById('parseBtn').disabled=false;
   }
 });
- 
+
 // ══════════════════════════════════════════
 //  Confetti
 // ══════════════════════════════════════════
@@ -770,7 +791,7 @@ function animateConfetti(){
   if(particles.length>0){confettiAnim=requestAnimationFrame(animateConfetti);}
   else{confettiAnim=null;ctx.clearRect(0,0,canvas.width,canvas.height);}
 }
- 
+
 // ══════════════════════════════════════════
 //  Floating bg
 // ══════════════════════════════════════════
@@ -784,7 +805,7 @@ function animateConfetti(){
     wrap.appendChild(el);
   }
 })();
- 
+
 // ══════════════════════════════════════════
 //  Init
 // ══════════════════════════════════════════
