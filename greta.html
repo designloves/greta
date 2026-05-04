@@ -696,10 +696,7 @@ function parseVocabText(raw) {
 
   // ── Format 2: alternating lines ──
   // English line, then Swedish line, repeating
-  // e.g: "Killed
-Dödad
-World
-Värld"
+  // e.g: "Killed / Dödad / World / Värld"
   const cleaned = lines.map(cleanLine).filter(Boolean);
 
   // Detect which line is English and which is Swedish by scanning first 6 lines
