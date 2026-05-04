@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Greta ✨ The English Tutor</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root {
   --pink:       #ffb7c5;
@@ -334,21 +333,73 @@ const SUPABASE_URL    = 'https://ivcnjkzuggwpxvnalbol.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_nvKqUBjP0B-TmROc_aJtdA_U-P0pr_u';
 
 // ══════════════════════════════════════════
-//  Supabase Auth
+//  Auth (direct Supabase REST — no SDK)
 // ══════════════════════════════════════════
-const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let currentUser = null;
 let sessionToken = null;
 let authCallback = null;
 
-_supabase.auth.onAuthStateChange((event, session) => {
-  currentUser = session?.user ?? null;
-  sessionToken = session?.access_token ?? null;
+function parseJWT(token) {
+  try { return JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))); }
+  catch { return null; }
+}
+function tokenExpired(token) {
+  const p = parseJWT(token);
+  return !p?.exp || Date.now()/1000 > p.exp - 60;
+}
+
+function saveSession(token, refreshToken) {
+  localStorage.setItem('greta_session', JSON.stringify({ token, refreshToken }));
+}
+function clearSession() {
+  localStorage.removeItem('greta_session');
+  currentUser = null; sessionToken = null;
+}
+
+async function loadSession() {
+  try {
+    const saved = localStorage.getItem('greta_session');
+    if (!saved) return;
+    let { token, refreshToken } = JSON.parse(saved);
+    if (tokenExpired(token) && refreshToken) {
+      const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+        body: JSON.stringify({ refresh_token: refreshToken }),
+      });
+      if (!res.ok) { clearSession(); return; }
+      const d = await res.json();
+      token = d.access_token; refreshToken = d.refresh_token;
+      saveSession(token, refreshToken);
+    } else if (tokenExpired(token)) {
+      clearSession(); return;
+    }
+    const p = parseJWT(token);
+    currentUser = { id: p.sub, email: p.email };
+    sessionToken = token;
+  } catch { clearSession(); }
+}
+
+function setSession(token, refreshToken) {
+  const p = parseJWT(token);
+  currentUser = p ? { id: p.sub, email: p.email } : null;
+  sessionToken = token;
+  saveSession(token, refreshToken);
   updateAuthUI();
-  if (currentUser && authCallback) {
-    const cb = authCallback; authCallback = null; cb();
+  if (currentUser && authCallback) { const cb = authCallback; authCallback = null; cb(); }
+}
+
+// Handle magic link redirect (#access_token=…)
+function checkAuthRedirect() {
+  const params = new URLSearchParams(location.hash.substring(1));
+  const token = params.get('access_token');
+  const refreshToken = params.get('refresh_token');
+  if (token) {
+    setSession(token, refreshToken);
+    history.replaceState(null, '', location.pathname + location.search);
+    showToast(`Logged in as ${currentUser?.email} 🌸`);
   }
-});
+}
 
 function updateAuthUI() {
   const label = document.getElementById('setsUserLabel');
@@ -367,8 +418,13 @@ function requireAuth(callback) {
 }
 
 async function signOut() {
-  await _supabase.auth.signOut();
-  currentUser = null; sessionToken = null;
+  if (sessionToken) {
+    fetch(`${SUPABASE_URL}/auth/v1/logout`, {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${sessionToken}` },
+    }).catch(()=>{});
+  }
+  clearSession();
   updateAuthUI();
   showToast('Logged out 👋');
   loadAndRenderSets();
@@ -630,11 +686,12 @@ async function sendMagicLink(){
   if(!email) return;
   document.getElementById('loginSubmit').disabled=true;
   try {
-    const { error }=await _supabase.auth.signInWithOtp({
-      email,
-      options:{ emailRedirectTo: location.href.split('#')[0] },
+    const res=await fetch(`${SUPABASE_URL}/auth/v1/otp`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY},
+      body:JSON.stringify({ email, create_user:true, options:{ emailRedirectTo: location.href.split('#')[0] } }),
     });
-    if(error) throw error;
+    if(!res.ok){ const d=await res.json(); throw new Error(d.msg||d.error_description||'Could not send link'); }
     document.getElementById('loginEmailSent').textContent=email;
     document.getElementById('loginFormWrap').style.display='none';
     document.getElementById('loginSentWrap').style.display='';
@@ -832,6 +889,7 @@ function animateConfetti(){
 // ══════════════════════════════════════════
 //  Init
 // ══════════════════════════════════════════
+loadSession().then(() => { updateAuthUI(); checkAuthRedirect(); });
 checkShareLink();
 if(!vocab.length) startGame();
 </script>
