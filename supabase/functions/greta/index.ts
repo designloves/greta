@@ -2,9 +2,8 @@
 //  Greta – Supabase Edge Function
 //  supabase/functions/greta/index.ts
 //
-//  Secrets (supabase secrets set KEY=value):
-//    ANTHROPIC_API_KEY
-//    OWNER_PASSWORD
+//  Auto-provided secrets (no manual setup needed):
+//    SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_ANON_KEY
 // ═══════════════════════════════════════════════════════
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
@@ -12,11 +11,10 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const CORS = {
   'Access-Control-Allow-Origin':  '*',
   'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Password',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 }
 
-const MAX_WORDS      = 20
-const MAX_TEXT_CHARS = 4000  // ~a full page of text
+const MAX_WORDS = 20
 
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -25,6 +23,7 @@ function json(data: unknown, status = 200) {
 }
 function err(msg: string, status: number) { return json({ error: msg }, status) }
 
+// Service-role client — bypasses RLS, used for all DB writes and share-link reads
 function db() {
   return createClient(
     Deno.env.get('SUPABASE_URL')!,
@@ -32,8 +31,17 @@ function db() {
   )
 }
 
-function authed(req: Request) {
-  return (req.headers.get('X-Password') ?? '') === Deno.env.get('OWNER_PASSWORD')
+// Verify the Bearer JWT and return the Supabase user (or null)
+async function getUser(req: Request) {
+  const auth = req.headers.get('Authorization')
+  if (!auth?.startsWith('Bearer ')) return null
+  const token = auth.slice(7)
+  const { data: { user }, error } = await createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_ANON_KEY')!,
+  ).auth.getUser(token)
+  if (error || !user) return null
+  return user
 }
 
 // ── Router ───────────────────────────────────────────────
@@ -41,30 +49,34 @@ function authed(req: Request) {
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: CORS })
 
-  const url = new URL(req.url)
+  const url  = new URL(req.url)
   const path = url.pathname
 
-  if (req.method === 'GET'    && path.endsWith('/sets'))     return getSets()
-  if (req.method === 'GET'    && path.includes('/sets/'))    return getSet(url)
-  if (req.method === 'POST'   && path.endsWith('/sets'))     return saveSet(req)
-  if (req.method === 'DELETE' && path.includes('/sets/'))    return deleteSet(req, url)
+  if (req.method === 'GET'    && path.endsWith('/sets'))   return getSets(req)
+  if (req.method === 'GET'    && path.includes('/sets/'))  return getSet(url)
+  if (req.method === 'POST'   && path.endsWith('/sets'))   return saveSet(req)
+  if (req.method === 'DELETE' && path.includes('/sets/'))  return deleteSet(req, url)
 
   return err('Not found', 404)
 })
 
-// ── GET /sets — public, list all sets ───────────────────
+// ── GET /sets — auth required, returns the current user's sets ──
 
-async function getSets() {
+async function getSets(req: Request) {
+  const user = await getUser(req)
+  if (!user) return err('Unauthorized', 401)
+
   const { data, error } = await db()
     .from('word_sets')
     .select('id, topic, word_count, created_at')
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false })
 
   if (error) return err(error.message, 500)
   return json(data ?? [])
 }
 
-// ── GET /sets/:id — public, load one set ────────────────
+// ── GET /sets/:id — public, load one set by ID (for share links) ──
 
 async function getSet(url: URL) {
   const id = url.pathname.split('/').pop()
@@ -81,10 +93,11 @@ async function getSet(url: URL) {
   return json(data)
 }
 
-// ── POST /sets — owner only, save a set ─────────────────
+// ── POST /sets — auth required, save a new set ──────────
 
 async function saveSet(req: Request) {
-  if (!authed(req)) return err('Wrong password 💦', 401)
+  const user = await getUser(req)
+  if (!user) return err('Unauthorized', 401)
 
   let body: { topic?: string; vocab?: unknown[] }
   try { body = await req.json() }
@@ -92,10 +105,11 @@ async function saveSet(req: Request) {
 
   const { topic, vocab } = body
   if (!topic || !vocab?.length) return err('Missing topic or vocab', 400)
+  if (vocab.length > MAX_WORDS) return err(`Max ${MAX_WORDS} words`, 400)
 
   const { data, error } = await db()
     .from('word_sets')
-    .insert({ topic, vocab, word_count: vocab.length })
+    .insert({ topic, vocab, word_count: vocab.length, user_id: user.id })
     .select('id')
     .single()
 
@@ -103,15 +117,21 @@ async function saveSet(req: Request) {
   return json({ id: data.id })
 }
 
-// ── DELETE /sets/:id — owner only ───────────────────────
+// ── DELETE /sets/:id — auth required, only own sets ─────
 
 async function deleteSet(req: Request, url: URL) {
-  if (!authed(req)) return err('Wrong password 💦', 401)
+  const user = await getUser(req)
+  if (!user) return err('Unauthorized', 401)
 
   const id = url.pathname.split('/').pop()
   if (!id) return err('Missing ID', 400)
 
-  const { error } = await db().from('word_sets').delete().eq('id', id)
+  const { error } = await db()
+    .from('word_sets')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', user.id)
+
   if (error) return err(error.message, 500)
   return json({ deleted: id })
 }

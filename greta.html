@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Greta ✨ The English Tutor</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root {
   --pink:       #ffb7c5;
@@ -170,6 +171,12 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
 .lockout-banner{background:rgba(255,112,150,0.1);border:1.5px solid rgba(255,112,150,0.3);border-radius:12px;padding:9px 14px;margin-bottom:12px;font-size:0.82rem;font-weight:800;color:var(--red-soft);display:none;}
 .lockout-banner.show{display:block;}
 
+/* Auth / login modal */
+.auth-status{font-size:0.73rem;font-weight:700;color:var(--text-soft);margin-top:2px;}
+.logout-link{background:none;border:none;color:var(--text-soft);font-size:0.73rem;font-weight:700;cursor:pointer;text-decoration:underline;padding:0;font-family:'Nunito',sans-serif;}
+.logout-link:hover{color:var(--lilac-deep);}
+.login-sent-icon{font-size:2.5rem;display:block;margin:8px 0 12px;}
+
 /* Paste modal */
 .paste-area{width:100%;min-height:160px;background:white;border:2.5px solid rgba(212,184,240,0.6);border-radius:18px;padding:14px 16px;font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:700;color:var(--text);outline:none;resize:vertical;line-height:1.6;box-shadow:0 3px 10px var(--shadow);transition:border-color 0.2s;}
 .paste-area:focus{border-color:var(--lilac-deep);box-shadow:0 0 0 4px rgba(180,142,224,0.15);}
@@ -208,7 +215,10 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
 <div class="modal-overlay" id="setsOverlay">
   <div class="modal-box sets-modal-box">
     <div class="sets-header">
-      <h2>📚 Word lists</h2>
+      <div>
+        <h2>📚 Word lists</h2>
+        <div id="setsUserLabel" class="auth-status"></div>
+      </div>
       <button class="sets-close" id="setsClose">✕</button>
     </div>
     <div class="sets-body" id="setList"></div>
@@ -216,20 +226,26 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
   </div>
 </div>
 
-<!-- PASSWORD MODAL -->
-<div class="modal-overlay" id="pwOverlay">
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginOverlay">
   <div class="modal-box">
-    <h2>🔐 Owner login</h2>
-    <p>Enter your password to add or remove word lists</p>
-    <div class="lockout-banner" id="lockoutBanner"></div>
-    <div class="pw-input-wrap">
-      <input class="pw-input" type="password" id="pwInput" placeholder="Enter password…" autocomplete="off">
-      <button class="pw-toggle" id="pwToggle" type="button" tabindex="-1">👁</button>
+    <h2>✉️ Log in</h2>
+    <p>Enter your email — we'll send a magic link, no password needed!</p>
+    <div id="loginFormWrap">
+      <div class="pw-input-wrap">
+        <input class="pw-input" type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email">
+      </div>
+      <div class="pw-err" id="loginErr"></div>
+      <div class="modal-row">
+        <button class="btn-cancel" id="loginCancel">Cancel</button>
+        <button class="btn-primary" id="loginSubmit">Send magic link ✨</button>
+      </div>
     </div>
-    <div class="pw-err" id="pwErr"></div>
-    <div class="modal-row">
-      <button class="btn-cancel" id="pwCancel">Cancel</button>
-      <button class="btn-primary" id="pwSubmit">Unlock ✨</button>
+    <div id="loginSentWrap" style="display:none;text-align:center">
+      <span class="login-sent-icon">📧</span>
+      <p style="font-weight:800;color:var(--text);margin-bottom:6px">Check your email!</p>
+      <p>We sent a magic link to <strong id="loginEmailSent"></strong>. Click it to log in!</p>
+      <button class="btn-cancel" id="loginSentClose" style="margin-top:14px;width:100%">Close</button>
     </div>
   </div>
 </div>
@@ -311,9 +327,52 @@ input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0
 
 <script>
 // ══════════════════════════════════════════
-//  CONFIG — set your Supabase function URL
+//  CONFIG
 // ══════════════════════════════════════════
-const API = 'YOUR_SUPABASE_FUNCTION_URL'; // https://xxxx.supabase.co/functions/v1/greta
+const API             = 'YOUR_SUPABASE_FUNCTION_URL';  // https://xxxx.supabase.co/functions/v1/greta
+const SUPABASE_URL    = 'YOUR_SUPABASE_URL';           // https://xxxx.supabase.co
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';    // eyJ…
+
+// ══════════════════════════════════════════
+//  Supabase Auth
+// ══════════════════════════════════════════
+const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let currentUser = null;
+let sessionToken = null;
+let authCallback = null;
+
+_supabase.auth.onAuthStateChange((event, session) => {
+  currentUser = session?.user ?? null;
+  sessionToken = session?.access_token ?? null;
+  updateAuthUI();
+  if (currentUser && authCallback) {
+    const cb = authCallback; authCallback = null; cb();
+  }
+});
+
+function updateAuthUI() {
+  const label = document.getElementById('setsUserLabel');
+  if (!label) return;
+  if (currentUser) {
+    label.innerHTML = `${currentUser.email} &middot; <button class="logout-link" onclick="signOut()">Log out</button>`;
+  } else {
+    label.textContent = '';
+  }
+}
+
+function requireAuth(callback) {
+  if (currentUser) { callback(); return; }
+  authCallback = callback;
+  openLoginModal();
+}
+
+async function signOut() {
+  await _supabase.auth.signOut();
+  currentUser = null; sessionToken = null;
+  updateAuthUI();
+  showToast('Logged out 👋');
+  loadAndRenderSets();
+}
 
 // ══════════════════════════════════════════
 //  Game state
@@ -482,9 +541,19 @@ function showToast(msg, duration=2800){
 // ══════════════════════════════════════════
 async function loadAndRenderSets(){
   const list=document.getElementById('setList');
+  const newBtn=document.getElementById('setsNewBtn');
+
+  if(!currentUser){
+    list.innerHTML='<div class="set-empty">Log in to save and manage your word lists 🌸<br><br><button class="btn btn-lilac" id="setsLoginBtn" style="width:auto;padding:10px 20px;font-size:0.9rem">Log in with email ✉️</button></div>';
+    document.getElementById('setsLoginBtn').addEventListener('click',()=>{ closeSetsModal(); openLoginModal(); });
+    newBtn.style.display='none';
+    return;
+  }
+
+  newBtn.style.display='';
   list.innerHTML='<div class="set-empty">Loading… 🌸</div>';
   try {
-    const res=await fetch(`${API}/sets`);
+    const res=await fetch(`${API}/sets`,{headers:{'Authorization':`Bearer ${sessionToken}`}});
     const sets=await res.json();
     if(!sets.length){
       list.innerHTML='<div class="set-empty">No word lists yet 🌸<br>Tap <strong>Add a new list</strong> below!</div>';
@@ -505,29 +574,27 @@ async function loadAndRenderSets(){
       </div>`;
     }).join('');
 
-    list.querySelectorAll('.set-play').forEach(btn=>btn.addEventListener('click', ()=>{
+    list.querySelectorAll('.set-play').forEach(btn=>btn.addEventListener('click',()=>{
       loadSetById(btn.dataset.id).then(()=>closeSetsModal());
     }));
-
-    list.querySelectorAll('.set-share').forEach(btn=>btn.addEventListener('click', ()=>{
+    list.querySelectorAll('.set-share').forEach(btn=>btn.addEventListener('click',()=>{
       const url=`${location.origin}${location.pathname}?set=${btn.dataset.id}`;
       navigator.clipboard.writeText(url).then(()=>showToast('Share link copied! 🔗'));
     }));
-
-    list.querySelectorAll('.set-del').forEach(btn=>btn.addEventListener('click', ()=>{
+    list.querySelectorAll('.set-del').forEach(btn=>btn.addEventListener('click',()=>{
       if(!confirm(`Delete "${btn.dataset.topic}"?`)) return;
-      deleteSet(btn.dataset.id, btn.dataset.topic);
+      deleteSet(btn.dataset.id,btn.dataset.topic);
     }));
 
   } catch(e){
-    list.innerHTML='<div class="set-empty">Could not load lists 💦<br>Check your API URL in the config.</div>';
+    list.innerHTML='<div class="set-empty">Could not load lists 💦<br>Check your config.</div>';
   }
 }
 
 async function deleteSet(id, topic){
-  if(!sessionPassword){ openPwModal(()=>deleteSet(id,topic)); return; }
+  if(!sessionToken){ requireAuth(()=>deleteSet(id,topic)); return; }
   try {
-    const res=await fetch(`${API}/sets/${id}`,{method:'DELETE',headers:{'X-Password':sessionPassword}});
+    const res=await fetch(`${API}/sets/${id}`,{method:'DELETE',headers:{'Authorization':`Bearer ${sessionToken}`}});
     if(!res.ok){ const d=await res.json(); showToast(d.error||'Delete failed 💦'); return; }
     if(currentSetId===id){ vocab=[]; currentTopic=''; currentSetId=null; startGame(); }
     showToast('Deleted! 🗑');
@@ -535,95 +602,54 @@ async function deleteSet(id, topic){
   } catch(e){ showToast('Could not delete 💦'); }
 }
 
-function openSetsModal(){ document.getElementById('setsOverlay').classList.add('active'); loadAndRenderSets(); }
+function openSetsModal(){ document.getElementById('setsOverlay').classList.add('active'); updateAuthUI(); loadAndRenderSets(); }
 function closeSetsModal(){ document.getElementById('setsOverlay').classList.remove('active'); }
 
 document.getElementById('setsOverlay').addEventListener('click', function(e){ if(e.target===this) closeSetsModal(); });
 document.getElementById('setsClose').addEventListener('click', closeSetsModal);
-document.getElementById('setsNewBtn').addEventListener('click', ()=>{ closeSetsModal(); openPwModal(()=>openPasteModal()); });
+document.getElementById('setsNewBtn').addEventListener('click', ()=>{ closeSetsModal(); requireAuth(()=>openPasteModal()); });
 document.getElementById('openSetsBtn').addEventListener('click', openSetsModal);
 
 // ══════════════════════════════════════════
-//  Password modal
+//  Login modal (magic link)
 // ══════════════════════════════════════════
-let sessionPassword='';
-let pwCallback=null;
-const MAX_ATTEMPTS=3, LOCKOUT_MS=30000;
-let failCount=0, lockedUntil=0, lockoutTimer=null;
-
-function isLockedOut(){ return Date.now()<lockedUntil; }
-
-function openPwModal(callback){
-  pwCallback=callback||null;
-  // If already authenticated this session, skip straight to callback
-  if(sessionPassword){ pwCallback?.(); return; }
-  document.getElementById('pwInput').value='';
-  document.getElementById('pwInput').type='password';
-  document.getElementById('pwToggle').textContent='👁';
-  document.getElementById('pwInput').classList.remove('error');
-  document.getElementById('pwErr').classList.remove('show');
-  document.getElementById('pwErr').textContent='';
-  updateLockoutUI();
-  document.getElementById('pwOverlay').classList.add('active');
-  if(!isLockedOut()) setTimeout(()=>document.getElementById('pwInput').focus(),50);
+function openLoginModal(){
+  document.getElementById('loginFormWrap').style.display='';
+  document.getElementById('loginSentWrap').style.display='none';
+  document.getElementById('loginEmail').value='';
+  document.getElementById('loginErr').textContent='';
+  document.getElementById('loginErr').classList.remove('show');
+  document.getElementById('loginSubmit').disabled=false;
+  document.getElementById('loginOverlay').classList.add('active');
+  setTimeout(()=>document.getElementById('loginEmail').focus(),50);
 }
-function closePwModal(){ document.getElementById('pwOverlay').classList.remove('active'); }
+function closeLoginModal(){ document.getElementById('loginOverlay').classList.remove('active'); }
 
-function updateLockoutUI(){
-  const banner=document.getElementById('lockoutBanner');
-  const input=document.getElementById('pwInput');
-  const submit=document.getElementById('pwSubmit');
-  if(isLockedOut()){
-    const secs=Math.ceil((lockedUntil-Date.now())/1000);
-    banner.textContent=`Too many attempts 🔒 Try again in ${secs}s`;
-    banner.classList.add('show'); input.disabled=true; submit.disabled=true;
-  } else {
-    banner.classList.remove('show'); input.disabled=false; submit.disabled=false;
-  }
-}
-
-async function submitPassword(){
-  if(isLockedOut()) return;
-  const val=document.getElementById('pwInput').value.trim();
-  if(!val) return;
-
-  // Verify by making a lightweight authenticated call
+async function sendMagicLink(){
+  const email=document.getElementById('loginEmail').value.trim();
+  if(!email) return;
+  document.getElementById('loginSubmit').disabled=true;
   try {
-    const res=await fetch(`${API}/sets`,{headers:{'X-Password':val}});
-    // Any non-401 means password is correct (GET /sets doesn't require auth but we'll use /parse with empty body to test)
-    // Actually test via a dummy parse call
-    const testRes=await fetch(`${API}/parse`,{method:'POST',headers:{'Content-Type':'application/json','X-Password':val},body:JSON.stringify({text:''})});
-    if(testRes.status===401){ throw new Error('wrong'); }
-    // 400 (empty text) is fine — it means auth passed
-    sessionPassword=val;
-    closePwModal();
-    pwCallback?.();
+    const { error }=await _supabase.auth.signInWithOtp({
+      email,
+      options:{ emailRedirectTo: location.href.split('#')[0] },
+    });
+    if(error) throw error;
+    document.getElementById('loginEmailSent').textContent=email;
+    document.getElementById('loginFormWrap').style.display='none';
+    document.getElementById('loginSentWrap').style.display='';
   } catch(e){
-    failCount++;
-    document.getElementById('pwInput').classList.add('error');
-    const remaining=MAX_ATTEMPTS-failCount;
-    if(failCount>=MAX_ATTEMPTS){
-      lockedUntil=Date.now()+LOCKOUT_MS; failCount=0;
-      if(lockoutTimer) clearInterval(lockoutTimer);
-      lockoutTimer=setInterval(()=>{ if(!isLockedOut()){ clearInterval(lockoutTimer); lockoutTimer=null; } updateLockoutUI(); },1000);
-      document.getElementById('pwErr').classList.remove('show');
-    } else {
-      document.getElementById('pwErr').textContent=remaining===1?`Wrong password — 1 attempt left! 💦`:`Wrong password — ${remaining} attempts left 💦`;
-      document.getElementById('pwErr').classList.add('show');
-      setTimeout(()=>{ document.getElementById('pwInput').classList.remove('error'); document.getElementById('pwInput').value=''; document.getElementById('pwInput').focus(); },600);
-    }
-    updateLockoutUI();
+    document.getElementById('loginErr').textContent=e.message||'Could not send link 💦';
+    document.getElementById('loginErr').classList.add('show');
+    document.getElementById('loginSubmit').disabled=false;
   }
 }
 
-document.getElementById('pwSubmit').addEventListener('click', submitPassword);
-document.getElementById('pwInput').addEventListener('keydown', function(e){ if(e.key==='Enter') submitPassword(); });
-document.getElementById('pwToggle').addEventListener('click', function(){
-  const inp=document.getElementById('pwInput');
-  if(inp.type==='password'){ inp.type='text'; this.textContent='🙈'; } else { inp.type='password'; this.textContent='👁'; }
-});
-document.getElementById('pwCancel').addEventListener('click', closePwModal);
-document.getElementById('pwOverlay').addEventListener('click', function(e){ if(e.target===this) closePwModal(); });
+document.getElementById('loginSubmit').addEventListener('click', sendMagicLink);
+document.getElementById('loginEmail').addEventListener('keydown', e=>{ if(e.key==='Enter') sendMagicLink(); });
+document.getElementById('loginCancel').addEventListener('click', ()=>{ authCallback=null; closeLoginModal(); });
+document.getElementById('loginSentClose').addEventListener('click', closeLoginModal);
+document.getElementById('loginOverlay').addEventListener('click', function(e){ if(e.target===this){ authCallback=null; closeLoginModal(); } });
 
 // ══════════════════════════════════════════
 //  Paste modal
@@ -741,7 +767,7 @@ document.getElementById('parseBtn').addEventListener('click', async ()=>{
     // Save to DB
     const saveRes=await fetch(`${API}/sets`,{
       method:'POST',
-      headers:{'Content-Type':'application/json','X-Password':sessionPassword},
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${sessionToken}`},
       body:JSON.stringify({topic, vocab:pairs}),
     });
     const saved=await saveRes.json();
