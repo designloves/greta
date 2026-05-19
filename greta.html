@@ -1,344 +1,397 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Greta ✨ The English Tutor</title>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Poppins — vocabulary tutor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --pink:       #ffb7c5;
-  --pink-deep:  #ff8fab;
-  --lilac:      #d4b8f0;
-  --lilac-deep: #b48ee0;
-  --mint:       #b5ead7;
-  --mint-deep:  #5ecba1;
-  --sky:        #bde0fe;
-  --yellow:     #fde89a;
-  --text:       #5a3e6b;
-  --text-soft:  #9b7eb8;
-  --red-soft:   #ff7096;
-  --green-soft: #3a9e7a;
-  --card-bg:    #fff0f5;
-  --shadow:     rgba(180,110,160,0.18);
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#ffe8f5 0%,#f0e6ff 40%,#e8f5ff 100%);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+  html,body{margin:0;padding:0;background:#2A2530;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',system-ui,sans-serif;}
 
-/* Bg floaties */
-.bg-floaties{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
-.floatie{position:absolute;opacity:0.18;user-select:none;animation:floatUp linear infinite;}
-@keyframes floatUp{0%{transform:translateY(110vh) rotate(0deg);opacity:0;}8%{opacity:0.18;}92%{opacity:0.18;}100%{transform:translateY(-10vh) rotate(360deg);opacity:0;}}
-.cloud{position:fixed;border-radius:50%;filter:blur(55px);pointer-events:none;z-index:0;}
-.c1{width:320px;height:200px;background:rgba(255,183,197,0.38);top:-60px;left:-80px;}
-.c2{width:280px;height:180px;background:rgba(212,184,240,0.32);bottom:40px;right:-60px;}
-.c3{width:240px;height:160px;background:rgba(189,224,254,0.32);top:40%;left:60%;}
+  @keyframes greta-spin{to{transform:rotate(360deg);}}
+  @keyframes greta-fall{0%{transform:translateY(-40px) rotate(0deg);opacity:1;}90%{opacity:1;}100%{transform:translateY(820px) rotate(360deg);opacity:0;}}
+  @keyframes greta-float{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-12px) rotate(8deg);}}
+  @keyframes greta-pop{0%{transform:scale(0.6);opacity:0;}60%{transform:scale(1.1);opacity:1;}100%{transform:scale(1);opacity:1;}}
+  @keyframes greta-kiss{
+    0%  {transform:translate(0,0) scale(1) rotate(0);}
+    20% {transform:translate(-30px,-30px) scale(1.1) rotate(-8deg);}
+    40% {transform:translate(-58px,-78px) scale(1.25) rotate(-14deg);}
+    55% {transform:translate(-62px,-88px) scale(1.3) rotate(-14deg);}
+    70% {transform:translate(-58px,-78px) scale(1.2) rotate(-10deg);}
+    100%{transform:translate(-20px,-20px) scale(1) rotate(0);opacity:0.95;}
+  }
+  @keyframes greta-oops{
+    0%,100%{transform:translate(0,0) rotate(0);}
+    15%{transform:translate(-8px,2px) rotate(-7deg);}
+    30%{transform:translate(8px,2px) rotate(7deg);}
+    45%{transform:translate(-7px,0) rotate(-6deg);}
+    60%{transform:translate(7px,0) rotate(6deg);}
+    75%{transform:translate(-4px,0) rotate(-3deg);}
+  }
+  @keyframes greta-heart-burst{
+    0%  {transform:scale(0) rotate(-12deg);opacity:0;}
+    35% {transform:scale(1.4) rotate(-6deg);opacity:1;}
+    65% {transform:scale(1.1) rotate(2deg);opacity:1;}
+    100%{transform:scale(0.9) translateY(-18px) rotate(8deg);opacity:0;}
+  }
+  @keyframes greta-card-correct{0%{transform:scale(1);}35%{transform:scale(1.018);}100%{transform:scale(1);}}
+  @keyframes greta-card-wrong{0%,100%{transform:translateX(0);}20%{transform:translateX(-7px);}40%{transform:translateX(7px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+  @keyframes greta-tada{
+    0%  {transform:scale(1) rotate(0);}
+    10% {transform:scale(0.92) rotate(-6deg);}
+    20%,40%,60%,80%{transform:scale(1.18) rotate(8deg);}
+    30%,50%,70%    {transform:scale(1.18) rotate(-8deg);}
+    100%{transform:scale(1) rotate(0);}
+  }
+  @keyframes greta-bigbounce{
+    0%  {transform:translate(0,0) scale(1,1);}
+    18% {transform:translate(0,-70px) scale(0.94,1.12);}
+    38% {transform:translate(0,0) scale(1.12,0.86);}
+    55% {transform:translate(0,-32px) scale(0.97,1.06);}
+    72% {transform:translate(0,0) scale(1.05,0.95);}
+    100%{transform:translate(0,0) scale(1,1);}
+  }
+  @keyframes greta-cartwheel{
+    0%  {transform:translate(0,0) rotate(0) scale(1);}
+    30% {transform:translate(-30px,-50px) rotate(-200deg) scale(0.9);}
+    60% {transform:translate(-60px,-40px) rotate(-380deg) scale(1);}
+    100%{transform:translate(-20px,-10px) rotate(-360deg) scale(0.95);}
+  }
+  @keyframes greta-sink{
+    0%  {transform:translate(0,0) scale(1,1);}
+    20% {transform:translate(0,6px) scale(1.05,0.8);}
+    40% {transform:translate(0,-2px) scale(0.95,1.08);}
+    60% {transform:translate(0,5px) scale(1.04,0.86);}
+    100%{transform:translate(0,0) scale(1,1);}
+  }
+  @keyframes greta-headtilt{0%{transform:rotate(0);}25%{transform:rotate(-22deg) translateX(-4px);}65%{transform:rotate(-22deg) translateX(-4px);}100%{transform:rotate(0);}}
+  @keyframes greta-spin-shrink{0%{transform:rotate(0) scale(1);}50%{transform:rotate(-540deg) scale(0.55);}100%{transform:rotate(-720deg) scale(1);}}
+  @keyframes greta-sparkle-arc{
+    0%  {transform:translate(0,0) scale(0) rotate(0);opacity:0;}
+    30% {transform:translate(var(--dx,0px),var(--dy,0px)) scale(1.2) rotate(45deg);opacity:1;}
+    100%{transform:translate(calc(var(--dx,0px)*1.7),calc(var(--dy,0px)*1.7 - 8px)) scale(0.6) rotate(110deg);opacity:0;}
+  }
+  @keyframes greta-confetti-rain{
+    0%  {transform:translate(var(--cdx,0px),-30px) rotate(0);opacity:0;}
+    10% {opacity:1;}
+    100%{transform:translate(calc(var(--cdx,0px) + var(--cdx2,0px)),320px) rotate(720deg);opacity:0;}
+  }
+  @keyframes greta-petal-trail{
+    0%  {transform:translate(0,0) scale(0) rotate(0);opacity:0;}
+    25% {transform:translate(var(--dx,0),var(--dy,0)) scale(1) rotate(var(--rot,0deg));opacity:1;}
+    100%{transform:translate(calc(var(--dx,0)*1.4),calc(var(--dy,0)*1.4 + 24px)) scale(0.6) rotate(calc(var(--rot,0deg) + 120deg));opacity:0;}
+  }
+  @keyframes greta-droplet-fall{0%{transform:translate(0,0) scale(0);opacity:0;}20%{transform:translate(0,0) scale(1);opacity:1;}100%{transform:translate(0,28px) scale(0.8);opacity:0;}}
+  @keyframes greta-qmark-pop{0%{transform:scale(0) rotate(-20deg);opacity:0;}35%{transform:scale(1.3) rotate(8deg);opacity:1;}100%{transform:scale(1.15) translateY(-12px) rotate(0);opacity:0;}}
+  @keyframes greta-puff{0%{transform:scale(0);opacity:0;}40%{transform:scale(1.2);opacity:0.85;}100%{transform:scale(1.6);opacity:0;}}
+  @keyframes greta-answer-rise{0%{transform:translateY(14px);opacity:0;}100%{transform:translateY(0);opacity:1;}}
+  @keyframes greta-fade-in{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
-/* Card */
-.card{position:relative;z-index:10;background:var(--card-bg);border-radius:36px;padding:32px 36px 28px;width:min(500px,94vw);box-shadow:0 8px 40px var(--shadow),0 2px 0 rgba(255,255,255,0.9) inset;border:2.5px solid rgba(255,183,197,0.7);text-align:center;}
-.card::before{content:'';position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:80%;height:6px;background:linear-gradient(90deg,var(--pink),var(--lilac),var(--sky),var(--mint),var(--yellow),var(--pink));border-radius:99px;}
-
-/* Header */
-.header-row{display:flex;align-items:center;justify-content:space-between;}
-.avatar-wrap{position:relative;width:54px;height:54px;flex-shrink:0;}
-.avatar-face{width:54px;height:54px;background:linear-gradient(145deg,var(--pink),#ffd6e8);border-radius:50%;border:3px solid var(--pink-deep);display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 4px 14px rgba(255,143,171,0.35);animation:wobble 4s ease-in-out infinite;}
-@keyframes wobble{0%,100%{transform:rotate(-4deg) scale(1);}25%{transform:rotate(4deg) scale(1.05);}50%{transform:rotate(-2deg) scale(1);}75%{transform:rotate(3deg) scale(1.03);}}
-.avatar-star{position:absolute;top:-4px;right:-4px;font-size:14px;animation:spinStar 3s linear infinite;}
-@keyframes spinStar{to{transform:rotate(360deg);}}
-.title-block{flex:1;text-align:left;padding-left:10px;}
-h1{font-family:'Baloo 2',cursive;font-size:1.9rem;font-weight:800;background:linear-gradient(135deg,var(--pink-deep),var(--lilac-deep));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;}
-.subtitle{font-size:0.75rem;font-weight:700;color:var(--text-soft);}
-.lists-btn{background:linear-gradient(135deg,#f0d6ff,#ffd6f0);border:2px solid var(--lilac);color:var(--lilac-deep);border-radius:18px;padding:8px 14px;font-family:'Nunito',sans-serif;font-size:0.8rem;font-weight:800;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;display:flex;align-items:center;gap:5px;white-space:nowrap;box-shadow:0 3px 10px rgba(180,142,224,0.25);}
-.lists-btn:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 6px 18px rgba(180,142,224,0.38);}
-
-/* Topic badge */
-.topic-badge{display:none;align-items:center;gap:5px;background:linear-gradient(90deg,rgba(255,183,197,0.4),rgba(212,184,240,0.4));border:1.5px solid rgba(255,183,197,0.8);border-radius:99px;padding:4px 14px;font-size:0.75rem;font-weight:800;color:var(--text);margin:10px auto 0;width:fit-content;}
-.topic-badge.visible{display:inline-flex;}
-
-/* Progress */
-.progress-wrap{background:rgba(212,184,240,0.2);border-radius:99px;height:10px;margin:18px 0 16px;overflow:hidden;border:1.5px solid rgba(212,184,240,0.4);}
-.progress-bar{height:100%;background:linear-gradient(90deg,var(--pink-deep),var(--lilac-deep),#9b7bd4);border-radius:99px;transition:width 0.5s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;}
-.progress-bar::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);animation:shimmer 1.8s ease-in-out infinite;}
-@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
-.score-row{display:flex;justify-content:space-between;margin-bottom:18px;gap:6px;}
-.score-pill{flex:1;background:white;border:2px solid rgba(255,183,197,0.6);border-radius:99px;padding:5px 10px;font-size:0.78rem;font-weight:800;color:var(--text);box-shadow:0 2px 8px var(--shadow);}
-
-/* Quiz */
-.prompt-label{font-size:0.7rem;font-weight:800;letter-spacing:2px;color:var(--text-soft);text-transform:uppercase;margin-bottom:6px;}
-.swedish-word{font-family:'Baloo 2',cursive;font-size:2.3rem;font-weight:800;color:var(--text);margin-bottom:20px;min-height:52px;line-height:1.15;}
-.swedish-word span{display:inline-block;background:linear-gradient(180deg,transparent 60%,rgba(255,183,197,0.55) 60%);padding:0 4px;}
-.input-wrap{position:relative;margin-bottom:12px;}
-input[type="text"]{width:100%;background:white;border:2.5px solid rgba(212,184,240,0.7);border-radius:18px;padding:13px 18px;font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text);outline:none;text-align:center;transition:border-color 0.2s,box-shadow 0.2s,transform 0.1s;box-shadow:0 3px 10px var(--shadow);}
-input[type="text"]::placeholder{color:rgba(155,126,184,0.4);font-weight:700;}
-input[type="text"]:focus{border-color:var(--pink-deep);transform:scale(1.01);box-shadow:0 0 0 4px rgba(255,143,171,0.15),0 3px 10px var(--shadow);}
-input.correct{border-color:var(--mint-deep)!important;background:rgba(181,234,215,0.2)!important;color:var(--green-soft)!important;}
-input.wrong{border-color:var(--red-soft)!important;background:rgba(255,112,150,0.08)!important;color:var(--red-soft)!important;animation:shake 0.4s ease;}
-@keyframes shake{0%,100%{transform:translateX(0) scale(1.01);}20%{transform:translateX(-8px) scale(1.01);}40%{transform:translateX(8px) scale(1.01);}60%{transform:translateX(-5px) scale(1.01);}80%{transform:translateX(5px) scale(1.01);}}
-
-/* Buttons */
-.btn{width:100%;padding:13px;border-radius:20px;border:none;cursor:pointer;font-family:'Baloo 2',cursive;font-size:1.15rem;font-weight:700;letter-spacing:0.5px;background:linear-gradient(135deg,var(--pink-deep),var(--lilac-deep));color:white;transition:transform 0.15s,box-shadow 0.15s,opacity 0.15s;box-shadow:0 5px 18px rgba(255,143,171,0.4);position:relative;overflow:hidden;}
-.btn::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);transition:left 0.4s;}
-.btn:hover::after{left:140%;}
-.btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 9px 24px rgba(255,143,171,0.5);}
-.btn:active{transform:translateY(0) scale(0.99);}
-.btn:disabled{opacity:0.45;cursor:not-allowed;transform:none;}
-.btn-lilac{background:linear-gradient(135deg,var(--lilac-deep),#9b5fd4)!important;box-shadow:0 5px 18px rgba(180,142,224,0.4)!important;}
-.btn-lilac:hover{box-shadow:0 9px 24px rgba(180,142,224,0.55)!important;}
-
-/* Feedback */
-.feedback{min-height:34px;margin:10px 0 2px;font-size:0.95rem;font-weight:800;border-radius:14px;padding:6px 14px;transition:all 0.25s;opacity:0;}
-.feedback.show{opacity:1;}
-.feedback.correct{color:var(--green-soft);background:rgba(181,234,215,0.4);border:1.5px solid rgba(94,203,161,0.3);}
-.feedback.wrong{color:var(--red-soft);background:rgba(255,112,150,0.1);border:1.5px solid rgba(255,112,150,0.25);}
-
-/* Penalty */
-.penalty-box{display:none;margin-top:14px;background:rgba(255,112,150,0.06);border:2px solid rgba(255,112,150,0.25);border-radius:20px;padding:16px 18px;text-align:left;}
-.penalty-box.active{display:block;animation:popIn 0.3s cubic-bezier(.34,1.56,.64,1);}
-@keyframes popIn{from{transform:scale(0.9);opacity:0}to{transform:scale(1);opacity:1}}
-.penalty-label{font-size:0.78rem;font-weight:800;color:var(--red-soft);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;}
-.penalty-word{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:700;color:var(--text);margin-bottom:10px;}
-.penalty-dots{display:flex;gap:7px;margin-bottom:10px;}
-.dot{width:20px;height:20px;border-radius:50%;border:2.5px solid rgba(255,112,150,0.4);background:transparent;transition:all 0.25s;display:flex;align-items:center;justify-content:center;}
-.dot.filled{background:var(--red-soft);border-color:var(--red-soft);}
-.dot.filled::after{content:'♥';color:white;font-size:11px;}
-.penalty-input{width:100%;background:white;border:2.5px solid rgba(255,112,150,0.3);border-radius:14px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;color:var(--text);outline:none;text-align:center;box-shadow:0 2px 8px var(--shadow);}
-.penalty-input:focus{border-color:var(--red-soft);box-shadow:0 0 0 3px rgba(255,112,150,0.15);}
-.penalty-input.good{border-color:var(--mint-deep)!important;color:var(--green-soft);}
-
-/* Empty state */
-.empty-state{padding:28px 10px 16px;color:var(--text-soft);font-size:0.9rem;font-weight:700;line-height:1.7;}
-.empty-state strong{color:var(--lilac-deep);}
-.empty-kawaii{font-size:2.8rem;display:block;margin-bottom:10px;animation:wobble 3s ease-in-out infinite;}
-
-/* Finish */
-.finish-screen{display:none;text-align:center;}
-.finish-screen.active{display:block;animation:popIn 0.4s cubic-bezier(.34,1.56,.64,1);}
-.finish-deco{font-size:3.5rem;display:block;margin-bottom:4px;animation:wobble 3s ease-in-out infinite;}
-.finish-title{font-family:'Baloo 2',cursive;font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,var(--pink-deep),var(--lilac-deep));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;}
-.finish-stats{font-size:0.95rem;color:var(--text-soft);font-weight:700;margin-bottom:22px;}
-.stars{font-size:2.2rem;margin-bottom:14px;display:block;letter-spacing:4px;}
-.finish-btns{display:flex;gap:10px;}
-
-/* Modal shared */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(90,62,107,0.45);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center;padding:16px;}
-.modal-overlay.active{display:flex;}
-.modal-box{background:var(--card-bg);border:2.5px solid rgba(255,183,197,0.7);border-radius:32px;padding:28px 28px 24px;width:min(460px,100%);text-align:center;box-shadow:0 16px 60px rgba(155,90,140,0.3);animation:popIn 0.35s cubic-bezier(.34,1.56,.64,1);position:relative;}
-.modal-box::before{content:'';position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:70%;height:6px;background:linear-gradient(90deg,var(--pink),var(--lilac),var(--mint),var(--yellow));border-radius:99px;}
-.modal-box h2{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.4rem;background:linear-gradient(135deg,var(--pink-deep),var(--lilac-deep));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;}
-.modal-box p{color:var(--text-soft);font-size:0.82rem;font-weight:700;margin-bottom:14px;line-height:1.5;}
-.modal-row{display:flex;gap:10px;margin-top:10px;}
-.btn-cancel{flex:1;padding:12px;border-radius:16px;border:2px solid rgba(212,184,240,0.5);background:white;color:var(--text-soft);font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:800;cursor:pointer;transition:background 0.2s;}
-.btn-cancel:hover{background:rgba(212,184,240,0.1);}
-.btn-primary{flex:2;padding:12px;border-radius:16px;border:none;cursor:pointer;font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:700;background:linear-gradient(135deg,var(--pink-deep),var(--lilac-deep));color:white;transition:transform 0.15s,box-shadow 0.15s,opacity 0.15s;box-shadow:0 5px 18px rgba(255,143,171,0.4);}
-.btn-primary:hover{transform:translateY(-2px);}
-.btn-primary:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
-
-/* Sets modal */
-.sets-modal-box{max-height:85vh;display:flex;flex-direction:column;}
-.sets-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.sets-close{background:rgba(212,184,240,0.2);border:1.5px solid rgba(212,184,240,0.5);border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:1rem;color:var(--text-soft);display:flex;align-items:center;justify-content:center;}
-.sets-close:hover{background:rgba(212,184,240,0.4);}
-.sets-body{overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px;margin-bottom:14px;max-height:50vh;}
-.set-empty{color:var(--text-soft);font-size:0.88rem;font-weight:700;text-align:center;padding:20px 0;line-height:1.7;}
-.set-empty strong{color:var(--lilac-deep);}
-.set-item{display:flex;align-items:center;background:white;border:2px solid rgba(255,183,197,0.5);border-radius:18px;padding:12px 14px;gap:10px;box-shadow:0 2px 8px var(--shadow);transition:border-color 0.15s,transform 0.15s;}
-.set-item:hover{border-color:var(--pink-deep);transform:translateY(-1px);}
-.set-info{text-align:left;flex:1;min-width:0;}
-.set-name{font-family:'Baloo 2',cursive;font-size:0.95rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.set-meta{font-size:0.72rem;font-weight:700;color:var(--text-soft);}
-.set-actions{display:flex;gap:6px;flex-shrink:0;}
-.set-play{background:linear-gradient(135deg,var(--pink-deep),var(--lilac-deep));border:none;border-radius:12px;padding:7px 12px;font-family:'Baloo 2',cursive;font-size:0.85rem;font-weight:700;color:white;cursor:pointer;transition:transform 0.15s;box-shadow:0 3px 10px rgba(255,143,171,0.35);}
-.set-play:hover{transform:scale(1.05);}
-.set-share{background:rgba(189,224,254,0.3);border:1.5px solid rgba(100,180,240,0.4);border-radius:12px;padding:7px 9px;font-size:0.9rem;cursor:pointer;transition:background 0.15s;}
-.set-share:hover{background:rgba(189,224,254,0.6);}
-.set-del{background:rgba(255,112,150,0.1);border:1.5px solid rgba(255,112,150,0.3);border-radius:12px;padding:7px 9px;font-size:0.9rem;cursor:pointer;transition:background 0.15s;}
-.set-del:hover{background:rgba(255,112,150,0.22);}
-
-/* Toast */
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#5a3e6b;color:white;padding:10px 22px;border-radius:99px;font-size:0.85rem;font-weight:800;opacity:0;transition:all 0.3s;z-index:999;white-space:nowrap;}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-/* Password modal */
-.pw-input-wrap{position:relative;margin-bottom:8px;}
-.pw-input{width:100%;background:white;border:2.5px solid rgba(212,184,240,0.7);border-radius:18px;padding:13px 46px 13px 18px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;color:var(--text);outline:none;transition:border-color 0.2s,box-shadow 0.2s;box-shadow:0 3px 10px var(--shadow);}
-.pw-input:focus{border-color:var(--lilac-deep);box-shadow:0 0 0 4px rgba(180,142,224,0.15);}
-.pw-input.error{border-color:var(--red-soft)!important;animation:shake 0.4s ease;}
-.pw-input:disabled{opacity:0.5;}
-.pw-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--text-soft);line-height:1;}
-.pw-err{font-size:0.8rem;font-weight:800;color:var(--red-soft);min-height:18px;transition:opacity 0.3s;opacity:0;margin-bottom:4px;}
-.pw-err.show{opacity:1;}
-.lockout-banner{background:rgba(255,112,150,0.1);border:1.5px solid rgba(255,112,150,0.3);border-radius:12px;padding:9px 14px;margin-bottom:12px;font-size:0.82rem;font-weight:800;color:var(--red-soft);display:none;}
-.lockout-banner.show{display:block;}
-
-/* Auth / login modal */
-.auth-status{font-size:0.73rem;font-weight:700;color:var(--text-soft);margin-top:2px;}
-.logout-link{background:none;border:none;color:var(--text-soft);font-size:0.73rem;font-weight:700;cursor:pointer;text-decoration:underline;padding:0;font-family:'Nunito',sans-serif;}
-.logout-link:hover{color:var(--lilac-deep);}
-.login-sent-icon{font-size:2.5rem;display:block;margin:8px 0 12px;}
-
-/* Paste modal */
-.paste-area{width:100%;min-height:160px;background:white;border:2.5px solid rgba(212,184,240,0.6);border-radius:18px;padding:14px 16px;font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:700;color:var(--text);outline:none;resize:vertical;line-height:1.6;box-shadow:0 3px 10px var(--shadow);transition:border-color 0.2s;}
-.paste-area:focus{border-color:var(--lilac-deep);box-shadow:0 0 0 4px rgba(180,142,224,0.15);}
-.paste-area::placeholder{color:rgba(155,126,184,0.45);}
-.paste-hint{font-size:0.75rem;font-weight:700;color:var(--text-soft);margin-bottom:10px;line-height:1.5;}
-.parse-status{min-height:26px;font-size:0.85rem;font-weight:700;color:var(--lilac-deep);margin:10px 0 4px;display:flex;align-items:center;justify-content:center;gap:8px;}
-.spinner{width:16px;height:16px;border:2.5px solid rgba(180,142,224,0.25);border-top-color:var(--lilac-deep);border-radius:50%;animation:spin 0.7s linear infinite;display:none;flex-shrink:0;}
-.spinner.active{display:block;}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* Screen fx */
-.flash{position:fixed;inset:0;pointer-events:none;z-index:100;opacity:0;}
-.flash.green{background:radial-gradient(ellipse at center,rgba(94,203,161,0.4) 0%,transparent 70%);}
-.flash.red{background:radial-gradient(ellipse at center,rgba(255,112,150,0.35) 0%,transparent 70%);}
-.flash.animate{animation:flashanim 0.5s ease forwards;}
-@keyframes flashanim{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
-#confettiCanvas{position:fixed;inset:0;pointer-events:none;z-index:200;}
-.ring{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);width:180px;height:180px;border-radius:50%;border:4px solid var(--mint-deep);pointer-events:none;z-index:150;opacity:0;}
-.ring.pop{animation:ringpop 0.6s ease-out forwards;}
-@keyframes ringpop{0%{transform:translate(-50%,-50%) scale(0);opacity:1;}100%{transform:translate(-50%,-50%) scale(4);opacity:0;}}
-.heart-burst{position:fixed;pointer-events:none;z-index:300;font-size:1.5rem;animation:heartFly 0.9s ease-out forwards;}
-@keyframes heartFly{0%{opacity:1;transform:translate(0,0) scale(1.2);}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0.4);}}
+  ::-webkit-scrollbar{width:0;height:0;}
+  input,textarea,button{font:inherit;}
+  *{box-sizing:border-box;}
 </style>
 </head>
 <body>
+<div id="root"></div>
 
-<div class="bg-floaties" id="bgFloaties"></div>
-<div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
-<div class="flash green" id="flashGreen"></div>
-<div class="flash red" id="flashRed"></div>
-<div class="ring" id="ring"></div>
-<canvas id="confettiCanvas"></canvas>
-<div class="toast" id="toast"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
-<!-- SETS MODAL -->
-<div class="modal-overlay" id="setsOverlay">
-  <div class="modal-box sets-modal-box">
-    <div class="sets-header">
-      <div>
-        <h2>📚 Word lists</h2>
-        <div id="setsUserLabel" class="auth-status"></div>
-      </div>
-      <button class="sets-close" id="setsClose">✕</button>
-    </div>
-    <div class="sets-body" id="setList"></div>
-    <button class="btn btn-lilac" id="setsNewBtn">✏️ Add a new list</button>
-  </div>
-</div>
-
-<!-- LOGIN MODAL -->
-<div class="modal-overlay" id="loginOverlay">
-  <div class="modal-box">
-    <h2>✉️ Log in</h2>
-    <p>Enter your email — we'll send a magic link, no password needed!</p>
-    <div id="loginFormWrap">
-      <div class="pw-input-wrap">
-        <input class="pw-input" type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email">
-      </div>
-      <div class="pw-err" id="loginErr"></div>
-      <div class="modal-row">
-        <button class="btn-cancel" id="loginCancel">Cancel</button>
-        <button class="btn-primary" id="loginSubmit">Send magic link ✨</button>
-      </div>
-    </div>
-    <div id="loginSentWrap" style="display:none;text-align:center">
-      <span class="login-sent-icon">📧</span>
-      <p style="font-weight:800;color:var(--text);margin-bottom:6px">Check your email!</p>
-      <p>We sent a magic link to <strong id="loginEmailSent"></strong>. Click it to log in!</p>
-      <button class="btn-cancel" id="loginSentClose" style="margin-top:14px;width:100%">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- PASTE MODAL -->
-<div class="modal-overlay" id="pasteOverlay">
-  <div class="modal-box">
-    <h2>✏️ Paste your word list</h2>
-    <p class="paste-hint">Copy your vocabulary words from anywhere — your phone's Notes app, a PDF, a photo's text recognition — and paste them below. Greta will sort it out! 🌸</p>
-    <textarea class="paste-area" id="pasteArea" placeholder="Killed - Dödad&#10;World - Värld&#10;Safe - Säker&#10;…"></textarea>
-    <div class="parse-status" id="parseStatus" style="opacity:0">
-      <div class="spinner" id="spinner"></div>
-      <span id="parseMsg"></span>
-    </div>
-    <div class="modal-row">
-      <button class="btn-cancel" id="pasteCancel">Cancel</button>
-      <button class="btn-primary" id="parseBtn" disabled>Let Greta sort it out ✨</button>
-    </div>
-  </div>
-</div>
-
-<!-- MAIN CARD -->
-<div class="card">
-  <div id="gameArea">
-    <div class="header-row">
-      <div class="avatar-wrap">
-        <div class="avatar-face">✏️</div>
-        <span class="avatar-star">⭐</span>
-      </div>
-      <div class="title-block">
-        <h1>Greta</h1>
-        <div class="subtitle">The English Tutor ✨</div>
-      </div>
-      <button class="lists-btn" id="openSetsBtn">📚 My lists</button>
-    </div>
-
-    <div class="topic-badge" id="topicBadge">🌸 <span id="topicLabel"></span></div>
-
-    <div class="empty-state" id="emptyState">
-      <span class="empty-kawaii">🌸</span>
-      No word list loaded yet!<br>
-      Tap <strong>My lists</strong> to pick one or add a new one.
-    </div>
-
-    <div id="quizContent" style="display:none">
-      <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
-      <div class="score-row">
-        <div class="score-pill">✅ <span id="scoreCorrect">0</span> right</div>
-        <div class="score-pill" id="qCounter">1 / ?</div>
-        <div class="score-pill">❌ <span id="scoreWrong">0</span> wrong</div>
-      </div>
-      <p class="prompt-label">What does this mean in English?</p>
-      <div class="swedish-word"><span id="swedishWord">–</span></div>
-      <div class="input-wrap">
-        <input type="text" id="answerInput" placeholder="Type your answer… 💭" autocomplete="off" spellcheck="false">
-      </div>
-      <button class="btn" id="checkBtn">Check it! ✓</button>
-      <div class="feedback" id="feedback"></div>
-      <div class="penalty-box" id="penaltyBox">
-        <div class="penalty-label">✍️ Write it 5 times to continue!</div>
-        <div class="penalty-word" id="penaltyWord"></div>
-        <div class="penalty-dots" id="penaltyDots"></div>
-        <input type="text" class="penalty-input" id="penaltyInput" placeholder="Type the correct answer…" autocomplete="off" spellcheck="false">
-      </div>
-    </div>
-  </div>
-
-  <div class="finish-screen" id="finishScreen">
-    <span class="finish-deco" id="finishDeco">🌸</span>
-    <div class="finish-title" id="finishTitle">You did it!</div>
-    <span class="stars" id="finishStars">⭐⭐⭐</span>
-    <div class="finish-stats" id="finishStats"></div>
-    <div class="finish-btns">
-      <button class="btn" id="restartBtn" style="flex:2">Play again 🔄</button>
-      <button class="btn btn-lilac" id="newListBtn" style="flex:0 0 auto;width:56px">📚</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// ══════════════════════════════════════════
-//  CONFIG
-// ══════════════════════════════════════════
+<script type="text/babel" data-presets="react">
+// ─── CONFIG ───────────────────────────────────────────────────────
 const API             = 'https://ivcnjkzuggwpxvnalbol.supabase.co/functions/v1/greta';
 const SUPABASE_URL    = 'https://ivcnjkzuggwpxvnalbol.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_nvKqUBjP0B-TmROc_aJtdA_U-P0pr_u';
 
-// ══════════════════════════════════════════
-//  Auth (direct Supabase REST — no SDK)
-// ══════════════════════════════════════════
-let currentUser = null;
-let sessionToken = null;
-let authCallback = null;
+// ─── LANGUAGES ────────────────────────────────────────────────────
+const LANGUAGES = {
+  sv: { name: "Swedish",  native: "Svenska",  code: "SV", color: "#FFD66B" },
+  en: { name: "English",  native: "English",  code: "EN", color: "#E8447B" },
+  es: { name: "Spanish",  native: "Español",  code: "ES", color: "#FF8FAE" },
+  fr: { name: "French",   native: "Français", code: "FR", color: "#7FCFB0" },
+  de: { name: "German",   native: "Deutsch",  code: "DE", color: "#6FB3E3" },
+};
 
+function langHelpers(list) {
+  const f  = (list && list.from) || "sv";
+  const tt = (list && list.to)   || "en";
+  return {
+    from: f, to: tt,
+    src: (w) => (w && (w[f] ?? w.sv)) || "",
+    tgt: (w) => (w && (w[tt] ?? w.en)) || "",
+    srcLang:  (LANGUAGES[f]  && LANGUAGES[f].name)  || f.toUpperCase(),
+    tgtLang:  (LANGUAGES[tt] && LANGUAGES[tt].name) || tt.toUpperCase(),
+    srcCode:  (LANGUAGES[f]  && LANGUAGES[f].code)  || f.toUpperCase(),
+    tgtCode:  (LANGUAGES[tt] && LANGUAGES[tt].code) || tt.toUpperCase(),
+    srcColor: (LANGUAGES[f]  && LANGUAGES[f].color) || "#888",
+    tgtColor: (LANGUAGES[tt] && LANGUAGES[tt].color) || "#888",
+  };
+}
+
+// ─── SAMPLE LISTS (shown to guests before login) ─────────────────
+const SAMPLE_LISTS = [
+  { id:"djur",    from:"sv", to:"en", name:"Djur (Animals)",   color:"rose",
+    words:[{sv:"katt",en:"cat"},{sv:"hund",en:"dog"},{sv:"häst",en:"horse"},{sv:"fågel",en:"bird"},{sv:"kanin",en:"rabbit"},{sv:"räv",en:"fox"},{sv:"björn",en:"bear"},{sv:"ekorre",en:"squirrel"},{sv:"groda",en:"frog"},{sv:"fjäril",en:"butterfly"}] },
+  { id:"mat",     from:"sv", to:"en", name:"Mat (Food)",        color:"butter",
+    words:[{sv:"äpple",en:"apple"},{sv:"bröd",en:"bread"},{sv:"ost",en:"cheese"},{sv:"mjölk",en:"milk"},{sv:"smör",en:"butter"},{sv:"köttbullar",en:"meatballs"},{sv:"potatis",en:"potato"},{sv:"glass",en:"ice cream"},{sv:"kaka",en:"cookie"},{sv:"soppa",en:"soup"}] },
+  { id:"skola",   from:"sv", to:"en", name:"Skolan (School)",   color:"sky",
+    words:[{sv:"bok",en:"book"},{sv:"penna",en:"pen"},{sv:"lärare",en:"teacher"},{sv:"klassrum",en:"classroom"},{sv:"matematik",en:"math"},{sv:"rast",en:"recess"},{sv:"ryggsäck",en:"backpack"},{sv:"skrivbord",en:"desk"}] },
+  { id:"kanslor", from:"sv", to:"en", name:"Känslor (Feelings)", color:"mint",
+    words:[{sv:"glad",en:"happy"},{sv:"ledsen",en:"sad"},{sv:"arg",en:"angry"},{sv:"rädd",en:"scared"},{sv:"trött",en:"tired"},{sv:"förvånad",en:"surprised"}] },
+];
+
+// ─── THEME (Gummy Tech) ──────────────────────────────────────────
+const T = {
+  paper:      "#F4F1E8",
+  paperAlt:   "#E9E4D2",
+  ink:        "#241F3D",
+  inkSoft:    "#6B638A",
+  pink:       "#B583E8",
+  pinkSoft:   "#E5D4F7",
+  butter:     "#F2EE5B",
+  butterSoft: "#FBF8B0",
+  sky:        "#8AD7FF",
+  skySoft:    "#D6F0FF",
+  mint:       "#A8F08C",
+  mintSoft:   "#DFF7CE",
+  rose:       "#FFB0C8",
+  correct:    "#A8F08C",
+  wrong:      "#F46B7C",
+  border:     "2.5px solid #241F3D",
+  borderThin: "2px solid #241F3D",
+  radius:     "26px",
+  radiusLg:   "34px",
+  shadow:     "0 6px 0 #241F3D",
+  shadowLg:   "0 10px 0 #241F3D",
+  hFont:      "'Bricolage Grotesque', system-ui, sans-serif",
+  bFont:      "'Space Grotesk', system-ui, sans-serif",
+  mFont:      "'JetBrains Mono', ui-monospace, monospace",
+};
+
+const MASCOT_PALETTE = {
+  body: "#FFFFFF", outline: "#241F3D", cheek: "#FFB0C8",
+  bow: "#B583E8", bowCenter: "#F2EE5B", eye: "#241F3D",
+};
+
+const COLOR_MAP = { rose: T.rose, butter: T.butter, sky: T.sky, mint: T.mint, pink: T.pink };
+
+// ─── ICONS (inline SVG) ───────────────────────────────────────────
+const { useState, useEffect, useRef } = React;
+
+function Bloom({ size=24, color="currentColor", center, spinning=false }) {
+  const c = center || color;
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true"
+      style={spinning ? { animation:"greta-spin 4s linear infinite", display:"block" } : { display:"block" }}>
+      {[0,60,120,180,240,300].map(deg=>(
+        <ellipse key={deg} cx="16" cy="9" rx="4" ry="6" fill={color} transform={`rotate(${deg} 16 16)`}/>
+      ))}
+      <circle cx="16" cy="16" r="3" fill={c}/>
+    </svg>
+  );
+}
+
+function Spark({ size=16, color="currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
+      <path d="M12 1 L13.5 9.5 L22 11 L13.5 12.5 L12 21 L10.5 12.5 L2 11 L10.5 9.5 Z" fill={color}/>
+    </svg>
+  );
+}
+
+function Heart({ size=20, color="currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
+      <path d="M12 21 C 5 16 2 12 2 8 a5 5 0 0 1 10 -1 a5 5 0 0 1 10 1 c 0 4 -3 8 -10 13 z" fill={color}/>
+    </svg>
+  );
+}
+
+function Check({ size=20, color="currentColor", weight=4 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
+      <path d="M4 13 L10 19 L20 6" fill="none" stroke={color} strokeWidth={weight} strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function Cross({ size=20, color="currentColor", weight=4 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
+      <path d="M6 6 L18 18 M18 6 L6 18" fill="none" stroke={color} strokeWidth={weight} strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function Plus({ size=18, color="currentColor", weight=3 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
+      <path d="M12 4 V20 M4 12 H20" fill="none" stroke={color} strokeWidth={weight} strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function ArrowRight({ size=20, color="currentColor", weight=3 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
+      <path d="M5 12 H19 M13 6 L19 12 L13 18" fill="none" stroke={color} strokeWidth={weight} strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function ArrowBack({ size=20, color="currentColor", weight=3 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
+      <path d="M19 12 H5 M11 6 L5 12 L11 18" fill="none" stroke={color} strokeWidth={weight} strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function Mail({ size=22, color="currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
+      <rect x="3" y="6" width="18" height="13" rx="2" fill={color}/>
+      <path d="M3 8 L12 14 L21 8" fill="none" stroke="white" strokeWidth="2" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function Gear({ size=20, color="currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
+      <path d="M12 2 L14 5 L17 4 L17 7 L20 8 L18 11 L20 14 L17 15 L17 18 L14 17 L12 20 L10 17 L7 18 L7 15 L4 14 L6 11 L4 8 L7 7 L7 4 L10 5 Z" fill={color}/>
+      <circle cx="12" cy="11" r="3" fill="white"/>
+    </svg>
+  );
+}
+
+function Trash({ size=18, color="currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
+      <path d="M5 6 H19 L18 21 H6 Z" fill={color}/>
+      <rect x="9" y="3" width="6" height="3" rx="1" fill={color}/>
+    </svg>
+  );
+}
+
+function BookStack({ size=22, color="currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
+      <rect x="3" y="4" width="14" height="4" rx="1" fill={color}/>
+      <rect x="5" y="10" width="14" height="4" rx="1" fill={color} opacity="0.7"/>
+      <rect x="3" y="16" width="14" height="4" rx="1" fill={color}/>
+    </svg>
+  );
+}
+
+function ConfettiPiece({ size=12, color, rot=0 }) {
+  return (
+    <svg width={size} height={size*1.6} viewBox="0 0 10 16" aria-hidden="true" style={{transform:`rotate(${rot}deg)`,display:"block"}}>
+      <rect x="0" y="0" width="10" height="16" rx="2" fill={color}/>
+    </svg>
+  );
+}
+
+// ─── MASCOT ───────────────────────────────────────────────────────
+function Mascot({ size=120, mood="happy" }) {
+  const p = MASCOT_PALETTE;
+  const eyes = {
+    happy:    <><circle cx="34" cy="48" r="3.2" fill={p.eye}/><circle cx="58" cy="48" r="3.2" fill={p.eye}/></>,
+    proud:    <><path d="M30 48 Q34 44 38 48" fill="none" stroke={p.eye} strokeWidth="3" strokeLinecap="round"/><path d="M54 48 Q58 44 62 48" fill="none" stroke={p.eye} strokeWidth="3" strokeLinecap="round"/></>,
+    thinking: <><circle cx="34" cy="48" r="3.2" fill={p.eye}/><path d="M54 48 Q58 44 62 48" fill="none" stroke={p.eye} strokeWidth="3" strokeLinecap="round"/></>,
+    oops:     <><path d="M30 50 L38 46" stroke={p.eye} strokeWidth="3" strokeLinecap="round"/><path d="M54 46 L62 50" stroke={p.eye} strokeWidth="3" strokeLinecap="round"/></>,
+    cheer:    <><path d="M30 50 Q34 44 38 50" fill="none" stroke={p.eye} strokeWidth="3" strokeLinecap="round"/><path d="M54 50 Q58 44 62 50" fill="none" stroke={p.eye} strokeWidth="3" strokeLinecap="round"/></>,
+  }[mood];
+  const mouth = {
+    happy:    <path d="M40 60 Q46 65 52 60" fill="none" stroke={p.eye} strokeWidth="2.6" strokeLinecap="round"/>,
+    proud:    <path d="M40 60 Q46 67 52 60" fill="none" stroke={p.eye} strokeWidth="2.6" strokeLinecap="round"/>,
+    thinking: <path d="M42 62 L50 62" stroke={p.eye} strokeWidth="2.6" strokeLinecap="round"/>,
+    oops:     <ellipse cx="46" cy="62" rx="3" ry="3.5" fill={p.eye}/>,
+    cheer:    <path d="M38 58 Q46 70 54 58 Z" fill={p.eye}/>,
+  }[mood];
+
+  return (
+    <svg width={size} height={size} viewBox="0 0 96 96" aria-hidden="true" style={{display:"block"}}>
+      <path d="M20 60 Q12 60 12 50 Q12 42 20 40 Q20 28 32 28 Q36 18 48 20 Q60 18 64 28 Q76 28 76 40 Q84 42 84 50 Q84 60 76 60 Q76 72 64 72 L32 72 Q20 72 20 60 Z"
+        fill={p.body} stroke={p.outline} strokeWidth="2.5"/>
+      <ellipse cx="28" cy="56" rx="4" ry="3" fill={p.cheek} opacity="0.9"/>
+      <ellipse cx="64" cy="56" rx="4" ry="3" fill={p.cheek} opacity="0.9"/>
+      {eyes}
+      {mouth}
+      <g transform="translate(58 18) rotate(-15)">
+        {[0,60,120,180,240,300].map(deg=>(
+          <ellipse key={deg} cx="0" cy="-7" rx="4" ry="6" fill={p.bow} transform={`rotate(${deg})`}/>
+        ))}
+        <circle cx="0" cy="0" r="3" fill={p.bowCenter}/>
+      </g>
+    </svg>
+  );
+}
+
+// ─── BASE COMPONENTS ──────────────────────────────────────────────
+function Btn({ children, onClick, variant="primary", size="md", full, type, disabled, style={} }) {
+  const sz = { sm:{padding:"8px 14px",fontSize:14}, md:{padding:"12px 20px",fontSize:16}, lg:{padding:"16px 24px",fontSize:18} }[size];
+  const v  = {
+    primary:  { bg:T.pink,    color:"#fff", shadow:`0 ${size==="lg"?6:4}px 0 ${T.ink}` },
+    secondary:{ bg:T.butter,  color:T.ink,  shadow:`0 ${size==="lg"?6:4}px 0 ${T.ink}` },
+    tertiary: { bg:T.paper,   color:T.ink,  shadow:`0 ${size==="lg"?6:4}px 0 ${T.ink}` },
+    danger:   { bg:T.wrong,   color:"#fff", shadow:`0 ${size==="lg"?6:4}px 0 ${T.ink}` },
+  }[variant] || { bg:T.pink, color:"#fff", shadow:`0 4px 0 ${T.ink}` };
+  const [pressed, setPressed] = useState(false);
+  const pressY = size==="lg" ? 4 : 3;
+  return (
+    <button type={type||"button"} disabled={disabled} onClick={onClick}
+      onMouseDown={()=>setPressed(true)} onMouseUp={()=>setPressed(false)}
+      onMouseLeave={()=>setPressed(false)} onTouchStart={()=>setPressed(true)} onTouchEnd={()=>setPressed(false)}
+      style={{
+        ...sz, background:v.bg, color:v.color,
+        border:T.border, borderRadius:T.radius, fontFamily:T.bFont, fontWeight:700,
+        letterSpacing:"-0.01em", cursor:disabled?"not-allowed":"pointer", opacity:disabled?0.5:1,
+        boxShadow: pressed ? `0 1px 0 ${T.ink}` : v.shadow,
+        transform:pressed?`translateY(${pressY}px)`:"translateY(0)",
+        transition:"transform 80ms, box-shadow 80ms",
+        display:"inline-flex", alignItems:"center", justifyContent:"center", gap:8,
+        width:full?"100%":"auto", outline:"none",
+        ...style,
+      }}>
+      {children}
+    </button>
+  );
+}
+
+function Card({ children, style={}, color, large, onClick }) {
+  return (
+    <div onClick={onClick} style={{
+      background:color||T.paper, border:T.border,
+      borderRadius:large?T.radiusLg:T.radius,
+      boxShadow:large?T.shadowLg:T.shadow,
+      padding:20, cursor:onClick?"pointer":"default", ...style,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+function DotBar({ total, current }) {
+  return (
+    <div style={{ display:"flex", gap:6, alignItems:"center", flexWrap:"wrap" }}>
+      {Array.from({length:total}).map((_,i)=>(
+        <div key={i} style={{
+          width:i===current?28:10, height:10, borderRadius:6,
+          border:`2px solid ${T.ink}`,
+          background:i<current?T.mint:i===current?T.butter:T.paperAlt,
+          transition:"all 200ms",
+        }}/>
+      ))}
+    </div>
+  );
+}
+
+// ─── AUTH ─────────────────────────────────────────────────────────
 function parseJWT(token) {
   try { return JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))); }
   catch { return null; }
@@ -348,550 +401,1031 @@ function tokenExpired(token) {
   return !p?.exp || Date.now()/1000 > p.exp - 60;
 }
 
-function saveSession(token, refreshToken) {
-  localStorage.setItem('greta_session', JSON.stringify({ token, refreshToken }));
-}
-function clearSession() {
-  localStorage.removeItem('greta_session');
-  currentUser = null; sessionToken = null;
-}
-
-async function loadSession() {
-  try {
-    const saved = localStorage.getItem('greta_session');
-    if (!saved) return;
-    let { token, refreshToken } = JSON.parse(saved);
-    if (tokenExpired(token) && refreshToken) {
-      const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
-        body: JSON.stringify({ refresh_token: refreshToken }),
-      });
-      if (!res.ok) { clearSession(); return; }
-      const d = await res.json();
-      token = d.access_token; refreshToken = d.refresh_token;
-      saveSession(token, refreshToken);
-    } else if (tokenExpired(token)) {
-      clearSession(); return;
-    }
-    const p = parseJWT(token);
-    currentUser = { id: p.sub, email: p.email };
-    sessionToken = token;
-  } catch { clearSession(); }
-}
-
-function setSession(token, refreshToken) {
-  const p = parseJWT(token);
-  currentUser = p ? { id: p.sub, email: p.email } : null;
-  sessionToken = token;
-  saveSession(token, refreshToken);
-  updateAuthUI();
-  if (currentUser && authCallback) { const cb = authCallback; authCallback = null; cb(); }
-}
-
-// Handle magic link redirect (#access_token=…)
-function checkAuthRedirect() {
-  const params = new URLSearchParams(location.hash.substring(1));
-  const token = params.get('access_token');
-  const refreshToken = params.get('refresh_token');
-  if (token) {
-    setSession(token, refreshToken);
-    history.replaceState(null, '', location.pathname + location.search);
-    showToast(`Logged in as ${currentUser?.email} 🌸`);
+// ─── FEEDBACK BURST ───────────────────────────────────────────────
+function FeedbackBurst({ feedback, anim, keyboardUp }) {
+  if (!feedback || !anim) return null;
+  if (anim === "kiss") return (
+    <div style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex:4 }}>
+      <div style={{ position:"absolute", bottom:keyboardUp?64:78, left:"50%", marginLeft:-14,
+        animation:"greta-heart-burst 1100ms ease-out 250ms both" }}>
+        <Heart size={32} color={T.pink}/>
+      </div>
+    </div>
+  );
+  if (anim === "tada") {
+    const colors=[T.pink,T.butter,T.sky,T.mint,T.rose];
+    const dirs=[{dx:-55,dy:-40},{dx:55,dy:-40},{dx:-70,dy:0},{dx:70,dy:0},{dx:0,dy:-65}];
+    return (
+      <div style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex:4 }}>
+        {dirs.map((d,i)=>(
+          <div key={i} style={{ position:"absolute", left:"50%", top:"50%",
+            "--dx":d.dx+"px", "--dy":d.dy+"px",
+            animation:`greta-sparkle-arc 900ms ease-out ${i*50}ms both` }}>
+            <Spark size={keyboardUp?18:22} color={colors[i%colors.length]}/>
+          </div>
+        ))}
+      </div>
+    );
   }
-}
-
-function updateAuthUI() {
-  const label = document.getElementById('setsUserLabel');
-  if (!label) return;
-  if (currentUser) {
-    label.innerHTML = `${currentUser.email} &middot; <button class="logout-link" onclick="signOut()">Log out</button>`;
-  } else {
-    label.textContent = '';
+  if (anim === "bigbounce") {
+    const colors=[T.pink,T.butter,T.sky,T.mint,T.rose];
+    const pieces=Array.from({length:18}).map((_,i)=>({
+      cdx:(i*47)%320+"px", cdx2:(((i*13)%60)-30)+"px",
+      delay:(i*35)%400, rot:(i*47)%360, color:colors[i%colors.length],
+    }));
+    return (
+      <div style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex:4, overflow:"hidden" }}>
+        {pieces.map((p,i)=>(
+          <div key={i} style={{ position:"absolute", top:0, left:0,
+            "--cdx":p.cdx, "--cdx2":p.cdx2,
+            animation:`greta-confetti-rain 1200ms ease-in ${p.delay}ms both` }}>
+            <ConfettiPiece size={9} color={p.color} rot={p.rot}/>
+          </div>
+        ))}
+      </div>
+    );
   }
-}
-
-function requireAuth(callback) {
-  if (currentUser) { callback(); return; }
-  authCallback = callback;
-  openLoginModal();
-}
-
-async function signOut() {
-  if (sessionToken) {
-    fetch(`${SUPABASE_URL}/auth/v1/logout`, {
-      method: 'POST',
-      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${sessionToken}` },
-    }).catch(()=>{});
+  if (anim === "cartwheel") {
+    const colors=[T.pink,T.butter,T.mint];
+    const dirs=[{dx:-10,dy:-10,rot:0},{dx:-30,dy:-30,rot:40},{dx:-50,dy:-50,rot:80},{dx:-70,dy:-55,rot:120},{dx:-85,dy:-45,rot:160}];
+    return (
+      <div style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex:4 }}>
+        {dirs.map((d,i)=>(
+          <div key={i} style={{ position:"absolute", bottom:keyboardUp?16:24, right:keyboardUp?16:24,
+            "--dx":d.dx+"px", "--dy":d.dy+"px", "--rot":d.rot+"deg",
+            animation:`greta-petal-trail 1000ms ease-out ${i*80}ms both` }}>
+            <Bloom size={keyboardUp?16:20} color={colors[i%colors.length]} center={T.paper}/>
+          </div>
+        ))}
+      </div>
+    );
   }
-  clearSession();
-  updateAuthUI();
-  showToast('Logged out 👋');
-  loadAndRenderSets();
+  if (anim === "sink") return (
+    <div style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex:4 }}>
+      <div style={{ position:"absolute", bottom:keyboardUp?30:38, right:keyboardUp?50:62,
+        animation:"greta-droplet-fall 1000ms ease-in 200ms both" }}>
+        <svg width="14" height="20" viewBox="0 0 14 20" aria-hidden="true">
+          <path d="M7 1 C 11 9 13 13 13 16 a6 6 0 0 1 -12 0 C 1 13 3 9 7 1 Z" fill={T.sky}/>
+          <ellipse cx="9" cy="13" rx="1.5" ry="3" fill="#fff" opacity="0.6"/>
+        </svg>
+      </div>
+    </div>
+  );
+  if (anim === "headtilt") return (
+    <div style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex:4 }}>
+      <div style={{ position:"absolute", bottom:keyboardUp?58:80, right:keyboardUp?18:26,
+        animation:"greta-qmark-pop 1000ms ease-out 100ms both",
+        fontFamily:T.hFont, fontSize:keyboardUp?28:36, color:T.wrong, fontWeight:700 }}>?</div>
+    </div>
+  );
+  if (anim === "spin") return (
+    <div style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex:2 }}>
+      <div style={{ position:"absolute", bottom:keyboardUp?-4:-8, right:keyboardUp?-4:-8,
+        width:keyboardUp?80:110, height:keyboardUp?80:110, borderRadius:"50%",
+        background:T.inkSoft, animation:"greta-puff 850ms ease-out both", opacity:0.5 }}/>
+    </div>
+  );
+  return null;
 }
 
-// ══════════════════════════════════════════
-//  Game state
-// ══════════════════════════════════════════
-let vocab=[], currentTopic='', currentSetId=null;
-let order=[], current=0, score=0, wrongs=0;
-let penaltyCount=0, inPenalty=false, currentItem=null, confettiAnim=null;
-
-const norm = s => s.toLowerCase().trim().replace(/[^a-zåäö ]/g,'');
-const checkAns = (inp, item) => {
-  const n = norm(inp);
-  return Array.isArray(item.en) ? item.en.some(e=>norm(e)===n) : norm(item.en)===n;
+const ANIM_MAP = {
+  kiss:      "greta-kiss 1100ms cubic-bezier(.4,1.4,.6,1) both",
+  tada:      "greta-tada 950ms ease-in-out both",
+  bigbounce: "greta-bigbounce 1100ms ease-out both",
+  cartwheel: "greta-cartwheel 1000ms cubic-bezier(.5,.9,.5,1) both",
+  shake:     "greta-oops 620ms ease-in-out both",
+  sink:      "greta-sink 900ms ease-in-out both",
+  headtilt:  "greta-headtilt 950ms ease-in-out both",
+  spin:      "greta-spin-shrink 850ms cubic-bezier(.5,1.4,.5,1) both",
 };
-function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 
-// Check for ?set= share link on load
-function checkShareLink(){
-  const params = new URLSearchParams(window.location.search);
-  const setId = params.get('set');
-  if(setId) loadSetById(setId);
+// ─── SCREEN: LOGIN ────────────────────────────────────────────────
+function ScreenLogin({ onLogin, currentUser, onSendLink }) {
+  const [email, setEmail] = useState("");
+  const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
+
+  const send = async (e) => {
+    e?.preventDefault();
+    if (!email.includes("@")) { setErr("Enter a valid email"); return; }
+    setErr(""); setLoading(true);
+    try {
+      const res = await fetch(`${SUPABASE_URL}/auth/v1/otp`, {
+        method:"POST",
+        headers:{"Content-Type":"application/json","apikey":SUPABASE_ANON_KEY},
+        body:JSON.stringify({ email, create_user:true, options:{ emailRedirectTo: location.href.split("#")[0] } }),
+      });
+      if (!res.ok) { const d=await res.json(); throw new Error(d.msg||d.error_description||"Could not send link"); }
+      setSent(true);
+    } catch(e) { setErr(e.message||"Could not send link"); }
+    finally { setLoading(false); }
+  };
+
+  return (
+    <div style={{ padding:"24px 24px", display:"flex", flexDirection:"column", alignItems:"center", textAlign:"center", gap:20, minHeight:"100%", justifyContent:"center" }}>
+      {!sent ? (<>
+        <Mascot size={140} mood="happy"/>
+        <div>
+          <h1 style={{ fontFamily:T.hFont, fontSize:44, margin:0, color:T.ink, letterSpacing:"-0.02em", lineHeight:1 }}>Hej!</h1>
+          <p style={{ fontFamily:T.bFont, color:T.inkSoft, fontSize:16, marginTop:8, marginBottom:0, maxWidth:260 }}>
+            I'm Poppins. Drop your email and I'll send a magic link — no passwords, promise.
+          </p>
+        </div>
+        <form onSubmit={send} style={{ width:"100%", display:"flex", flexDirection:"column", gap:12 }}>
+          <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@email.com"
+            style={{ width:"100%", padding:"14px 18px", border:T.border, borderRadius:T.radius,
+              fontFamily:T.bFont, fontSize:16, background:T.paper, color:T.ink,
+              outline:"none", boxSizing:"border-box", boxShadow:`inset 0 2px 0 ${T.paperAlt}` }}/>
+          {err && <div style={{ fontFamily:T.bFont, color:T.wrong, fontSize:14 }}>{err}</div>}
+          <Btn variant="primary" size="lg" full type="submit" disabled={loading}>
+            <Spark size={18} color="#fff"/> {loading ? "Sending…" : "Send magic link"}
+          </Btn>
+          <button type="button" onClick={onLogin}
+            style={{ background:"none", border:"none", color:T.inkSoft, fontFamily:T.bFont, fontSize:14, cursor:"pointer", marginTop:4, textDecoration:"underline" }}>
+            skip — try Poppins first
+          </button>
+        </form>
+      </>) : (<>
+        <Mascot size={140} mood="cheer"/>
+        <div>
+          <h1 style={{ fontFamily:T.hFont, fontSize:36, margin:0, color:T.ink, letterSpacing:"-0.02em", lineHeight:1.05 }}>Check your inbox</h1>
+          <p style={{ fontFamily:T.bFont, color:T.inkSoft, fontSize:15, marginTop:12, marginBottom:0, maxWidth:280 }}>
+            I sent a sparkly link to <strong style={{ color:T.ink }}>{email}</strong>. Tap it to come on in.
+          </p>
+        </div>
+        <Btn variant="secondary" size="md" onClick={onLogin}>
+          I clicked it — let me in <ArrowRight size={16} color={T.ink}/>
+        </Btn>
+      </>)}
+    </div>
+  );
 }
 
-async function loadSetById(id){
-  try {
-    const res = await fetch(`${API}/sets/${id}`);
-    if(!res.ok) throw new Error('Set not found');
-    const s = await res.json();
-    vocab = s.vocab.map(p=>({sv:p.sv, en:typeof p.en==='string'&&p.en.includes('|')?p.en.split('|').map(x=>x.trim()):p.en}));
-    currentTopic = s.topic;
-    currentSetId = s.id;
-    startGame();
-  } catch(e){
-    showToast('Could not load shared list 💦');
+// ─── SCREEN: HOME ─────────────────────────────────────────────────
+function ScreenHome({ lists, activeListId, pair, onPickList, onAddList, onStart, onSettings, onPickPair }) {
+  const list = lists.find(l=>l.id===activeListId);
+  return (
+    <div style={{ padding:"18px 22px 24px", display:"flex", flexDirection:"column", gap:22, minHeight:"100%" }}>
+      {/* header */}
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+          <Bloom size={26} color={T.pink} center={T.butter} spinning/>
+          <span style={{ fontFamily:T.hFont, fontSize:24, color:T.ink, letterSpacing:"-0.02em" }}>Poppins</span>
+        </div>
+        <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+          <button onClick={onPickPair} style={{ display:"flex", alignItems:"center", gap:6,
+            background:T.paper, border:T.border, borderRadius:999, padding:"5px 10px 5px 6px",
+            cursor:"pointer", boxShadow:`0 2px 0 ${T.ink}`, fontFamily:T.mFont, fontSize:12, fontWeight:700, color:T.ink, outline:"none" }}>
+            <span style={{ width:18,height:18,borderRadius:999,border:T.borderThin,background:LANGUAGES[pair.from]?.color||"#888",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:9,color:T.ink,fontWeight:800 }}>{LANGUAGES[pair.from]?.code||"??"}</span>
+            <ArrowRight size={12} color={T.ink} weight={3}/>
+            <span style={{ width:18,height:18,borderRadius:999,border:T.borderThin,background:LANGUAGES[pair.to]?.color||"#888",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:9,color:T.ink,fontWeight:800 }}>{LANGUAGES[pair.to]?.code||"??"}</span>
+          </button>
+          <button onClick={onSettings} style={{ background:T.paperAlt, border:T.borderThin, borderRadius:999,
+            width:38,height:38, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", outline:"none" }}>
+            <Gear size={18} color={T.ink}/>
+          </button>
+        </div>
+      </div>
+
+      {/* mascot */}
+      <div style={{ display:"flex", justifyContent:"center", marginTop:-4 }}>
+        <Mascot size={120} mood="happy"/>
+      </div>
+
+      {!list ? (
+        <Card large color={T.butterSoft} style={{ textAlign:"center", padding:"28px 22px" }}>
+          <h2 style={{ fontFamily:T.hFont, fontSize:28, margin:0, color:T.ink, lineHeight:1.1, letterSpacing:"-0.02em" }}>No words yet!</h2>
+          <p style={{ fontFamily:T.bFont, color:T.inkSoft, fontSize:15, marginTop:8, marginBottom:16 }}>Pick a list to start, or paste your own words.</p>
+          <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+            <Btn variant="primary" size="md" full onClick={onPickList}><BookStack size={18} color="#fff"/> Pick a list</Btn>
+            <Btn variant="tertiary" size="md" full onClick={onAddList}><Plus size={16} color={T.ink}/> Paste my own</Btn>
+          </div>
+        </Card>
+      ) : (<>
+        <Card large color={COLOR_MAP[list.color]||T.pinkSoft} style={{ position:"relative", overflow:"hidden" }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
+            <div>
+              <div style={{ fontFamily:T.bFont, fontSize:12, fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:T.ink, opacity:0.75 }}>Today's list</div>
+              <h2 style={{ fontFamily:T.hFont, fontSize:32, margin:"4px 0 0", color:T.ink, lineHeight:1, letterSpacing:"-0.02em" }}>{list.name}</h2>
+              <div style={{ fontFamily:T.mFont, fontSize:13, color:T.ink, marginTop:8, opacity:0.8 }}>
+                {list.words.length} words · {LANGUAGES[list.from]?.code||"SV"} → {LANGUAGES[list.to]?.code||"EN"}
+              </div>
+            </div>
+            <Bloom size={42} color={T.ink} center={COLOR_MAP[list.color]||T.pinkSoft}/>
+          </div>
+          <div style={{ marginTop:18 }}>
+            <Btn variant="primary" size="lg" full onClick={onStart}>Start practice <ArrowRight size={18} color="#fff"/></Btn>
+          </div>
+        </Card>
+        <div style={{ marginTop:"auto", display:"flex", gap:10 }}>
+          <Btn variant="tertiary" size="md" onClick={onPickList}><BookStack size={16} color={T.ink}/> My lists</Btn>
+          <Btn variant="tertiary" size="md" onClick={onAddList}><Plus size={16} color={T.ink}/> New</Btn>
+        </div>
+      </>)}
+    </div>
+  );
+}
+
+// ─── SCREEN: LISTS ────────────────────────────────────────────────
+function ScreenLists({ lists, activeListId, onPick, onAdd, onClose, onDelete }) {
+  return (
+    <div style={{ padding:"24px 20px", display:"flex", flexDirection:"column", gap:16, minHeight:"100%" }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+        <div>
+          <h2 style={{ fontFamily:T.hFont, fontSize:30, margin:0, color:T.ink, letterSpacing:"-0.02em" }}>My lists</h2>
+          <div style={{ fontFamily:T.mFont, fontSize:11, color:T.inkSoft, letterSpacing:"0.08em", marginTop:4 }}>
+            {lists.length} {lists.length===1?"list":"lists"}
+          </div>
+        </div>
+        <button onClick={onClose} style={{ background:T.paperAlt, border:T.borderThin, borderRadius:999, width:36,height:36,
+          cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", outline:"none" }}>
+          <Cross size={16} color={T.ink} weight={3}/>
+        </button>
+      </div>
+      <div style={{ display:"flex", flexDirection:"column", gap:12, flex:1, overflowY:"auto" }}>
+        {lists.length===0 && (
+          <div style={{ textAlign:"center", padding:"32px 0", fontFamily:T.bFont, color:T.inkSoft, fontSize:15 }}>
+            No lists yet — add one!
+          </div>
+        )}
+        {lists.map(list=>(
+          <Card key={list.id} color={COLOR_MAP[list.color]||T.pinkSoft}
+            style={{ padding:"16px 18px", display:"flex", alignItems:"center", gap:14, cursor:"pointer",
+              transform:activeListId===list.id?"translateX(4px)":"translateX(0)", transition:"transform 120ms" }}
+            onClick={()=>onPick(list.id)}>
+            <div style={{ width:48,height:48,borderRadius:14,background:T.paper,border:T.borderThin,
+              display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0 }}>
+              <Bloom size={28} color={T.ink} center={COLOR_MAP[list.color]}/>
+            </div>
+            <div style={{ flex:1, minWidth:0 }}>
+              <div style={{ fontFamily:T.hFont, fontSize:20, color:T.ink, lineHeight:1.1, letterSpacing:"-0.01em", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{list.name}</div>
+              <div style={{ fontFamily:T.mFont, fontSize:12, color:T.ink, opacity:0.7, marginTop:2 }}>
+                {list.words.length} words{activeListId===list.id?" · active":""}
+              </div>
+            </div>
+            {activeListId===list.id && (
+              <div style={{ background:T.ink, borderRadius:999, width:28,height:28, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                <Check size={16} color="#fff" weight={4}/>
+              </div>
+            )}
+            {onDelete && (
+              <button onClick={e=>{e.stopPropagation();onDelete(list);}}
+                style={{ background:"transparent", border:"none", cursor:"pointer", padding:4, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                <Trash size={16} color={T.ink}/>
+              </button>
+            )}
+          </Card>
+        ))}
+      </div>
+      <Btn variant="primary" size="lg" full onClick={onAdd} style={{ marginTop:8 }}>
+        <Plus size={18} color="#fff" weight={4}/> Add a new list
+      </Btn>
+    </div>
+  );
+}
+
+// ─── SCREEN: PASTE ────────────────────────────────────────────────
+function ScreenPaste({ pair, onSave, onCancel }) {
+  const [name, setName]   = useState("");
+  const [text, setText]   = useState("");
+  const [parsed, setParsed] = useState([]);
+  const [step, setStep]   = useState("paste");
+  const [saving, setSaving] = useState(false);
+
+  const parse = () => {
+    const lines = text.split("\n").map(l=>l.trim()).filter(Boolean);
+    const out = [];
+    for (const line of lines) {
+      const m = line.match(/^(.+?)\s*[=\-–→:\t]+\s*(.+)$/);
+      if (m) { out.push({ [pair.from]:m[1].trim(), [pair.to]:m[2].trim() }); }
+      else if (line.split(/\s{2,}/).length===2) {
+        const [a,b]=line.split(/\s{2,}/);
+        out.push({ [pair.from]:a.trim(), [pair.to]:b.trim() });
+      }
+    }
+    setParsed(out);
+    setStep("review");
+  };
+
+  const save = () => {
+    setSaving(true);
+    onSave({
+      id: "user-"+Date.now(),
+      name: name||"My new list",
+      color: ["rose","butter","sky","mint"][Math.floor(Math.random()*4)],
+      words: parsed,
+      from: pair.from, to: pair.to,
+    });
+  };
+
+  return (
+    <div style={{ padding:"24px 20px", display:"flex", flexDirection:"column", gap:16, minHeight:"100%" }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+        <h2 style={{ fontFamily:T.hFont, fontSize:28, margin:0, color:T.ink, letterSpacing:"-0.02em", lineHeight:1.1 }}>
+          {step==="paste"?"Paste a word list":"Look right?"}
+        </h2>
+        <button onClick={onCancel} style={{ background:T.paperAlt, border:T.borderThin, borderRadius:999, width:36,height:36,
+          cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", outline:"none" }}>
+          <Cross size={16} color={T.ink} weight={3}/>
+        </button>
+      </div>
+
+      {step==="paste" && (<>
+        <div style={{ display:"inline-flex", alignItems:"center", gap:6, alignSelf:"flex-start",
+          padding:"4px 10px", borderRadius:999, background:T.butterSoft, border:T.borderThin,
+          fontFamily:T.mFont, fontSize:11, fontWeight:700, color:T.ink }}>
+          <span>{LANGUAGES[pair.from]?.code||"SV"}</span>
+          <ArrowRight size={10} color={T.ink} weight={3}/>
+          <span>{LANGUAGES[pair.to]?.code||"EN"}</span>
+        </div>
+        <p style={{ fontFamily:T.bFont, color:T.inkSoft, fontSize:14, margin:0, lineHeight:1.6 }}>
+          Copy from anywhere — Notes, a PDF, a screenshot. Use any separator:{" "}
+          {["=","-",":","→"].map(s=>(
+            <code key={s} style={{ fontFamily:T.mFont, background:T.paperAlt, padding:"1px 6px", borderRadius:6, marginRight:4 }}>{s}</code>
+          ))}
+        </p>
+        <input value={name} onChange={e=>setName(e.target.value)} placeholder="What's this list called?"
+          style={{ padding:"12px 16px", border:T.border, borderRadius:T.radius,
+            fontFamily:T.hFont, fontSize:18, background:T.paper, color:T.ink, outline:"none" }}/>
+        <textarea value={text} onChange={e=>setText(e.target.value)}
+          placeholder={"katt = cat\nhund - dog\nhäst → horse\nfågel: bird"} rows={9}
+          style={{ padding:"14px 16px", border:T.border, borderRadius:T.radius,
+            fontFamily:T.mFont, fontSize:14, background:T.paper, color:T.ink, outline:"none",
+            resize:"none", boxShadow:`inset 0 2px 0 ${T.paperAlt}`, lineHeight:1.6 }}/>
+        <div style={{ display:"flex", gap:10 }}>
+          <Btn variant="tertiary" size="md" onClick={onCancel}>Cancel</Btn>
+          <Btn variant="primary" size="md" onClick={parse} disabled={!text.trim()} style={{ flex:1 }}>
+            <Spark size={16} color="#fff"/> Sort it out
+          </Btn>
+        </div>
+      </>)}
+
+      {step==="review" && (<>
+        <div style={{ background:T.mintSoft, border:T.borderThin, borderRadius:T.radius,
+          padding:"10px 14px", display:"flex", alignItems:"center", gap:8 }}>
+          <Check size={18} color={T.ink} weight={4}/>
+          <span style={{ fontFamily:T.bFont, fontSize:14, color:T.ink, fontWeight:600 }}>
+            Found <strong>{parsed.length}</strong> words
+          </span>
+        </div>
+        <div style={{ flex:1, overflowY:"auto", display:"flex", flexDirection:"column", gap:6 }}>
+          {parsed.map((w,i)=>(
+            <div key={i} style={{ display:"flex", alignItems:"center", gap:12,
+              background:T.paper, border:T.borderThin, borderRadius:14, padding:"10px 14px", fontFamily:T.bFont, fontSize:15 }}>
+              <span style={{ color:T.ink, fontWeight:700, flex:1 }}>{w[pair.from]||w.sv}</span>
+              <ArrowRight size={14} color={T.inkSoft} weight={2.5}/>
+              <span style={{ color:T.inkSoft, flex:1 }}>{w[pair.to]||w.en}</span>
+            </div>
+          ))}
+        </div>
+        <div style={{ display:"flex", gap:10 }}>
+          <Btn variant="tertiary" size="md" onClick={()=>setStep("paste")}>Edit</Btn>
+          <Btn variant="primary" size="md" onClick={save} disabled={parsed.length===0||saving} style={{ flex:1 }}>
+            {saving?"Saving…":"Save list"} <ArrowRight size={16} color="#fff"/>
+          </Btn>
+        </div>
+      </>)}
+    </div>
+  );
+}
+
+// ─── SCREEN: LANGUAGE PICKER ──────────────────────────────────────
+function ScreenLangPicker({ pair, lists, onPick, onClose }) {
+  const seen=new Set(); const pairs=[];
+  lists.forEach(l=>{
+    if(!l.from||!l.to) return;
+    const k=l.from+">"+l.to;
+    if(seen.has(k)) return;
+    seen.add(k);
+    pairs.push({ from:l.from, to:l.to, count:lists.filter(x=>x.from===l.from&&x.to===l.to).length });
+  });
+  const Chip=({code,color})=>(
+    <span style={{ width:32,height:32,borderRadius:999,border:T.border,background:color||"#ccc",
+      display:"inline-flex",alignItems:"center",justifyContent:"center",
+      fontFamily:T.mFont,fontSize:11,fontWeight:800,color:T.ink,boxShadow:`0 2px 0 ${T.ink}` }}>{code}</span>
+  );
+  return (
+    <div style={{ padding:"24px 20px", display:"flex", flexDirection:"column", gap:16, minHeight:"100%" }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+        <h2 style={{ fontFamily:T.hFont, fontSize:30, margin:0, color:T.ink, letterSpacing:"-0.02em" }}>Which language?</h2>
+        <button onClick={onClose} style={{ background:T.paperAlt, border:T.borderThin, borderRadius:999, width:36,height:36,
+          cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", outline:"none" }}>
+          <Cross size={16} color={T.ink} weight={3}/>
+        </button>
+      </div>
+      <p style={{ fontFamily:T.bFont, color:T.inkSoft, fontSize:14, margin:0 }}>Pick a language you're learning from another.</p>
+      <div style={{ display:"flex", flexDirection:"column", gap:10, flex:1 }}>
+        {pairs.length===0 && (
+          <div style={{ fontFamily:T.bFont, color:T.inkSoft, textAlign:"center", padding:"32px 0" }}>
+            Add some lists first!
+          </div>
+        )}
+        {pairs.map(p=>{
+          const isActive=p.from===pair.from&&p.to===pair.to;
+          const fromL=LANGUAGES[p.from]||{code:p.from.toUpperCase(),color:"#ccc",name:p.from};
+          const toL  =LANGUAGES[p.to]  ||{code:p.to.toUpperCase()  ,color:"#ccc",name:p.to  };
+          return (
+            <div key={p.from+p.to} onClick={()=>onPick(p)}
+              style={{ padding:"14px 16px", background:isActive?T.butterSoft:T.paper,
+                border:T.border, borderRadius:T.radius, boxShadow:T.shadow,
+                cursor:"pointer", display:"flex", alignItems:"center", gap:14 }}>
+              <Chip code={fromL.code} color={fromL.color}/>
+              <ArrowRight size={16} color={T.ink} weight={3}/>
+              <Chip code={toL.code} color={toL.color}/>
+              <div style={{ flex:1, marginLeft:6 }}>
+                <div style={{ fontFamily:T.hFont, fontSize:18, color:T.ink, lineHeight:1.1, letterSpacing:"-0.01em" }}>
+                  {fromL.name} → {toL.name}
+                </div>
+                <div style={{ fontFamily:T.mFont, fontSize:12, color:T.inkSoft, marginTop:2 }}>
+                  {p.count} list{p.count!==1?"s":""}
+                </div>
+              </div>
+              {isActive && (
+                <div style={{ background:T.ink, borderRadius:999, width:26,height:26, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                  <Check size={14} color="#fff" weight={4}/>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ padding:"12px 14px", background:T.paperAlt, border:T.borderThin, borderRadius:T.radius,
+        fontFamily:T.bFont, fontSize:13, color:T.inkSoft }}>
+        <strong style={{ color:T.ink }}>Want a different pair?</strong>{" "}
+        Paste a list in any language and Poppins will tag it automatically.
+      </div>
+    </div>
+  );
+}
+
+// ─── SCREEN: QUIZ ─────────────────────────────────────────────────
+function ScreenQuiz({ list, onDone, onExit }) {
+  const [idx, setIdx]         = useState(0);
+  const [answer, setAnswer]   = useState("");
+  const [feedback, setFeedback] = useState(null);
+  const [right, setRight]     = useState(0);
+  const [wrong, setWrong]     = useState(0);
+  const [writeMode, setWriteMode] = useState(false);
+  const [anim, setAnim]       = useState(null);
+  const inputRef = useRef(null);
+
+  const lh    = langHelpers(list);
+  const word  = list.words[idx];
+  const total = list.words.length;
+
+  // Keep refs so the auto-advance timeout always sees fresh values
+  const idxRef   = useRef(idx);
+  const rightRef = useRef(right);
+  const wrongRef = useRef(wrong);
+  useEffect(()=>{ idxRef.current   = idx;   }, [idx]);
+  useEffect(()=>{ rightRef.current = right; }, [right]);
+  useEffect(()=>{ wrongRef.current = wrong; }, [wrong]);
+
+  useEffect(()=>{ if(inputRef.current && !feedback) inputRef.current.focus(); }, [idx, feedback]);
+
+  const advance = () => {
+    const nextIdx = idxRef.current + 1;
+    if(nextIdx >= total) { onDone({ right:rightRef.current, wrong:wrongRef.current, total }); return; }
+    setIdx(nextIdx); setAnswer(""); setFeedback(null); setAnim(null); setWriteMode(false);
+  };
+
+  const submit = () => {
+    if(!answer.trim()||feedback) return;
+    const guess   = answer.trim().toLowerCase();
+    const correct = lh.tgt(word).toLowerCase();
+    const ok      = guess===correct;
+    const pool    = ok ? ["kiss","tada","bigbounce","cartwheel"] : ["shake","sink","headtilt","spin"];
+    setAnim(pool[Math.floor(Math.random()*pool.length)]);
+    if(ok) { setRight(r=>r+1); setFeedback("correct"); }
+    else   { setWrong(w=>w+1); setFeedback("wrong"); }
+  };
+
+  const advanceRef = useRef(advance);
+  useEffect(()=>{ advanceRef.current = advance; });
+
+  useEffect(()=>{
+    if(!feedback) return;
+    const delay = feedback==="correct" ? 1200 : 1400;
+    const id = setTimeout(()=>{
+      if(feedback==="correct") advanceRef.current();
+      else setWriteMode(true);
+    }, delay);
+    return ()=>clearTimeout(id);
+  }, [feedback]);
+
+  if(writeMode) return <ScreenWriteFive list={list} word={word} onDone={advance}/>;
+
+  const fbCard   = feedback==="correct"?T.mintSoft:feedback==="wrong"?T.pinkSoft:T.paper;
+  const cardAnim = feedback==="correct"?"greta-card-correct 700ms ease-out":feedback==="wrong"?"greta-card-wrong 480ms ease-in-out":"none";
+  const mascotMood = feedback==="correct"?(anim==="tada"?"proud":"cheer"):feedback==="wrong"?"oops":"happy";
+
+  return (
+    <div style={{ padding:"20px 20px 24px", display:"flex", flexDirection:"column", gap:14, minHeight:"100%", boxSizing:"border-box" }}>
+      {/* HUD */}
+      <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+        <button onClick={onExit} style={{ background:T.paperAlt, border:T.borderThin, borderRadius:999,
+          width:34,height:34, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center",
+          flexShrink:0, outline:"none" }}>
+          <ArrowBack size={14} color={T.ink} weight={3}/>
+        </button>
+        <div style={{ flex:1, display:"flex", flexDirection:"column", gap:4 }}>
+          <DotBar total={total} current={idx}/>
+          <div style={{ display:"flex", justifyContent:"space-between", fontFamily:T.mFont, fontSize:11, color:T.inkSoft }}>
+            <span>{idx+1} / {total}</span>
+            <span style={{ display:"flex", gap:10 }}>
+              <span style={{ color:T.correct, fontWeight:700 }}>✓{right}</span>
+              <span style={{ color:T.wrong, fontWeight:700 }}>✗{wrong}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Question card */}
+      <Card large color={fbCard} style={{
+        flex:1, display:"flex", flexDirection:"column", justifyContent:"center",
+        padding:24, transition:"background 250ms", position:"relative", overflow:"hidden",
+        animation:cardAnim,
+      }}>
+        <div style={{ display:"flex", flexDirection:"column", gap:14, alignItems:"center", textAlign:"center" }}>
+          <div style={{ fontFamily:T.bFont, fontSize:11, fontWeight:700, letterSpacing:"0.16em",
+            textTransform:"uppercase", color:T.ink, opacity:0.5 }}>{lh.srcLang}</div>
+          <div style={{ fontFamily:T.hFont, fontSize:54, lineHeight:0.95, color:T.ink,
+            letterSpacing:"-0.03em", wordBreak:"break-word", maxWidth:"100%" }}>{lh.src(word)}</div>
+          {feedback==="wrong" && (
+            <div style={{ fontFamily:T.hFont, fontSize:30, color:T.wrong, lineHeight:1,
+              letterSpacing:"-0.02em", animation:"greta-answer-rise 360ms ease-out both" }}>
+              = {lh.tgt(word)}
+            </div>
+          )}
+          {!feedback && (<>
+            <div style={{ height:1, width:40, background:T.ink, opacity:0.2 }}/>
+            <div style={{ fontFamily:T.bFont, fontSize:14, color:T.ink, opacity:0.7 }}>
+              What does this mean in {lh.tgtLang}?
+            </div>
+          </>)}
+        </div>
+
+        {feedback && <FeedbackBurst feedback={feedback} anim={anim}/>}
+
+        <div style={{
+          position:"absolute", bottom:-8, right:-8,
+          transformOrigin:"center bottom",
+          animation:ANIM_MAP[anim]||"none",
+          zIndex:3,
+          ...(anim==="kiss" ? { bottom:14, right:"50%", marginRight:-36 } : {}),
+        }}>
+          <Mascot size={86} mood={mascotMood}/>
+        </div>
+      </Card>
+
+      {/* Input */}
+      <input ref={inputRef} value={answer} onChange={e=>setAnswer(e.target.value)}
+        onKeyDown={e=>{ if(e.key==="Enter") submit(); }}
+        disabled={!!feedback}
+        placeholder={`type in ${lh.tgtLang}, then press enter…`}
+        style={{ padding:"16px 18px", border:T.border, borderRadius:T.radius,
+          fontFamily:T.bFont, fontSize:18, fontWeight:600,
+          background:feedback==="correct"?T.mintSoft:feedback==="wrong"?T.pinkSoft:T.paper,
+          color:T.ink, outline:"none", boxShadow:`inset 0 2px 0 ${T.paperAlt}`,
+          transition:"background 250ms", textAlign:feedback?"center":"left" }}/>
+    </div>
+  );
+}
+
+// ─── SCREEN: WRITE 5× ────────────────────────────────────────────
+function ScreenWriteFive({ list, word, onDone }) {
+  const lh = langHelpers(list);
+  const [reps, setReps] = useState(["","","","",""]);
+  const inputRefs = useRef([]);
+
+  useEffect(()=>{ inputRefs.current[0]?.focus(); }, []);
+
+  const setRep = (i, v) => {
+    const next=[...reps]; next[i]=v; setReps(next);
+    if(v.trim().toLowerCase()===lh.tgt(word).toLowerCase() && i<4) {
+      setTimeout(()=>inputRefs.current[i+1]?.focus(), 100);
+    }
+  };
+
+  const completed = reps.filter(r=>r.trim().toLowerCase()===lh.tgt(word).toLowerCase()).length;
+  const allDone   = completed===5;
+
+  return (
+    <div style={{ padding:"20px 20px 24px", display:"flex", flexDirection:"column", gap:16, minHeight:"100%", boxSizing:"border-box" }}>
+      <div style={{ textAlign:"center" }}>
+        <div style={{ fontFamily:T.bFont, fontSize:11, fontWeight:700, letterSpacing:"0.16em", textTransform:"uppercase", color:T.inkSoft }}>Practice</div>
+        <h2 style={{ fontFamily:T.hFont, fontSize:28, margin:"4px 0 0", color:T.ink, letterSpacing:"-0.02em", lineHeight:1.05 }}>
+          Write "<span style={{ color:T.pink }}>{lh.tgt(word)}</span>" 5 times
+        </h2>
+        <p style={{ fontFamily:T.bFont, color:T.inkSoft, fontSize:13, margin:"6px 0 0" }}>
+          ({lh.src(word)} in {lh.srcLang})
+        </p>
+      </div>
+
+      <div style={{ display:"flex", justifyContent:"center" }}>
+        <Mascot size={80} mood="thinking"/>
+      </div>
+
+      <div style={{ display:"flex", flexDirection:"column", gap:8, flex:1 }}>
+        {reps.map((r,i)=>{
+          const ok=r.trim().toLowerCase()===lh.tgt(word).toLowerCase();
+          return (
+            <div key={i} style={{ display:"flex", alignItems:"center", gap:10 }}>
+              <div style={{ width:30,height:30,borderRadius:999,border:T.borderThin,
+                background:ok?T.correct:T.paperAlt,display:"flex",alignItems:"center",justifyContent:"center",
+                fontFamily:T.mFont,fontSize:13,fontWeight:700,color:ok?"#fff":T.ink,flexShrink:0 }}>
+                {ok?<Check size={14} color="#fff" weight={4}/>:i+1}
+              </div>
+              <input ref={el=>inputRefs.current[i]=el} value={r} onChange={e=>setRep(i,e.target.value)}
+                disabled={ok} placeholder={i===0?lh.tgt(word):""}
+                style={{ flex:1, padding:"12px 14px", border:T.border, borderRadius:T.radius,
+                  fontFamily:T.bFont, fontSize:16, fontWeight:600,
+                  background:ok?T.mintSoft:T.paper, color:T.ink, outline:"none", opacity:ok?0.7:1 }}/>
+            </div>
+          );
+        })}
+      </div>
+
+      <Btn variant="primary" size="lg" full onClick={onDone} disabled={!allDone}>
+        {allDone ? <>Got it — keep going <ArrowRight size={18} color="#fff"/></> : `${completed} / 5 done`}
+      </Btn>
+    </div>
+  );
+}
+
+// ─── SCREEN: CELEBRATION ──────────────────────────────────────────
+function ScreenDone({ result, onAgain, onHome }) {
+  const pct   = Math.round((result.right/result.total)*100);
+  const stars = pct>=90?3:pct>=60?2:1;
+  const colors=[T.pink,T.butter,T.sky,T.mint,T.rose];
+  const pieces=Array.from({length:24}).map((_,i)=>({
+    color:colors[i%colors.length], left:(i*37)%100, delay:(i*80)%1500, rot:(i*47)%360,
+  }));
+  return (
+    <div style={{ padding:"32px 22px", display:"flex", flexDirection:"column", alignItems:"center",
+      textAlign:"center", gap:18, minHeight:"100%", justifyContent:"center", position:"relative", overflow:"hidden" }}>
+      {pieces.map((p,i)=>(
+        <div key={i} style={{ position:"absolute", top:-20, left:`${p.left}%`,
+          animation:`greta-fall 3s ${p.delay}ms infinite linear` }}>
+          <ConfettiPiece size={10} color={p.color} rot={p.rot}/>
+        </div>
+      ))}
+      <Mascot size={150} mood="proud"/>
+      <div style={{ display:"flex", gap:6 }}>
+        {[1,2,3].map(s=>(
+          <div key={s} style={{ width:50,height:50,borderRadius:999,
+            background:s<=stars?T.butter:T.paperAlt, border:T.border,
+            display:"flex", alignItems:"center", justifyContent:"center",
+            transform:s<=stars?"scale(1)":"scale(0.85)", transition:"transform 300ms",
+            boxShadow:s<=stars?`0 4px 0 ${T.ink}`:"none" }}>
+            <Spark size={26} color={s<=stars?T.ink:T.inkSoft}/>
+          </div>
+        ))}
+      </div>
+      <div>
+        <h1 style={{ fontFamily:T.hFont, fontSize:44, margin:0, color:T.ink, letterSpacing:"-0.03em", lineHeight:1 }}>You did it!</h1>
+        <p style={{ fontFamily:T.bFont, color:T.inkSoft, fontSize:16, marginTop:8, marginBottom:0 }}>
+          {pct}% right · <span style={{ fontFamily:T.mFont }}>{result.right}/{result.total}</span> on the first try
+        </p>
+      </div>
+      <div style={{ display:"flex", gap:10, width:"100%", maxWidth:320 }}>
+        <Btn variant="tertiary" size="md" onClick={onHome}>Home</Btn>
+        <Btn variant="primary" size="md" onClick={onAgain} style={{ flex:1 }}>
+          Play again <ArrowRight size={16} color="#fff"/>
+        </Btn>
+      </div>
+    </div>
+  );
+}
+
+// ─── SCREEN: SETTINGS ────────────────────────────────────────────
+function ScreenSettings({ pair, currentUser, onClose, onLogout, onChangePair }) {
+  return (
+    <div style={{ padding:"24px 20px", display:"flex", flexDirection:"column", gap:16, minHeight:"100%" }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+        <h2 style={{ fontFamily:T.hFont, fontSize:30, margin:0, color:T.ink, letterSpacing:"-0.02em" }}>Settings</h2>
+        <button onClick={onClose} style={{ background:T.paperAlt, border:T.borderThin, borderRadius:999, width:36,height:36,
+          cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", outline:"none" }}>
+          <Cross size={16} color={T.ink} weight={3}/>
+        </button>
+      </div>
+
+      <Card color={T.pinkSoft}>
+        <div style={{ display:"flex", alignItems:"center", gap:14 }}>
+          <div style={{ width:56,height:56,borderRadius:999,background:T.paper,border:T.borderThin,
+            display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0 }}>
+            <Mascot size={48} mood="happy"/>
+          </div>
+          <div style={{ flex:1 }}>
+            <div style={{ fontFamily:T.hFont, fontSize:18, color:T.ink, lineHeight:1.1 }}>Hej there!</div>
+            <div style={{ fontFamily:T.mFont, fontSize:12, color:T.inkSoft }}>
+              {currentUser?.email||"Not signed in"}
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      <div>
+        <div style={{ fontFamily:T.bFont, fontSize:11, fontWeight:700, letterSpacing:"0.16em",
+          textTransform:"uppercase", color:T.inkSoft, marginBottom:8 }}>Language</div>
+        <Card onClick={onChangePair} style={{ padding:"14px 16px", display:"flex", alignItems:"center", gap:12, cursor:"pointer" }}>
+          <span style={{ width:32,height:32,borderRadius:999,border:T.border,
+            background:LANGUAGES[pair.from]?.color||"#ccc",display:"inline-flex",alignItems:"center",justifyContent:"center",
+            fontFamily:T.mFont,fontSize:11,fontWeight:800,color:T.ink }}>{LANGUAGES[pair.from]?.code||"SV"}</span>
+          <ArrowRight size={14} color={T.ink} weight={3}/>
+          <span style={{ width:32,height:32,borderRadius:999,border:T.border,
+            background:LANGUAGES[pair.to]?.color||"#ccc",display:"inline-flex",alignItems:"center",justifyContent:"center",
+            fontFamily:T.mFont,fontSize:11,fontWeight:800,color:T.ink }}>{LANGUAGES[pair.to]?.code||"EN"}</span>
+          <div style={{ flex:1, marginLeft:4 }}>
+            <div style={{ fontFamily:T.bFont, fontWeight:600, color:T.ink, fontSize:14 }}>
+              {LANGUAGES[pair.from]?.name||"Swedish"} → {LANGUAGES[pair.to]?.name||"English"}
+            </div>
+            <div style={{ fontFamily:T.mFont, fontSize:11, color:T.inkSoft, marginTop:1 }}>Tap to change</div>
+          </div>
+        </Card>
+      </div>
+
+      <div>
+        <div style={{ fontFamily:T.bFont, fontSize:11, fontWeight:700, letterSpacing:"0.16em",
+          textTransform:"uppercase", color:T.inkSoft, marginBottom:8 }}>Practice</div>
+        <Card style={{ padding:0, overflow:"hidden" }}>
+          {[
+            {label:"Daily reminder",value:"Every day at 4pm"},
+            {label:"Sound effects",value:"On"},
+            {label:"Show pronunciation",value:"On"},
+          ].map((row,i,arr)=>(
+            <div key={row.label} style={{ padding:"14px 16px",
+              borderBottom:i<arr.length-1?`1.5px solid ${T.paperAlt}`:"none",
+              display:"flex", justifyContent:"space-between", alignItems:"center", fontFamily:T.bFont }}>
+              <span style={{ color:T.ink, fontWeight:600 }}>{row.label}</span>
+              <span style={{ color:T.inkSoft, fontSize:13 }}>{row.value}</span>
+            </div>
+          ))}
+        </Card>
+      </div>
+
+      <Btn variant="tertiary" size="md" full onClick={onLogout}>Log out</Btn>
+
+      <div style={{ textAlign:"center", fontFamily:T.mFont, fontSize:11, color:T.inkSoft, marginTop:"auto" }}>
+        Poppins v1 · made with <Heart size={12} color={T.pink}/>
+      </div>
+    </div>
+  );
+}
+
+// ─── APP SHELL ────────────────────────────────────────────────────
+function App() {
+  // Auth state
+  const [currentUser,   setCurrentUser]   = useState(null);
+  const [sessionToken,  setSessionToken]  = useState(null);
+  const [authLoading,   setAuthLoading]   = useState(true);
+
+  // App state
+  const [screen,        setScreen]        = useState("home");
+  const [lists,         setLists]         = useState(SAMPLE_LISTS);
+  const [pair,          setPair]          = useState({ from:"sv", to:"en" });
+  const [activeListId,  setActiveListId]  = useState("djur");
+  const [result,        setResult]        = useState(null);
+
+  const pairLists = lists.filter(l=>(l.from||"sv")===pair.from&&(l.to||"en")===pair.to);
+
+  // ── Auth helpers ──────────────────────────────────────────────
+  function saveSession(token, refresh) {
+    localStorage.setItem("greta_session", JSON.stringify({token,refresh}));
   }
-}
-
-// ══════════════════════════════════════════
-//  Game
-// ══════════════════════════════════════════
-function startGame(){
-  document.getElementById('finishScreen').classList.remove('active');
-  document.getElementById('gameArea').style.display='block';
-  if(!vocab.length){
-    document.getElementById('quizContent').style.display='none';
-    document.getElementById('emptyState').style.display='block';
-    document.getElementById('topicBadge').classList.remove('visible');
-    return;
-  }
-  order=shuffle(vocab); current=0; score=0; wrongs=0;
-  document.getElementById('quizContent').style.display='block';
-  document.getElementById('emptyState').style.display='none';
-  document.getElementById('topicBadge').classList.add('visible');
-  document.getElementById('topicLabel').textContent=currentTopic;
-  loadQ();
-}
-
-function loadQ(){
-  if(current>=order.length){ showFinish(); return; }
-  currentItem=order[current]; inPenalty=false;
-  document.getElementById('swedishWord').textContent=currentItem.sv;
-  const ai=document.getElementById('answerInput');
-  ai.value=''; ai.className=''; ai.disabled=false;
-  document.getElementById('checkBtn').disabled=false;
-  document.getElementById('feedback').className='feedback';
-  document.getElementById('feedback').textContent='';
-  document.getElementById('penaltyBox').classList.remove('active');
-  document.getElementById('qCounter').textContent=`${current+1} / ${order.length}`;
-  document.getElementById('progressBar').style.width=`${(current/order.length)*100}%`;
-  document.getElementById('scoreCorrect').textContent=score;
-  document.getElementById('scoreWrong').textContent=wrongs;
-  ai.focus();
-}
-
-function fb(msg,type){ const el=document.getElementById('feedback'); el.textContent=msg; el.className=`feedback show ${type}`; }
-
-function correctFx(){
-  const f=document.getElementById('flashGreen'); f.classList.remove('animate'); void f.offsetWidth; f.classList.add('animate');
-  const r=document.getElementById('ring'); r.classList.remove('pop'); void r.offsetWidth; r.classList.add('pop');
-  spawnHearts(); launchConfetti();
-}
-function wrongFx(){ const f=document.getElementById('flashRed'); f.classList.remove('animate'); void f.offsetWidth; f.classList.add('animate'); }
-
-function spawnHearts(){
-  const em=['💕','💖','⭐','✨','🌸','💫','🎀'];
-  for(let i=0;i<8;i++){
-    const h=document.createElement('div'); h.className='heart-burst';
-    h.textContent=em[Math.floor(Math.random()*em.length)];
-    const ang=Math.random()*Math.PI*2, dist=80+Math.random()*130;
-    h.style.cssText=`left:${35+Math.random()*30}%;top:${25+Math.random()*35}%;--dx:${Math.cos(ang)*dist}px;--dy:${Math.sin(ang)*dist}px;animation-delay:${Math.random()*0.2}s`;
-    document.body.appendChild(h); setTimeout(()=>h.remove(),1100);
-  }
-}
-
-function checkMain(){
-  const val=document.getElementById('answerInput').value;
-  if(!val.trim()) return;
-  const correct=Array.isArray(currentItem.en)?currentItem.en[0]:currentItem.en;
-  if(checkAns(val,currentItem)){
-    score++;
-    document.getElementById('answerInput').classList.add('correct');
-    fb(`🌸 Correct! "${correct}"`, 'correct'); correctFx();
-    document.getElementById('checkBtn').disabled=true;
-    document.getElementById('answerInput').disabled=true;
-    setTimeout(()=>{ current++; loadQ(); }, 1200);
-  } else {
-    wrongs++;
-    document.getElementById('answerInput').classList.add('wrong');
-    fb(`💦 The answer is: "${correct}"`, 'wrong'); wrongFx();
-    document.getElementById('checkBtn').disabled=true;
-    document.getElementById('answerInput').disabled=true;
-    setTimeout(()=>startPenalty(correct), 3000);
-  }
-}
-
-function startPenalty(correct){
-  inPenalty=true; penaltyCount=0;
-  document.getElementById('feedback').className='feedback';
-  document.getElementById('penaltyBox').classList.add('active');
-  document.getElementById('penaltyWord').textContent=correct;
-  const dots=document.getElementById('penaltyDots'); dots.innerHTML='';
-  for(let i=0;i<5;i++){ const d=document.createElement('div'); d.className='dot'; dots.appendChild(d); }
-  const pi=document.getElementById('penaltyInput'); pi.value=''; pi.className='penalty-input'; pi.disabled=false; pi.focus();
-}
-
-document.getElementById('penaltyInput').addEventListener('input', function(){
-  if(!inPenalty) return;
-  const correct=Array.isArray(currentItem.en)?currentItem.en[0]:currentItem.en;
-  if(norm(this.value)===norm(correct)){
-    this.classList.add('good'); penaltyCount++;
-    const dots=document.querySelectorAll('#penaltyDots .dot');
-    if(dots[penaltyCount-1]) dots[penaltyCount-1].classList.add('filled');
-    setTimeout(()=>{ this.value=''; this.classList.remove('good'); if(penaltyCount>=5){ inPenalty=false; current++; loadQ(); } }, 300);
-  }
-});
-
-document.getElementById('checkBtn').addEventListener('click', checkMain);
-document.getElementById('answerInput').addEventListener('keydown', function(e){ if(e.key==='Enter'&&!this.disabled) checkMain(); });
-
-function showFinish(){
-  document.getElementById('gameArea').style.display='none';
-  document.getElementById('finishScreen').classList.add('active');
-  const pct=Math.round((score/order.length)*100);
-  document.getElementById('finishDeco').textContent=pct>=90?'🌟':pct>=60?'🌸':'💪';
-  document.getElementById('finishTitle').textContent=pct>=90?'Amazing! 🎉':pct>=60?'Good work! 🌸':'Keep going! 💪';
-  document.getElementById('finishStars').textContent=pct>=90?'🌟🌟🌟':pct>=60?'⭐⭐':'⭐';
-  document.getElementById('finishStats').textContent=`${score} out of ${order.length} correct (${pct}%)`;
-  launchConfetti();
-}
-
-document.getElementById('restartBtn').addEventListener('click', startGame);
-document.getElementById('newListBtn').addEventListener('click', openSetsModal);
-
-// ══════════════════════════════════════════
-//  Toast
-// ══════════════════════════════════════════
-let toastTimer;
-function showToast(msg, duration=2800){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>t.classList.remove('show'), duration);
-}
-
-// ══════════════════════════════════════════
-//  Sets modal
-// ══════════════════════════════════════════
-async function loadAndRenderSets(){
-  const list=document.getElementById('setList');
-  const newBtn=document.getElementById('setsNewBtn');
-
-  if(!currentUser){
-    list.innerHTML='<div class="set-empty">Log in to save and manage your word lists 🌸<br><br><button class="btn btn-lilac" id="setsLoginBtn" style="width:auto;padding:10px 20px;font-size:0.9rem">Log in with email ✉️</button></div>';
-    document.getElementById('setsLoginBtn').addEventListener('click',()=>{ closeSetsModal(); openLoginModal(); });
-    newBtn.style.display='none';
-    return;
+  function clearSession() {
+    localStorage.removeItem("greta_session");
+    setCurrentUser(null); setSessionToken(null);
   }
 
-  newBtn.style.display='';
-  list.innerHTML='<div class="set-empty">Loading… 🌸</div>';
-  try {
-    const res=await fetch(`${API}/sets`,{headers:{'Authorization':`Bearer ${sessionToken}`}});
-    const sets=await res.json();
-    if(!sets.length){
-      list.innerHTML='<div class="set-empty">No word lists yet 🌸<br>Tap <strong>Add a new list</strong> below!</div>';
+  function applySession(token, refresh) {
+    const p = parseJWT(token);
+    const user = p ? { id:p.sub, email:p.email } : null;
+    setCurrentUser(user); setSessionToken(token);
+    saveSession(token, refresh);
+    return user;
+  }
+
+  useEffect(()=>{
+    (async()=>{
+      // Handle magic link redirect
+      const params = new URLSearchParams(location.hash.substring(1));
+      const hashToken = params.get("access_token");
+      const hashRefresh = params.get("refresh_token");
+      if(hashToken) {
+        applySession(hashToken, hashRefresh);
+        history.replaceState(null, "", location.pathname+location.search);
+        setAuthLoading(false);
+        return;
+      }
+      // Restore saved session
+      try {
+        const saved = localStorage.getItem("greta_session");
+        if(!saved) { setAuthLoading(false); return; }
+        let { token, refresh } = JSON.parse(saved);
+        if(tokenExpired(token) && refresh) {
+          const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
+            method:"POST",
+            headers:{"Content-Type":"application/json","apikey":SUPABASE_ANON_KEY},
+            body:JSON.stringify({refresh_token:refresh}),
+          });
+          if(!res.ok) { clearSession(); setAuthLoading(false); return; }
+          const d = await res.json();
+          token=d.access_token; refresh=d.refresh_token;
+        } else if(tokenExpired(token)) { clearSession(); setAuthLoading(false); return; }
+        applySession(token, refresh);
+      } catch { clearSession(); }
+      setAuthLoading(false);
+    })();
+  }, []);
+
+  // ── Load lists from Supabase ──────────────────────────────────
+  useEffect(()=>{
+    if(!sessionToken) return;
+    loadLists();
+  }, [sessionToken]);
+
+  async function loadLists() {
+    try {
+      const res = await fetch(`${API}/sets`, { headers:{"Authorization":`Bearer ${sessionToken}`} });
+      if(!res.ok) return;
+      const sets = await res.json();
+      const COLORS = ["rose","butter","sky","mint","pink"];
+      const mapped = sets.map((s,i)=>({
+        id:    s.id,
+        name:  s.topic,
+        color: COLORS[i % COLORS.length],
+        words: (s.vocab||[]).map(p=>({sv:p.sv, en:typeof p.en==="string"&&p.en.includes("|")?p.en.split("|").map(x=>x.trim()):p.en})),
+        from:  "sv",
+        to:    "en",
+      }));
+      if(mapped.length>0) {
+        setLists(mapped);
+        setActiveListId(mapped[0].id);
+      }
+    } catch {}
+  }
+
+  async function saveList(newList) {
+    const words = newList.words.map(w=>({ sv:w[newList.from]||w.sv, en:w[newList.to]||w.en }));
+    if(!sessionToken) {
+      // Guest mode — keep in memory only
+      setLists(l=>[...l, newList]);
+      setActiveListId(newList.id);
+      setScreen("home");
       return;
     }
-    list.innerHTML=sets.map(s=>{
-      const date=new Date(s.created_at).toLocaleDateString('sv-SE');
-      return `<div class="set-item">
-        <div class="set-info">
-          <div class="set-name">${s.topic}</div>
-          <div class="set-meta">${s.word_count} words · ${date}</div>
-        </div>
-        <div class="set-actions">
-          <button class="set-play" data-id="${s.id}">▶ Play</button>
-          <button class="set-share" data-id="${s.id}" title="Copy share link">🔗</button>
-          <button class="set-del" data-id="${s.id}" data-topic="${s.topic}">🗑</button>
-        </div>
-      </div>`;
-    }).join('');
-
-    list.querySelectorAll('.set-play').forEach(btn=>btn.addEventListener('click',()=>{
-      loadSetById(btn.dataset.id).then(()=>closeSetsModal());
-    }));
-    list.querySelectorAll('.set-share').forEach(btn=>btn.addEventListener('click',()=>{
-      const url=`${location.origin}${location.pathname}?set=${btn.dataset.id}`;
-      navigator.clipboard.writeText(url).then(()=>showToast('Share link copied! 🔗'));
-    }));
-    list.querySelectorAll('.set-del').forEach(btn=>btn.addEventListener('click',()=>{
-      if(!confirm(`Delete "${btn.dataset.topic}"?`)) return;
-      deleteSet(btn.dataset.id,btn.dataset.topic);
-    }));
-
-  } catch(e){
-    list.innerHTML='<div class="set-empty">Could not load lists 💦<br>Check your config.</div>';
-  }
-}
-
-async function deleteSet(id, topic){
-  if(!sessionToken){ requireAuth(()=>deleteSet(id,topic)); return; }
-  try {
-    const res=await fetch(`${API}/sets/${id}`,{method:'DELETE',headers:{'Authorization':`Bearer ${sessionToken}`}});
-    if(!res.ok){ const d=await res.json(); showToast(d.error||'Delete failed 💦'); return; }
-    if(currentSetId===id){ vocab=[]; currentTopic=''; currentSetId=null; startGame(); }
-    showToast('Deleted! 🗑');
-    loadAndRenderSets();
-  } catch(e){ showToast('Could not delete 💦'); }
-}
-
-function openSetsModal(){ document.getElementById('setsOverlay').classList.add('active'); updateAuthUI(); loadAndRenderSets(); }
-function closeSetsModal(){ document.getElementById('setsOverlay').classList.remove('active'); }
-
-document.getElementById('setsOverlay').addEventListener('click', function(e){ if(e.target===this) closeSetsModal(); });
-document.getElementById('setsClose').addEventListener('click', closeSetsModal);
-document.getElementById('setsNewBtn').addEventListener('click', ()=>{ closeSetsModal(); requireAuth(()=>openPasteModal()); });
-document.getElementById('openSetsBtn').addEventListener('click', openSetsModal);
-
-// ══════════════════════════════════════════
-//  Login modal (magic link)
-// ══════════════════════════════════════════
-function openLoginModal(){
-  document.getElementById('loginFormWrap').style.display='';
-  document.getElementById('loginSentWrap').style.display='none';
-  document.getElementById('loginEmail').value='';
-  document.getElementById('loginErr').textContent='';
-  document.getElementById('loginErr').classList.remove('show');
-  document.getElementById('loginSubmit').disabled=false;
-  document.getElementById('loginOverlay').classList.add('active');
-  setTimeout(()=>document.getElementById('loginEmail').focus(),50);
-}
-function closeLoginModal(){ document.getElementById('loginOverlay').classList.remove('active'); }
-
-async function sendMagicLink(){
-  const email=document.getElementById('loginEmail').value.trim();
-  if(!email) return;
-  document.getElementById('loginSubmit').disabled=true;
-  try {
-    const res=await fetch(`${SUPABASE_URL}/auth/v1/otp`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY},
-      body:JSON.stringify({ email, create_user:true, options:{ emailRedirectTo: location.href.split('#')[0] } }),
-    });
-    if(!res.ok){ const d=await res.json(); throw new Error(d.msg||d.error_description||'Could not send link'); }
-    document.getElementById('loginEmailSent').textContent=email;
-    document.getElementById('loginFormWrap').style.display='none';
-    document.getElementById('loginSentWrap').style.display='';
-  } catch(e){
-    document.getElementById('loginErr').textContent=e.message||'Could not send link 💦';
-    document.getElementById('loginErr').classList.add('show');
-    document.getElementById('loginSubmit').disabled=false;
-  }
-}
-
-document.getElementById('loginSubmit').addEventListener('click', sendMagicLink);
-document.getElementById('loginEmail').addEventListener('keydown', e=>{ if(e.key==='Enter') sendMagicLink(); });
-document.getElementById('loginCancel').addEventListener('click', ()=>{ authCallback=null; closeLoginModal(); });
-document.getElementById('loginSentClose').addEventListener('click', closeLoginModal);
-document.getElementById('loginOverlay').addEventListener('click', function(e){ if(e.target===this){ authCallback=null; closeLoginModal(); } });
-
-// ══════════════════════════════════════════
-//  Paste modal
-// ══════════════════════════════════════════
-function openPasteModal(){
-  document.getElementById('pasteArea').value='';
-  document.getElementById('parseBtn').disabled=true;
-  document.getElementById('parseStatus').style.opacity='0';
-  document.getElementById('pasteOverlay').classList.add('active');
-  setTimeout(()=>document.getElementById('pasteArea').focus(),50);
-}
-function closePasteModal(){ document.getElementById('pasteOverlay').classList.remove('active'); }
-
-document.getElementById('pasteArea').addEventListener('input', function(){
-  document.getElementById('parseBtn').disabled=!this.value.trim();
-});
-document.getElementById('pasteCancel').addEventListener('click', closePasteModal);
-document.getElementById('pasteOverlay').addEventListener('click', function(e){ if(e.target===this) closePasteModal(); });
-
-// ── Local parser — no API needed ──
-function isSwedish(s){ return /[åäöÅÄÖ]/.test(s); }
-function isLikelyEnglish(s){ return /^[a-zA-Z0-9 ',.\/()-]+$/.test(s); }
-function cleanLine(s){ return s.trim().replace(/^\d+[.)\s]+/, '').trim(); }
-
-function parseVocabText(raw) {
-  const lines = raw.split(/\n/).map(l=>l.trim()).filter(Boolean);
-  const pairs = [];
-
-  // ── Format 1: inline pairs separated by - – = or tab ──
-  // e.g. "Killed - Dödad" or "World	Värld"
-  const inlinePairs = [];
-  for (const line of lines) {
-    if (/^\d+\.?$/.test(line)) continue;
-    const match = line.match(/^(.+?)\s*(?:[-–—=]|\t)\s*(.+)$/);
-    if (!match) continue;
-    let left  = cleanLine(match[1]);
-    let right = cleanLine(match[2]);
-    if (!left || !right || left.length > 100 || right.length > 100) continue;
-    const sv = isSwedish(left) ? left : isSwedish(right) ? right : left;
-    const en = isSwedish(left) ? right : isSwedish(right) ? left : right;
-    inlinePairs.push({ sv, en });
-  }
-  if (inlinePairs.length >= 2) return inlinePairs.slice(0, 20);
-
-  // ── Format 2: alternating lines ──
-  // English line, then Swedish line, repeating
-  // e.g: "Killed / Dödad / World / Värld"
-  const cleaned = lines.map(cleanLine).filter(Boolean);
-
-  // Detect which line is English and which is Swedish by scanning first 6 lines
-  // Find the dominant pattern
-  let enFirstScore = 0; // even lines English, odd lines Swedish
-  let svFirstScore = 0; // even lines Swedish, odd lines English
-  for (let i = 0; i < Math.min(cleaned.length - 1, 8); i += 2) {
-    const a = cleaned[i], b = cleaned[i+1];
-    if (isLikelyEnglish(a) && isSwedish(b)) enFirstScore++;
-    if (isSwedish(a) && isLikelyEnglish(b)) svFirstScore++;
-  }
-
-  const altPairs = [];
-  if (enFirstScore > 0 || svFirstScore > 0) {
-    const enFirst = enFirstScore >= svFirstScore;
-    for (let i = 0; i + 1 < cleaned.length; i += 2) {
-      const a = cleaned[i], b = cleaned[i+1];
-      if (!a || !b || a.length > 100 || b.length > 100) continue;
-      altPairs.push(enFirst ? { sv: b, en: a } : { sv: a, en: b });
+    try {
+      const res = await fetch(`${API}/sets`, {
+        method:"POST",
+        headers:{"Content-Type":"application/json","Authorization":`Bearer ${sessionToken}`},
+        body:JSON.stringify({ topic:newList.name, vocab:words }),
+      });
+      const saved = await res.json();
+      if(!res.ok) throw new Error(saved.error||"Save failed");
+      const stamped = { ...newList, id:saved.id };
+      setLists(l=>[...l, stamped]);
+      setActiveListId(stamped.id);
+    } catch {
+      setLists(l=>[...l, newList]);
+      setActiveListId(newList.id);
     }
+    setScreen("home");
   }
-  if (altPairs.length >= 2) return altPairs.slice(0, 20);
 
-  // ── Format 3: fallback — just try to pair consecutive non-empty lines ──
-  for (let i = 0; i + 1 < cleaned.length; i += 2) {
-    const a = cleaned[i], b = cleaned[i+1];
-    if (!a || !b) continue;
-    const sv = isSwedish(a) ? a : b;
-    const en = isSwedish(a) ? b : a;
-    pairs.push({ sv, en });
+  async function deleteList(list) {
+    if(sessionToken) {
+      try {
+        await fetch(`${API}/sets/${list.id}`, { method:"DELETE", headers:{"Authorization":`Bearer ${sessionToken}`} });
+      } catch {}
+    }
+    setLists(l=>l.filter(x=>x.id!==list.id));
+    if(activeListId===list.id) setActiveListId(null);
   }
-  return pairs.slice(0, 20);
+
+  async function signOut() {
+    if(sessionToken) {
+      fetch(`${SUPABASE_URL}/auth/v1/logout`, {
+        method:"POST",
+        headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":`Bearer ${sessionToken}`},
+      }).catch(()=>{});
+    }
+    clearSession();
+    setLists(SAMPLE_LISTS);
+    setActiveListId("djur");
+    setScreen("home");
+  }
+
+  function changePair(p) {
+    setPair({ from:p.from, to:p.to });
+    const first = lists.find(l=>l.from===p.from&&l.to===p.to);
+    setActiveListId(first?first.id:null);
+    setScreen("home");
+  }
+
+  const activeList = lists.find(l=>l.id===activeListId);
+
+  if(authLoading) return (
+    <div style={{ display:"flex", alignItems:"center", justifyContent:"center",
+      width:360, height:720, background:T.paper, borderRadius:T.radiusLg }}>
+      <Bloom size={40} color={T.pink} center={T.butter} spinning/>
+    </div>
+  );
+
+  // Screen rendering
+  let body;
+  switch(screen) {
+    case "login":
+      body = <ScreenLogin onLogin={()=>setScreen("home")} currentUser={currentUser}/>;
+      break;
+    case "home":
+      body = <ScreenHome
+        lists={pairLists} activeListId={activeListId} pair={pair}
+        onPickList={()=>setScreen("lists")}
+        onAddList={()=>setScreen("paste")}
+        onStart={()=>activeList&&setScreen("quiz")}
+        onSettings={()=>setScreen("settings")}
+        onPickPair={()=>setScreen("langpicker")}/>;
+      break;
+    case "lists":
+      body = <ScreenLists
+        lists={pairLists} activeListId={activeListId}
+        onPick={id=>{ setActiveListId(id); setScreen("home"); }}
+        onAdd={()=>setScreen("paste")}
+        onClose={()=>setScreen("home")}
+        onDelete={deleteList}/>;
+      break;
+    case "paste":
+      body = <ScreenPaste pair={pair} onSave={saveList} onCancel={()=>setScreen(activeListId?"home":"lists")}/>;
+      break;
+    case "quiz":
+      if(!activeList) { setScreen("home"); return null; }
+      body = <ScreenQuiz list={activeList} onDone={r=>{ setResult(r); setScreen("done"); }} onExit={()=>setScreen("home")}/>;
+      break;
+    case "done":
+      body = <ScreenDone
+        result={result||{right:0,wrong:0,total:0}}
+        onAgain={()=>{ setResult(null); setScreen("quiz"); }}
+        onHome={()=>{ setResult(null); setScreen("home"); }}/>;
+      break;
+    case "settings":
+      body = <ScreenSettings pair={pair} currentUser={currentUser}
+        onClose={()=>setScreen("home")} onLogout={signOut} onChangePair={()=>setScreen("langpicker")}/>;
+      break;
+    case "langpicker":
+      body = <ScreenLangPicker pair={pair} lists={lists} onPick={changePair} onClose={()=>setScreen("home")}/>;
+      break;
+    default:
+      body = <div/>;
+  }
+
+  return (
+    <div style={{
+      width:360, height:720,
+      background:T.paperAlt,
+      border:`4px solid ${T.ink}`,
+      borderRadius:44,
+      overflow:"hidden",
+      boxShadow:T.shadowLg,
+      position:"relative",
+    }}>
+      {/* Dynamic island */}
+      <div style={{
+        position:"absolute", top:14, left:"50%", transform:"translateX(-50%)",
+        width:90, height:22, background:T.ink, borderRadius:999, zIndex:20,
+      }}/>
+      <div style={{ width:"100%", height:"100%", borderRadius:36, overflow:"hidden", position:"relative", display:"flex", flexDirection:"column" }}>
+        {/* Status bar */}
+        <div style={{ height:46, flexShrink:0, display:"flex", alignItems:"flex-end",
+          justifyContent:"space-between", padding:"0 24px 6px",
+          fontFamily:T.mFont, fontWeight:700, fontSize:13, color:T.ink, background:T.paper }}>
+          <div>9:41</div>
+          <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+            <svg width="17" height="10" viewBox="0 0 17 10" aria-hidden="true">
+              <rect x="0"    y="6" width="3" height="4"  rx="0.5" fill={T.ink}/>
+              <rect x="4.5" y="4" width="3" height="6"  rx="0.5" fill={T.ink}/>
+              <rect x="9"   y="2" width="3" height="8"  rx="0.5" fill={T.ink}/>
+              <rect x="13.5" y="0" width="3" height="10" rx="0.5" fill={T.ink} opacity="0.35"/>
+            </svg>
+            <svg width="24" height="11" viewBox="0 0 24 11" aria-hidden="true">
+              <rect x="0.75" y="0.75" width="19.5" height="9.5" rx="2.5" fill="none" stroke={T.ink} strokeWidth="1.2" opacity="0.9"/>
+              <rect x="2" y="2" width="13" height="7" rx="1" fill={T.ink}/>
+              <rect x="21.5" y="3.5" width="1.8" height="4" rx="0.6" fill={T.ink} opacity="0.6"/>
+            </svg>
+          </div>
+        </div>
+        {/* Screen body */}
+        <div style={{ flex:1, minHeight:0, overflowY:"auto", background:T.paper, position:"relative" }}>
+          {body}
+        </div>
+      </div>
+    </div>
+  );
 }
 
-function guessTopic(pairs) {
-  // Use the most distinctive English word as a rough topic guess
-  // Just return "Word list" + date as default — user can rename later
-  const now = new Date();
-  return `${now.toLocaleDateString('sv-SE')}`;
-}
-
-document.getElementById('parseBtn').addEventListener('click', async ()=>{
-  const text=document.getElementById('pasteArea').value.trim();
-  if(!text) return;
-
-  document.getElementById('parseBtn').disabled=true;
-  document.getElementById('parseStatus').style.opacity='1';
-  document.getElementById('spinner').classList.add('active');
-  document.getElementById('parseMsg').textContent='Greta is reading your list… 🌸';
-
-  // Parse locally — no API call
-  const pairs = parseVocabText(text);
-
-  if(!pairs.length){
-    document.getElementById('spinner').classList.remove('active');
-    document.getElementById('parseMsg').textContent='💦 Could not find any word pairs. Try the format: Word - Translation';
-    document.getElementById('parseBtn').disabled=false;
-    return;
-  }
-
-  const topic = guessTopic(pairs);
-  document.getElementById('parseMsg').textContent=`Found ${pairs.length} pairs — saving… 🌸`;
-
-  try {
-    // Save to DB
-    const saveRes=await fetch(`${API}/sets`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${sessionToken}`},
-      body:JSON.stringify({topic, vocab:pairs}),
-    });
-    const saved=await saveRes.json();
-    if(!saveRes.ok) throw new Error(saved.error||'Save failed');
-
-    vocab=pairs.map(p=>({sv:p.sv, en:p.en}));
-    currentTopic=topic;
-    currentSetId=saved.id;
-
-    document.getElementById('spinner').classList.remove('active');
-    document.getElementById('parseMsg').textContent=`✅ Saved ${pairs.length} words! Starting… 🎉`;
-    setTimeout(()=>{ closePasteModal(); startGame(); }, 900);
-
-  } catch(e){
-    document.getElementById('spinner').classList.remove('active');
-    document.getElementById('parseMsg').textContent='💦 '+e.message;
-    document.getElementById('parseBtn').disabled=false;
-  }
-});
-
-// ══════════════════════════════════════════
-//  Confetti
-// ══════════════════════════════════════════
-const canvas=document.getElementById('confettiCanvas');
-const ctx=canvas.getContext('2d');
-let particles=[];
-function resizeCanvas(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
-window.addEventListener('resize',resizeCanvas); resizeCanvas();
-function launchConfetti(){
-  const colors=['#ffb7c5','#d4b8f0','#b5ead7','#fde89a','#ffd6b0','#bde0fe','#ff8fab','#a78bfa'];
-  for(let i=0;i<140;i++){
-    particles.push({x:Math.random()*canvas.width,y:-20,w:Math.random()*12+5,h:Math.random()*8+4,color:colors[Math.floor(Math.random()*colors.length)],vx:(Math.random()-0.5)*7,vy:Math.random()*5+2,rot:Math.random()*360,vrot:(Math.random()-0.5)*12,life:1,heart:Math.random()<0.3});
-  }
-  if(!confettiAnim) animateConfetti();
-}
-function animateConfetti(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  particles=particles.filter(p=>p.life>0.01);
-  particles.forEach(p=>{
-    p.x+=p.vx;p.y+=p.vy;p.vy+=0.1;p.rot+=p.vrot;
-    if(p.y>canvas.height)p.life=0;p.life-=0.007;
-    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.globalAlpha=p.life;ctx.fillStyle=p.color;
-    if(p.heart){ctx.font=`${p.w+8}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('♥',0,0);}
-    else{ctx.beginPath();ctx.ellipse(0,0,p.w/2,p.h/2,0,0,Math.PI*2);ctx.fill();}
-    ctx.restore();
-  });
-  if(particles.length>0){confettiAnim=requestAnimationFrame(animateConfetti);}
-  else{confettiAnim=null;ctx.clearRect(0,0,canvas.width,canvas.height);}
-}
-
-// ══════════════════════════════════════════
-//  Floating bg
-// ══════════════════════════════════════════
-(function(){
-  const em=['🌸','💕','⭐','✨','🍬','🎀','💫','🌈','🦋','🍡','💖','🌷','🧁','🎵'];
-  const wrap=document.getElementById('bgFloaties');
-  for(let i=0;i<24;i++){
-    const el=document.createElement('div'); el.className='floatie';
-    el.textContent=em[Math.floor(Math.random()*em.length)];
-    el.style.cssText=`left:${Math.random()*100}%;font-size:${Math.random()*1.4+0.8}rem;animation-duration:${Math.random()*18+10}s;animation-delay:${Math.random()*16}s;`;
-    wrap.appendChild(el);
-  }
-})();
-
-// ══════════════════════════════════════════
-//  Init
-// ══════════════════════════════════════════
-loadSession().then(() => { updateAuthUI(); checkAuthRedirect(); });
-checkShareLink();
-if(!vocab.length) startGame();
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App/>);
 </script>
 </body>
 </html>
