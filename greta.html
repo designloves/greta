@@ -323,8 +323,8 @@ let currentUser=null, sessionToken=null;
 
 function parseJWT(t){try{return JSON.parse(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));}catch{return null;}}
 function tokenExpired(t){const p=parseJWT(t);return!p?.exp||Date.now()/1000>p.exp-60;}
-function saveSession(t,r){localStorage.setItem("greta_session",JSON.stringify({token:t,refresh:r}));}
-function clearSession(){localStorage.removeItem("greta_session");currentUser=null;sessionToken=null;}
+function saveSession(t,r){try{localStorage.setItem("greta_session",JSON.stringify({token:t,refresh:r}));}catch{}}
+function clearSession(){try{localStorage.removeItem("greta_session");}catch{}currentUser=null;sessionToken=null;}
 
 function applySession(token,refresh){
   const p=parseJWT(token);
@@ -336,7 +336,7 @@ function applySession(token,refresh){
 async function initAuth(){
   const params=new URLSearchParams(location.hash.substring(1));
   const ht=params.get("access_token"), hr=params.get("refresh_token");
-  if(ht){applySession(ht,hr);history.replaceState(null,"",location.pathname+location.search);return;}
+  if(ht){applySession(ht,hr);try{history.replaceState(null,"",location.pathname+location.search);}catch{}return;}
   try{
     const saved=localStorage.getItem("greta_session");
     if(!saved)return;
@@ -983,8 +983,8 @@ function on(id,evt,fn){const el=document.getElementById(id);if(el)el.addEventLis
 
 // ── BOOT ──────────────────────────────────────────────────────────
 (async()=>{
-  await initAuth();
-  if(sessionToken)await loadUserLists();
+  try{await initAuth();}catch{}
+  try{if(sessionToken)await loadUserLists();}catch{}
   render();
 })();
 </script>
