@@ -232,6 +232,12 @@ const API              = 'https://ivcnjkzuggwpxvnalbol.supabase.co/functions/v1/
 const SUPABASE_URL     = 'https://ivcnjkzuggwpxvnalbol.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_nvKqUBjP0B-TmROc_aJtdA_U-P0pr_u';
 
+function esc(s){
+  return String(s==null?"":s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+
 // ── LANGUAGES ─────────────────────────────────────────────────────
 const LANGUAGES = {
   sv:{name:"Swedish", native:"Svenska", code:"SV", color:"#FFD66B"},
@@ -323,8 +329,8 @@ let currentUser=null, sessionToken=null;
 
 function parseJWT(t){try{return JSON.parse(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));}catch{return null;}}
 function tokenExpired(t){const p=parseJWT(t);return!p?.exp||Date.now()/1000>p.exp-60;}
-function saveSession(t,r){try{localStorage.setItem("greta_session",JSON.stringify({token:t,refresh:r}));}catch{}}
-function clearSession(){try{localStorage.removeItem("greta_session");}catch{}currentUser=null;sessionToken=null;}
+function saveSession(t,r){try{sessionStorage.setItem("greta_session",JSON.stringify({token:t,refresh:r}));}catch{}}
+function clearSession(){try{sessionStorage.removeItem("greta_session");}catch{}currentUser=null;sessionToken=null;}
 
 function applySession(token,refresh){
   const p=parseJWT(token);
@@ -338,7 +344,7 @@ async function initAuth(){
   const ht=params.get("access_token"), hr=params.get("refresh_token");
   if(ht){applySession(ht,hr);try{history.replaceState(null,"",location.pathname+location.search);}catch{}return;}
   try{
-    const saved=localStorage.getItem("greta_session");
+    const saved=sessionStorage.getItem("greta_session");
     if(!saved)return;
     let{token,refresh}=JSON.parse(saved);
     if(tokenExpired(token)&&refresh){
@@ -524,7 +530,7 @@ login(){
       </div>
       <div style="width:100%;display:flex;flex-direction:column;gap:12px;">
         <input id="login-email" class="inp" type="email" placeholder="you@email.com" value="${loginEmail}" autocomplete="email"/>
-        ${loginErr?`<div style="color:var(--wrong);font-size:14px;">${loginErr}</div>`:""}
+        ${loginErr?`<div style="color:var(--wrong);font-size:14px;">${esc(loginErr)}</div>`:""}
         <button id="login-submit" class="btn btn-primary btn-lg btn-full" ${loginLoading?"disabled":""}>
           ${SVG.spark(18,"#fff")} ${loginLoading?"Sending…":"Send magic link"}
         </button>
@@ -539,7 +545,7 @@ login(){
       <div>
         <h1 class="h-font" style="font-size:36px;color:var(--ink);letter-spacing:-0.02em;line-height:1.05;">Check your inbox</h1>
         <p class="b-font" style="color:var(--ink-soft);font-size:15px;margin-top:12px;max-width:280px;">
-          I sent a sparkly link to <strong style="color:var(--ink);">${loginEmail}</strong>. Tap it to come on in.
+          I sent a sparkly link to <strong style="color:var(--ink);">${esc(loginEmail)}</strong>. Tap it to come on in.
         </p>
       </div>
       <button id="login-skip" class="btn btn-secondary">
@@ -558,7 +564,7 @@ home(){
       <div style="display:flex;justify-content:space-between;align-items:flex-start;">
         <div>
           <div class="label-caps">Today's list</div>
-          <h2 class="h-font" style="font-size:32px;color:var(--ink);margin:4px 0 0;letter-spacing:-0.02em;line-height:1;">${list.name}</h2>
+          <h2 class="h-font" style="font-size:32px;color:var(--ink);margin:4px 0 0;letter-spacing:-0.02em;line-height:1;">${esc(list.name)}</h2>
           <div class="m-font" style="font-size:13px;color:var(--ink);margin-top:8px;opacity:.8;">
             ${list.words.length} words · ${LANGUAGES[list.from]?.code||"SV"} → ${LANGUAGES[list.to]?.code||"EN"}
           </div>
@@ -610,7 +616,7 @@ lists(){
         ${SVG.bloom(28,"#241F3D",COLOR_MAP[l.color],false)}
       </div>
       <div style="flex:1;min-width:0;">
-        <div class="h-font" style="font-size:20px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.name}</div>
+        <div class="h-font" style="font-size:20px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(l.name)}</div>
         <div class="m-font" style="font-size:12px;color:var(--ink);opacity:.7;margin-top:2px;">${l.words.length} words${state.activeListId===l.id?" · active":""}</div>
       </div>
       ${state.activeListId===l.id?`<div style="background:var(--ink);border-radius:999px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${SVG.check(16,"#fff",4)}</div>`:""}
@@ -661,9 +667,9 @@ paste(){
     </div>`;
   const reviewItems=pasteParsed.map(w=>`
     <div style="display:flex;align-items:center;gap:12px;background:var(--paper);border:var(--border-thin);border-radius:14px;padding:10px 14px;" class="b-font">
-      <span style="color:var(--ink);font-weight:700;flex:1;">${w[pair.from]||w.sv}</span>
+      <span style="color:var(--ink);font-weight:700;flex:1;">${esc(w[pair.from]||w.sv)}</span>
       ${SVG.arrowRight(14,"#6B638A")}
-      <span style="color:var(--ink-soft);flex:1;">${w[pair.to]||w.en}</span>
+      <span style="color:var(--ink-soft);flex:1;">${esc(w[pair.to]||w.en)}</span>
     </div>`).join("");
   return `
     <div class="screen-pad">
@@ -734,7 +740,7 @@ quiz(){
           <div style="width:30px;height:30px;border-radius:999px;border:var(--border-thin);background:${ok?"var(--correct)":"var(--paper-alt)"};display:flex;align-items:center;justify-content:center;font-family:var(--m-font);font-size:13px;font-weight:700;color:${ok?"#fff":"var(--ink)"};flex-shrink:0;">
             ${ok?SVG.check(14,"#fff",4):i+1}
           </div>
-          <input id="w5-${i}" class="inp" value="${r}" ${ok?"disabled":""} placeholder="${i===0?target:""}"
+          <input id="w5-${i}" class="inp" value="${esc(r)}" ${ok?"disabled":""} placeholder="${i===0?esc(target):""}"
             style="background:${ok?"var(--mint-soft)":"var(--paper)"};opacity:${ok?.7:1};" data-w5="${i}"/>
         </div>`; }).join("");
     const done=quizReps.filter((r,_)=>r.trim().toLowerCase()===target.toLowerCase()).length;
@@ -743,9 +749,9 @@ quiz(){
         <div style="text-align:center;">
           <div class="label-caps">Practice</div>
           <h2 class="h-font" style="font-size:28px;color:var(--ink);margin:4px 0 0;letter-spacing:-0.02em;">
-            Write "<span style="color:var(--pink);">${target}</span>" 5 times
+            Write "<span style="color:var(--pink);">${esc(target)}</span>" 5 times
           </h2>
-          <p class="b-font" style="color:var(--ink-soft);font-size:13px;margin-top:6px;">(${lh.src(word)} in ${lh.srcLang})</p>
+          <p class="b-font" style="color:var(--ink-soft);font-size:13px;margin-top:6px;">(${esc(lh.src(word))} in ${esc(lh.srcLang)})</p>
         </div>
         <div style="display:flex;justify-content:center;">${mascotSVG(80,"thinking")}</div>
         <div style="display:flex;flex-direction:column;gap:8px;flex:1;">${rows}</div>
@@ -772,7 +778,7 @@ quiz(){
 
   const burst=feedbackBurst(quizFeedback,quizAnim);
 
-  const wrongAnswer=quizFeedback==="wrong"?`<div class="h-font" style="font-size:30px;color:var(--wrong);animation:greta-answer-rise 360ms ease-out both;">= ${lh.tgt(word)}</div>`:"";
+  const wrongAnswer=quizFeedback==="wrong"?`<div class="h-font" style="font-size:30px;color:var(--wrong);animation:greta-answer-rise 360ms ease-out both;">= ${esc(lh.tgt(word))}</div>`:"";
   const hint=!quizFeedback?`<div style="height:1px;width:40px;background:var(--ink);opacity:.2;"></div><div class="b-font" style="font-size:14px;color:var(--ink);opacity:.7;">What does this mean in ${lh.tgtLang}?</div>`:"";
   const inpBg=quizFeedback==="correct"?"var(--mint-soft)":quizFeedback==="wrong"?"var(--pink-soft)":"var(--paper)";
 
@@ -794,7 +800,7 @@ quiz(){
       <div class="card-lg" style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:24px;background:${fbBg};transition:background 250ms;position:relative;overflow:hidden;animation:${cardAnim};">
         <div style="display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;">
           <div class="label-caps">${lh.srcLang}</div>
-          <div class="h-font" style="font-size:54px;line-height:.95;color:var(--ink);letter-spacing:-.03em;word-break:break-word;">${lh.src(word)}</div>
+          <div class="h-font" style="font-size:54px;line-height:.95;color:var(--ink);letter-spacing:-.03em;word-break:break-word;">${esc(lh.src(word))}</div>
           ${wrongAnswer}${hint}
         </div>
         ${burst}
@@ -850,7 +856,7 @@ settings(){
           </div>
           <div>
             <div class="h-font" style="font-size:18px;color:var(--ink);">Hej there!</div>
-            <div class="m-font" style="font-size:12px;color:var(--ink-soft);">${currentUser?.email||"Not signed in"}</div>
+            <div class="m-font" style="font-size:12px;color:var(--ink-soft);">${esc(currentUser?.email||"Not signed in")}</div>
           </div>
         </div>
       </div>
