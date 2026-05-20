@@ -1,1431 +1,992 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Poppins — vocabulary tutor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  html,body{margin:0;padding:0;background:#2A2530;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',system-ui,sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:#2A2530;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',system-ui,sans-serif;}
 
-  @keyframes greta-spin{to{transform:rotate(360deg);}}
-  @keyframes greta-fall{0%{transform:translateY(-40px) rotate(0deg);opacity:1;}90%{opacity:1;}100%{transform:translateY(820px) rotate(360deg);opacity:0;}}
-  @keyframes greta-float{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-12px) rotate(8deg);}}
-  @keyframes greta-pop{0%{transform:scale(0.6);opacity:0;}60%{transform:scale(1.1);opacity:1;}100%{transform:scale(1);opacity:1;}}
-  @keyframes greta-kiss{
-    0%  {transform:translate(0,0) scale(1) rotate(0);}
-    20% {transform:translate(-30px,-30px) scale(1.1) rotate(-8deg);}
-    40% {transform:translate(-58px,-78px) scale(1.25) rotate(-14deg);}
-    55% {transform:translate(-62px,-88px) scale(1.3) rotate(-14deg);}
-    70% {transform:translate(-58px,-78px) scale(1.2) rotate(-10deg);}
-    100%{transform:translate(-20px,-20px) scale(1) rotate(0);opacity:0.95;}
-  }
-  @keyframes greta-oops{
-    0%,100%{transform:translate(0,0) rotate(0);}
-    15%{transform:translate(-8px,2px) rotate(-7deg);}
-    30%{transform:translate(8px,2px) rotate(7deg);}
-    45%{transform:translate(-7px,0) rotate(-6deg);}
-    60%{transform:translate(7px,0) rotate(6deg);}
-    75%{transform:translate(-4px,0) rotate(-3deg);}
-  }
-  @keyframes greta-heart-burst{
-    0%  {transform:scale(0) rotate(-12deg);opacity:0;}
-    35% {transform:scale(1.4) rotate(-6deg);opacity:1;}
-    65% {transform:scale(1.1) rotate(2deg);opacity:1;}
-    100%{transform:scale(0.9) translateY(-18px) rotate(8deg);opacity:0;}
-  }
-  @keyframes greta-card-correct{0%{transform:scale(1);}35%{transform:scale(1.018);}100%{transform:scale(1);}}
-  @keyframes greta-card-wrong{0%,100%{transform:translateX(0);}20%{transform:translateX(-7px);}40%{transform:translateX(7px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
-  @keyframes greta-tada{
-    0%  {transform:scale(1) rotate(0);}
-    10% {transform:scale(0.92) rotate(-6deg);}
-    20%,40%,60%,80%{transform:scale(1.18) rotate(8deg);}
-    30%,50%,70%    {transform:scale(1.18) rotate(-8deg);}
-    100%{transform:scale(1) rotate(0);}
-  }
-  @keyframes greta-bigbounce{
-    0%  {transform:translate(0,0) scale(1,1);}
-    18% {transform:translate(0,-70px) scale(0.94,1.12);}
-    38% {transform:translate(0,0) scale(1.12,0.86);}
-    55% {transform:translate(0,-32px) scale(0.97,1.06);}
-    72% {transform:translate(0,0) scale(1.05,0.95);}
-    100%{transform:translate(0,0) scale(1,1);}
-  }
-  @keyframes greta-cartwheel{
-    0%  {transform:translate(0,0) rotate(0) scale(1);}
-    30% {transform:translate(-30px,-50px) rotate(-200deg) scale(0.9);}
-    60% {transform:translate(-60px,-40px) rotate(-380deg) scale(1);}
-    100%{transform:translate(-20px,-10px) rotate(-360deg) scale(0.95);}
-  }
-  @keyframes greta-sink{
-    0%  {transform:translate(0,0) scale(1,1);}
-    20% {transform:translate(0,6px) scale(1.05,0.8);}
-    40% {transform:translate(0,-2px) scale(0.95,1.08);}
-    60% {transform:translate(0,5px) scale(1.04,0.86);}
-    100%{transform:translate(0,0) scale(1,1);}
-  }
-  @keyframes greta-headtilt{0%{transform:rotate(0);}25%{transform:rotate(-22deg) translateX(-4px);}65%{transform:rotate(-22deg) translateX(-4px);}100%{transform:rotate(0);}}
-  @keyframes greta-spin-shrink{0%{transform:rotate(0) scale(1);}50%{transform:rotate(-540deg) scale(0.55);}100%{transform:rotate(-720deg) scale(1);}}
-  @keyframes greta-sparkle-arc{
-    0%  {transform:translate(0,0) scale(0) rotate(0);opacity:0;}
-    30% {transform:translate(var(--dx,0px),var(--dy,0px)) scale(1.2) rotate(45deg);opacity:1;}
-    100%{transform:translate(calc(var(--dx,0px)*1.7),calc(var(--dy,0px)*1.7 - 8px)) scale(0.6) rotate(110deg);opacity:0;}
-  }
-  @keyframes greta-confetti-rain{
-    0%  {transform:translate(var(--cdx,0px),-30px) rotate(0);opacity:0;}
-    10% {opacity:1;}
-    100%{transform:translate(calc(var(--cdx,0px) + var(--cdx2,0px)),320px) rotate(720deg);opacity:0;}
-  }
-  @keyframes greta-petal-trail{
-    0%  {transform:translate(0,0) scale(0) rotate(0);opacity:0;}
-    25% {transform:translate(var(--dx,0),var(--dy,0)) scale(1) rotate(var(--rot,0deg));opacity:1;}
-    100%{transform:translate(calc(var(--dx,0)*1.4),calc(var(--dy,0)*1.4 + 24px)) scale(0.6) rotate(calc(var(--rot,0deg) + 120deg));opacity:0;}
-  }
-  @keyframes greta-droplet-fall{0%{transform:translate(0,0) scale(0);opacity:0;}20%{transform:translate(0,0) scale(1);opacity:1;}100%{transform:translate(0,28px) scale(0.8);opacity:0;}}
-  @keyframes greta-qmark-pop{0%{transform:scale(0) rotate(-20deg);opacity:0;}35%{transform:scale(1.3) rotate(8deg);opacity:1;}100%{transform:scale(1.15) translateY(-12px) rotate(0);opacity:0;}}
-  @keyframes greta-puff{0%{transform:scale(0);opacity:0;}40%{transform:scale(1.2);opacity:0.85;}100%{transform:scale(1.6);opacity:0;}}
-  @keyframes greta-answer-rise{0%{transform:translateY(14px);opacity:0;}100%{transform:translateY(0);opacity:1;}}
-  @keyframes greta-fade-in{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+/* ── Gummy Tech tokens ── */
+:root{
+  --paper:#F4F1E8; --paper-alt:#E9E4D2;
+  --ink:#241F3D;   --ink-soft:#6B638A;
+  --pink:#B583E8;  --pink-soft:#E5D4F7;
+  --butter:#F2EE5B;--butter-soft:#FBF8B0;
+  --sky:#8AD7FF;   --sky-soft:#D6F0FF;
+  --mint:#A8F08C;  --mint-soft:#DFF7CE;
+  --rose:#FFB0C8;
+  --correct:#A8F08C; --wrong:#F46B7C;
+  --radius:26px; --radius-lg:34px;
+  --border:2.5px solid #241F3D;
+  --border-thin:2px solid #241F3D;
+  --shadow:0 6px 0 #241F3D;
+  --shadow-lg:0 10px 0 #241F3D;
+  --h-font:'Bricolage Grotesque',system-ui,sans-serif;
+  --b-font:'Space Grotesk',system-ui,sans-serif;
+  --m-font:'JetBrains Mono',ui-monospace,monospace;
+}
 
-  ::-webkit-scrollbar{width:0;height:0;}
-  input,textarea,button{font:inherit;}
-  *{box-sizing:border-box;}
+/* ── Phone frame ── */
+#frame{
+  width:360px;height:720px;background:var(--paper-alt);
+  border:4px solid var(--ink);border-radius:44px;
+  overflow:hidden;box-shadow:var(--shadow-lg);
+  position:relative;flex-shrink:0;
+}
+#notch{
+  position:absolute;top:14px;left:50%;transform:translateX(-50%);
+  width:90px;height:22px;background:var(--ink);border-radius:999px;z-index:20;
+}
+#shell{width:100%;height:100%;border-radius:36px;overflow:hidden;display:flex;flex-direction:column;}
+#statusbar{
+  height:46px;flex-shrink:0;display:flex;align-items:flex-end;
+  justify-content:space-between;padding:0 24px 6px;
+  font-family:var(--m-font);font-weight:700;font-size:13px;
+  color:var(--ink);background:var(--paper);
+}
+#statusbar .sb-right{display:flex;align-items:center;gap:6px;}
+#screen{flex:1;min-height:0;overflow-y:auto;background:var(--paper);position:relative;}
+
+/* ── Cards ── */
+.card{background:var(--paper);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;}
+.card-lg{background:var(--paper);border:var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:20px;}
+
+/* ── Buttons ── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border:var(--border);border-radius:var(--radius);
+  font-family:var(--b-font);font-size:16px;font-weight:700;
+  letter-spacing:-0.01em;cursor:pointer;outline:none;
+  transition:transform 80ms,box-shadow 80ms;
+  padding:12px 20px;
+}
+.btn:disabled{opacity:0.5;cursor:not-allowed;}
+.btn-primary{background:var(--pink);color:#fff;box-shadow:0 4px 0 var(--ink);}
+.btn-secondary{background:var(--butter);color:var(--ink);box-shadow:0 4px 0 var(--ink);}
+.btn-tertiary{background:var(--paper);color:var(--ink);box-shadow:0 4px 0 var(--ink);}
+.btn-lg{padding:16px 24px;font-size:18px;box-shadow:0 6px 0 var(--ink) !important;}
+.btn-full{width:100%;}
+.btn:not(:disabled):active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink) !important;}
+.btn-sm{padding:8px 14px;font-size:14px;}
+
+/* ── Icon-btn (round) ── */
+.icon-btn{
+  background:var(--paper-alt);border:var(--border-thin);border-radius:999px;
+  width:38px;height:38px;cursor:pointer;display:flex;align-items:center;justify-content:center;outline:none;
+}
+.icon-btn-sm{width:34px;height:34px;}
+.icon-btn-xs{width:36px;height:36px;}
+
+/* ── Inputs ── */
+.inp{
+  width:100%;padding:14px 18px;border:var(--border);border-radius:var(--radius);
+  font-family:var(--b-font);font-size:16px;background:var(--paper);color:var(--ink);
+  outline:none;box-shadow:inset 0 2px 0 var(--paper-alt);
+}
+.inp:focus{box-shadow:inset 0 2px 0 var(--paper-alt),0 0 0 3px var(--pink-soft);}
+.inp-correct{background:var(--mint-soft)!important;}
+.inp-wrong{background:var(--pink-soft)!important;}
+.inp-mono{font-family:var(--m-font);font-size:14px;resize:none;line-height:1.6;}
+.inp-header{font-family:var(--h-font);font-size:18px;}
+
+/* ── Typography helpers ── */
+.h-font{font-family:var(--h-font);}
+.b-font{font-family:var(--b-font);}
+.m-font{font-family:var(--m-font);}
+.ink-soft{color:var(--ink-soft);}
+.label-caps{font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-soft);}
+
+/* ── Screen layout ── */
+.screen-pad{padding:20px 22px 24px;display:flex;flex-direction:column;gap:18px;min-height:100%;}
+.screen-pad-sm{padding:16px 20px 20px;display:flex;flex-direction:column;gap:14px;min-height:100%;}
+
+/* ── Dot progress bar ── */
+.dotbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.dot{height:10px;border-radius:6px;border:2px solid var(--ink);background:var(--paper-alt);transition:all 200ms;}
+.dot-current{width:28px;background:var(--butter);}
+.dot-done{width:10px;background:var(--mint);}
+.dot-future{width:10px;}
+
+/* ── Pair chip ── */
+.pair-chip{
+  display:flex;align-items:center;gap:6px;
+  background:var(--paper);border:var(--border);border-radius:999px;
+  padding:5px 10px 5px 6px;cursor:pointer;outline:none;
+  box-shadow:0 2px 0 var(--ink);
+  font-family:var(--m-font);font-size:12px;font-weight:700;color:var(--ink);
+}
+.lang-circle{
+  width:18px;height:18px;border-radius:999px;border:var(--border-thin);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:800;color:var(--ink);
+}
+
+/* ── Animations ── */
+@keyframes greta-spin{to{transform:rotate(360deg);}}
+@keyframes bloom-spin{to{transform:rotate(360deg);}}
+@keyframes greta-fall{0%{transform:translateY(-40px) rotate(0deg);opacity:1;}90%{opacity:1;}100%{transform:translateY(820px) rotate(360deg);opacity:0;}}
+@keyframes greta-float{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-12px) rotate(8deg);}}
+@keyframes greta-kiss{
+  0%  {transform:translate(0,0) scale(1) rotate(0);}
+  20% {transform:translate(-30px,-30px) scale(1.1) rotate(-8deg);}
+  40% {transform:translate(-58px,-78px) scale(1.25) rotate(-14deg);}
+  55% {transform:translate(-62px,-88px) scale(1.3) rotate(-14deg);}
+  70% {transform:translate(-58px,-78px) scale(1.2) rotate(-10deg);}
+  100%{transform:translate(-20px,-20px) scale(1) rotate(0);opacity:.95;}
+}
+@keyframes greta-oops{
+  0%,100%{transform:rotate(0);}
+  15%{transform:translate(-8px,2px) rotate(-7deg);}
+  30%{transform:translate(8px,2px) rotate(7deg);}
+  45%{transform:translate(-7px,0) rotate(-6deg);}
+  60%{transform:translate(7px,0) rotate(6deg);}
+  75%{transform:translate(-4px,0) rotate(-3deg);}
+}
+@keyframes greta-heart-burst{
+  0%  {transform:scale(0) rotate(-12deg);opacity:0;}
+  35% {transform:scale(1.4) rotate(-6deg);opacity:1;}
+  65% {transform:scale(1.1) rotate(2deg);opacity:1;}
+  100%{transform:scale(.9) translateY(-18px) rotate(8deg);opacity:0;}
+}
+@keyframes greta-card-correct{0%{transform:scale(1);}35%{transform:scale(1.018);}100%{transform:scale(1);}}
+@keyframes greta-card-wrong{0%,100%{transform:translateX(0);}20%{transform:translateX(-7px);}40%{transform:translateX(7px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+@keyframes greta-tada{
+  0%  {transform:scale(1) rotate(0);}10%{transform:scale(.92) rotate(-6deg);}
+  20%,40%,60%,80%{transform:scale(1.18) rotate(8deg);}
+  30%,50%,70%    {transform:scale(1.18) rotate(-8deg);}
+  100%{transform:scale(1) rotate(0);}
+}
+@keyframes greta-bigbounce{
+  0%  {transform:translate(0,0) scale(1,1);}
+  18% {transform:translate(0,-70px) scale(.94,1.12);}
+  38% {transform:translate(0,0) scale(1.12,.86);}
+  55% {transform:translate(0,-32px) scale(.97,1.06);}
+  72% {transform:translate(0,0) scale(1.05,.95);}
+  100%{transform:translate(0,0) scale(1,1);}
+}
+@keyframes greta-cartwheel{
+  0%  {transform:translate(0,0) rotate(0) scale(1);}
+  30% {transform:translate(-30px,-50px) rotate(-200deg) scale(.9);}
+  60% {transform:translate(-60px,-40px) rotate(-380deg) scale(1);}
+  100%{transform:translate(-20px,-10px) rotate(-360deg) scale(.95);}
+}
+@keyframes greta-sink{
+  0%  {transform:translate(0,0) scale(1,1);}
+  20% {transform:translate(0,6px) scale(1.05,.8);}
+  40% {transform:translate(0,-2px) scale(.95,1.08);}
+  60% {transform:translate(0,5px) scale(1.04,.86);}
+  100%{transform:translate(0,0) scale(1,1);}
+}
+@keyframes greta-headtilt{0%{transform:rotate(0);}25%{transform:rotate(-22deg) translateX(-4px);}65%{transform:rotate(-22deg) translateX(-4px);}100%{transform:rotate(0);}}
+@keyframes greta-spin-shrink{0%{transform:rotate(0) scale(1);}50%{transform:rotate(-540deg) scale(.55);}100%{transform:rotate(-720deg) scale(1);}}
+@keyframes greta-sparkle-arc{
+  0%  {transform:translate(0,0) scale(0) rotate(0);opacity:0;}
+  30% {transform:translate(var(--dx,0px),var(--dy,0px)) scale(1.2) rotate(45deg);opacity:1;}
+  100%{transform:translate(calc(var(--dx,0px)*1.7),calc(var(--dy,0px)*1.7 - 8px)) scale(.6) rotate(110deg);opacity:0;}
+}
+@keyframes greta-confetti-rain{
+  0%  {transform:translate(var(--cdx,0px),-30px) rotate(0);opacity:0;}
+  10% {opacity:1;}
+  100%{transform:translate(calc(var(--cdx,0px) + var(--cdx2,0px)),320px) rotate(720deg);opacity:0;}
+}
+@keyframes greta-petal-trail{
+  0%  {transform:translate(0,0) scale(0) rotate(0);opacity:0;}
+  25% {transform:translate(var(--dx,0),var(--dy,0)) scale(1) rotate(var(--rot,0deg));opacity:1;}
+  100%{transform:translate(calc(var(--dx,0)*1.4),calc(var(--dy,0)*1.4 + 24px)) scale(.6) rotate(calc(var(--rot,0deg) + 120deg));opacity:0;}
+}
+@keyframes greta-droplet-fall{0%{transform:scale(0);opacity:0;}20%{transform:scale(1);opacity:1;}100%{transform:translateY(28px) scale(.8);opacity:0;}}
+@keyframes greta-qmark-pop{0%{transform:scale(0) rotate(-20deg);opacity:0;}35%{transform:scale(1.3) rotate(8deg);opacity:1;}100%{transform:scale(1.15) translateY(-12px) rotate(0);opacity:0;}}
+@keyframes greta-puff{0%{transform:scale(0);opacity:0;}40%{transform:scale(1.2);opacity:.85;}100%{transform:scale(1.6);opacity:0;}}
+@keyframes greta-answer-rise{from{transform:translateY(14px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+@keyframes pop-in{from{transform:scale(.92);opacity:0;}to{transform:scale(1);opacity:1;}}
+
+::-webkit-scrollbar{width:0;height:0;}
+input,textarea,button{font:inherit;}
+svg{display:block;}
 </style>
 </head>
 <body>
-<div id="root"></div>
 
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<div id="frame">
+  <div id="notch"></div>
+  <div id="shell">
+    <div id="statusbar">
+      <span>9:41</span>
+      <div class="sb-right">
+        <svg width="17" height="10" viewBox="0 0 17 10"><rect x="0" y="6" width="3" height="4" rx=".5" fill="#241F3D"/><rect x="4.5" y="4" width="3" height="6" rx=".5" fill="#241F3D"/><rect x="9" y="2" width="3" height="8" rx=".5" fill="#241F3D"/><rect x="13.5" y="0" width="3" height="10" rx=".5" fill="#241F3D" opacity=".35"/></svg>
+        <svg width="24" height="11" viewBox="0 0 24 11"><rect x=".75" y=".75" width="19.5" height="9.5" rx="2.5" fill="none" stroke="#241F3D" stroke-width="1.2" opacity=".9"/><rect x="2" y="2" width="13" height="7" rx="1" fill="#241F3D"/><rect x="21.5" y="3.5" width="1.8" height="4" rx=".6" fill="#241F3D" opacity=".6"/></svg>
+      </div>
+    </div>
+    <div id="screen"></div>
+  </div>
+</div>
 
-<script type="text/babel" data-presets="react">
-// ─── CONFIG ───────────────────────────────────────────────────────
-const API             = 'https://ivcnjkzuggwpxvnalbol.supabase.co/functions/v1/greta';
-const SUPABASE_URL    = 'https://ivcnjkzuggwpxvnalbol.supabase.co';
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────
+const API              = 'https://ivcnjkzuggwpxvnalbol.supabase.co/functions/v1/greta';
+const SUPABASE_URL     = 'https://ivcnjkzuggwpxvnalbol.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_nvKqUBjP0B-TmROc_aJtdA_U-P0pr_u';
 
-// ─── LANGUAGES ────────────────────────────────────────────────────
+// ── LANGUAGES ─────────────────────────────────────────────────────
 const LANGUAGES = {
-  sv: { name: "Swedish",  native: "Svenska",  code: "SV", color: "#FFD66B" },
-  en: { name: "English",  native: "English",  code: "EN", color: "#E8447B" },
-  es: { name: "Spanish",  native: "Español",  code: "ES", color: "#FF8FAE" },
-  fr: { name: "French",   native: "Français", code: "FR", color: "#7FCFB0" },
-  de: { name: "German",   native: "Deutsch",  code: "DE", color: "#6FB3E3" },
+  sv:{name:"Swedish", native:"Svenska", code:"SV", color:"#FFD66B"},
+  en:{name:"English", native:"English", code:"EN", color:"#E8447B"},
+  es:{name:"Spanish", native:"Español", code:"ES", color:"#FF8FAE"},
+  fr:{name:"French",  native:"Français",code:"FR", color:"#7FCFB0"},
+  de:{name:"German",  native:"Deutsch", code:"DE", color:"#6FB3E3"},
 };
 
-function langHelpers(list) {
-  const f  = (list && list.from) || "sv";
-  const tt = (list && list.to)   || "en";
-  return {
-    from: f, to: tt,
-    src: (w) => (w && (w[f] ?? w.sv)) || "",
-    tgt: (w) => (w && (w[tt] ?? w.en)) || "",
-    srcLang:  (LANGUAGES[f]  && LANGUAGES[f].name)  || f.toUpperCase(),
-    tgtLang:  (LANGUAGES[tt] && LANGUAGES[tt].name) || tt.toUpperCase(),
-    srcCode:  (LANGUAGES[f]  && LANGUAGES[f].code)  || f.toUpperCase(),
-    tgtCode:  (LANGUAGES[tt] && LANGUAGES[tt].code) || tt.toUpperCase(),
-    srcColor: (LANGUAGES[f]  && LANGUAGES[f].color) || "#888",
-    tgtColor: (LANGUAGES[tt] && LANGUAGES[tt].color) || "#888",
+function langHelpers(list){
+  const f=(list&&list.from)||"sv", t=(list&&list.to)||"en";
+  return{
+    from:f,to:t,
+    src:w=>(w&&(w[f]??w.sv))||"",
+    tgt:w=>(w&&(w[t]??w.en))||"",
+    srcLang:(LANGUAGES[f]&&LANGUAGES[f].name)||f.toUpperCase(),
+    tgtLang:(LANGUAGES[t]&&LANGUAGES[t].name)||t.toUpperCase(),
+    srcCode:(LANGUAGES[f]&&LANGUAGES[f].code)||f.toUpperCase(),
+    tgtCode:(LANGUAGES[t]&&LANGUAGES[t].code)||t.toUpperCase(),
+    srcColor:(LANGUAGES[f]&&LANGUAGES[f].color)||"#888",
+    tgtColor:(LANGUAGES[t]&&LANGUAGES[t].color)||"#888",
   };
 }
 
-// ─── SAMPLE LISTS (shown to guests before login) ─────────────────
-const SAMPLE_LISTS = [
-  { id:"djur",    from:"sv", to:"en", name:"Djur (Animals)",   color:"rose",
-    words:[{sv:"katt",en:"cat"},{sv:"hund",en:"dog"},{sv:"häst",en:"horse"},{sv:"fågel",en:"bird"},{sv:"kanin",en:"rabbit"},{sv:"räv",en:"fox"},{sv:"björn",en:"bear"},{sv:"ekorre",en:"squirrel"},{sv:"groda",en:"frog"},{sv:"fjäril",en:"butterfly"}] },
-  { id:"mat",     from:"sv", to:"en", name:"Mat (Food)",        color:"butter",
-    words:[{sv:"äpple",en:"apple"},{sv:"bröd",en:"bread"},{sv:"ost",en:"cheese"},{sv:"mjölk",en:"milk"},{sv:"smör",en:"butter"},{sv:"köttbullar",en:"meatballs"},{sv:"potatis",en:"potato"},{sv:"glass",en:"ice cream"},{sv:"kaka",en:"cookie"},{sv:"soppa",en:"soup"}] },
-  { id:"skola",   from:"sv", to:"en", name:"Skolan (School)",   color:"sky",
-    words:[{sv:"bok",en:"book"},{sv:"penna",en:"pen"},{sv:"lärare",en:"teacher"},{sv:"klassrum",en:"classroom"},{sv:"matematik",en:"math"},{sv:"rast",en:"recess"},{sv:"ryggsäck",en:"backpack"},{sv:"skrivbord",en:"desk"}] },
-  { id:"kanslor", from:"sv", to:"en", name:"Känslor (Feelings)", color:"mint",
-    words:[{sv:"glad",en:"happy"},{sv:"ledsen",en:"sad"},{sv:"arg",en:"angry"},{sv:"rädd",en:"scared"},{sv:"trött",en:"tired"},{sv:"förvånad",en:"surprised"}] },
+// ── SAMPLE LISTS ──────────────────────────────────────────────────
+const SAMPLE_LISTS=[
+  {id:"djur",from:"sv",to:"en",name:"Djur (Animals)",color:"rose",
+    words:[{sv:"katt",en:"cat"},{sv:"hund",en:"dog"},{sv:"häst",en:"horse"},{sv:"fågel",en:"bird"},{sv:"kanin",en:"rabbit"},{sv:"räv",en:"fox"},{sv:"björn",en:"bear"},{sv:"ekorre",en:"squirrel"},{sv:"groda",en:"frog"},{sv:"fjäril",en:"butterfly"}]},
+  {id:"mat",from:"sv",to:"en",name:"Mat (Food)",color:"butter",
+    words:[{sv:"äpple",en:"apple"},{sv:"bröd",en:"bread"},{sv:"ost",en:"cheese"},{sv:"mjölk",en:"milk"},{sv:"smör",en:"butter"},{sv:"köttbullar",en:"meatballs"},{sv:"potatis",en:"potato"},{sv:"glass",en:"ice cream"},{sv:"kaka",en:"cookie"},{sv:"soppa",en:"soup"}]},
+  {id:"skola",from:"sv",to:"en",name:"Skolan (School)",color:"sky",
+    words:[{sv:"bok",en:"book"},{sv:"penna",en:"pen"},{sv:"lärare",en:"teacher"},{sv:"klassrum",en:"classroom"},{sv:"matematik",en:"math"},{sv:"rast",en:"recess"},{sv:"ryggsäck",en:"backpack"},{sv:"skrivbord",en:"desk"}]},
+  {id:"kanslor",from:"sv",to:"en",name:"Känslor (Feelings)",color:"mint",
+    words:[{sv:"glad",en:"happy"},{sv:"ledsen",en:"sad"},{sv:"arg",en:"angry"},{sv:"rädd",en:"scared"},{sv:"trött",en:"tired"},{sv:"förvånad",en:"surprised"}]},
 ];
 
-// ─── THEME (Gummy Tech) ──────────────────────────────────────────
-const T = {
-  paper:      "#F4F1E8",
-  paperAlt:   "#E9E4D2",
-  ink:        "#241F3D",
-  inkSoft:    "#6B638A",
-  pink:       "#B583E8",
-  pinkSoft:   "#E5D4F7",
-  butter:     "#F2EE5B",
-  butterSoft: "#FBF8B0",
-  sky:        "#8AD7FF",
-  skySoft:    "#D6F0FF",
-  mint:       "#A8F08C",
-  mintSoft:   "#DFF7CE",
-  rose:       "#FFB0C8",
-  correct:    "#A8F08C",
-  wrong:      "#F46B7C",
-  border:     "2.5px solid #241F3D",
-  borderThin: "2px solid #241F3D",
-  radius:     "26px",
-  radiusLg:   "34px",
-  shadow:     "0 6px 0 #241F3D",
-  shadowLg:   "0 10px 0 #241F3D",
-  hFont:      "'Bricolage Grotesque', system-ui, sans-serif",
-  bFont:      "'Space Grotesk', system-ui, sans-serif",
-  mFont:      "'JetBrains Mono', ui-monospace, monospace",
+const COLOR_MAP={rose:"#FFB0C8",butter:"#F2EE5B",sky:"#8AD7FF",mint:"#A8F08C",pink:"#B583E8"};
+
+// ── SVG ICONS (strings) ───────────────────────────────────────────
+const SVG={
+  bloom:(size,color,center,spinning)=>{
+    const c=center||color;
+    const petals=[0,60,120,180,240,300].map(d=>`<ellipse cx="16" cy="9" rx="4" ry="6" fill="${color}" transform="rotate(${d} 16 16)"/>`).join("");
+    const spin=spinning?`style="animation:bloom-spin 4s linear infinite"`:"";
+    return `<svg width="${size}" height="${size}" viewBox="0 0 32 32" ${spin}>${petals}<circle cx="16" cy="16" r="3" fill="${c}"/></svg>`;
+  },
+  spark:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M12 1 L13.5 9.5 L22 11 L13.5 12.5 L12 21 L10.5 12.5 L2 11 L10.5 9.5 Z" fill="${color}"/></svg>`,
+  heart:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M12 21 C 5 16 2 12 2 8 a5 5 0 0 1 10 -1 a5 5 0 0 1 10 1 c 0 4 -3 8 -10 13 z" fill="${color}"/></svg>`,
+  check:(size,color,w=4)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M4 13 L10 19 L20 6" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  cross:(size,color,w=4)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M6 6 L18 18 M18 6 L6 18" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round"/></svg>`,
+  plus:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M12 4 V20 M4 12 H20" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round"/></svg>`,
+  arrowRight:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M5 12 H19 M13 6 L19 12 L13 18" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  arrowBack:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M19 12 H5 M11 6 L5 12 L11 18" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  gear:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M12 2 L14 5 L17 4 L17 7 L20 8 L18 11 L20 14 L17 15 L17 18 L14 17 L12 20 L10 17 L7 18 L7 15 L4 14 L6 11 L4 8 L7 7 L7 4 L10 5 Z" fill="${color}"/><circle cx="12" cy="11" r="3" fill="white"/></svg>`,
+  trash:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M5 6 H19 L18 21 H6 Z" fill="${color}"/><rect x="9" y="3" width="6" height="3" rx="1" fill="${color}"/></svg>`,
+  books:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><rect x="3" y="4" width="14" height="4" rx="1" fill="${color}"/><rect x="5" y="10" width="14" height="4" rx="1" fill="${color}" opacity=".7"/><rect x="3" y="16" width="14" height="4" rx="1" fill="${color}"/></svg>`,
+  confetti:(size,color,rot)=>`<svg width="${size}" height="${size*1.6}" viewBox="0 0 10 16" style="transform:rotate(${rot}deg)"><rect x="0" y="0" width="10" height="16" rx="2" fill="${color}"/></svg>`,
 };
 
-const MASCOT_PALETTE = {
-  body: "#FFFFFF", outline: "#241F3D", cheek: "#FFB0C8",
-  bow: "#B583E8", bowCenter: "#F2EE5B", eye: "#241F3D",
-};
-
-const COLOR_MAP = { rose: T.rose, butter: T.butter, sky: T.sky, mint: T.mint, pink: T.pink };
-
-// ─── ICONS (inline SVG) ───────────────────────────────────────────
-const { useState, useEffect, useRef } = React;
-
-function Bloom({ size=24, color="currentColor", center, spinning=false }) {
-  const c = center || color;
-  return (
-    <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true"
-      style={spinning ? { animation:"greta-spin 4s linear infinite", display:"block" } : { display:"block" }}>
-      {[0,60,120,180,240,300].map(deg=>(
-        <ellipse key={deg} cx="16" cy="9" rx="4" ry="6" fill={color} transform={`rotate(${deg} 16 16)`}/>
-      ))}
-      <circle cx="16" cy="16" r="3" fill={c}/>
-    </svg>
-  );
+// ── MASCOT ────────────────────────────────────────────────────────
+function mascotSVG(size,mood){
+  const p={body:"#fff",outline:"#241F3D",cheek:"#FFB0C8",bow:"#B583E8",bowCenter:"#F2EE5B",eye:"#241F3D"};
+  const eyes={
+    happy:`<circle cx="34" cy="48" r="3.2" fill="${p.eye}"/><circle cx="58" cy="48" r="3.2" fill="${p.eye}"/>`,
+    proud:`<path d="M30 48 Q34 44 38 48" fill="none" stroke="${p.eye}" stroke-width="3" stroke-linecap="round"/><path d="M54 48 Q58 44 62 48" fill="none" stroke="${p.eye}" stroke-width="3" stroke-linecap="round"/>`,
+    thinking:`<circle cx="34" cy="48" r="3.2" fill="${p.eye}"/><path d="M54 48 Q58 44 62 48" fill="none" stroke="${p.eye}" stroke-width="3" stroke-linecap="round"/>`,
+    oops:`<path d="M30 50 L38 46" stroke="${p.eye}" stroke-width="3" stroke-linecap="round"/><path d="M54 46 L62 50" stroke="${p.eye}" stroke-width="3" stroke-linecap="round"/>`,
+    cheer:`<path d="M30 50 Q34 44 38 50" fill="none" stroke="${p.eye}" stroke-width="3" stroke-linecap="round"/><path d="M54 50 Q58 44 62 50" fill="none" stroke="${p.eye}" stroke-width="3" stroke-linecap="round"/>`,
+  }[mood]||"";
+  const mouth={
+    happy:`<path d="M40 60 Q46 65 52 60" fill="none" stroke="${p.eye}" stroke-width="2.6" stroke-linecap="round"/>`,
+    proud:`<path d="M40 60 Q46 67 52 60" fill="none" stroke="${p.eye}" stroke-width="2.6" stroke-linecap="round"/>`,
+    thinking:`<path d="M42 62 L50 62" stroke="${p.eye}" stroke-width="2.6" stroke-linecap="round"/>`,
+    oops:`<ellipse cx="46" cy="62" rx="3" ry="3.5" fill="${p.eye}"/>`,
+    cheer:`<path d="M38 58 Q46 70 54 58 Z" fill="${p.eye}"/>`,
+  }[mood]||"";
+  const bowPetals=[0,60,120,180,240,300].map(d=>`<ellipse cx="0" cy="-7" rx="4" ry="6" fill="${p.bow}" transform="rotate(${d})"/>`).join("");
+  return `<svg width="${size}" height="${size}" viewBox="0 0 96 96">
+    <path d="M20 60 Q12 60 12 50 Q12 42 20 40 Q20 28 32 28 Q36 18 48 20 Q60 18 64 28 Q76 28 76 40 Q84 42 84 50 Q84 60 76 60 Q76 72 64 72 L32 72 Q20 72 20 60 Z" fill="${p.body}" stroke="${p.outline}" stroke-width="2.5"/>
+    <ellipse cx="28" cy="56" rx="4" ry="3" fill="${p.cheek}" opacity=".9"/>
+    <ellipse cx="64" cy="56" rx="4" ry="3" fill="${p.cheek}" opacity=".9"/>
+    ${eyes}${mouth}
+    <g transform="translate(58 18) rotate(-15)">${bowPetals}<circle cx="0" cy="0" r="3" fill="${p.bowCenter}"/></g>
+  </svg>`;
 }
 
-function Spark({ size=16, color="currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
-      <path d="M12 1 L13.5 9.5 L22 11 L13.5 12.5 L12 21 L10.5 12.5 L2 11 L10.5 9.5 Z" fill={color}/>
-    </svg>
-  );
+// ── AUTH ──────────────────────────────────────────────────────────
+let currentUser=null, sessionToken=null;
+
+function parseJWT(t){try{return JSON.parse(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));}catch{return null;}}
+function tokenExpired(t){const p=parseJWT(t);return!p?.exp||Date.now()/1000>p.exp-60;}
+function saveSession(t,r){localStorage.setItem("greta_session",JSON.stringify({token:t,refresh:r}));}
+function clearSession(){localStorage.removeItem("greta_session");currentUser=null;sessionToken=null;}
+
+function applySession(token,refresh){
+  const p=parseJWT(token);
+  currentUser=p?{id:p.sub,email:p.email}:null;
+  sessionToken=token;
+  saveSession(token,refresh);
 }
 
-function Heart({ size=20, color="currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
-      <path d="M12 21 C 5 16 2 12 2 8 a5 5 0 0 1 10 -1 a5 5 0 0 1 10 1 c 0 4 -3 8 -10 13 z" fill={color}/>
-    </svg>
-  );
-}
-
-function Check({ size=20, color="currentColor", weight=4 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
-      <path d="M4 13 L10 19 L20 6" fill="none" stroke={color} strokeWidth={weight} strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
-
-function Cross({ size=20, color="currentColor", weight=4 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
-      <path d="M6 6 L18 18 M18 6 L6 18" fill="none" stroke={color} strokeWidth={weight} strokeLinecap="round"/>
-    </svg>
-  );
-}
-
-function Plus({ size=18, color="currentColor", weight=3 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
-      <path d="M12 4 V20 M4 12 H20" fill="none" stroke={color} strokeWidth={weight} strokeLinecap="round"/>
-    </svg>
-  );
-}
-
-function ArrowRight({ size=20, color="currentColor", weight=3 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
-      <path d="M5 12 H19 M13 6 L19 12 L13 18" fill="none" stroke={color} strokeWidth={weight} strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
-
-function ArrowBack({ size=20, color="currentColor", weight=3 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
-      <path d="M19 12 H5 M11 6 L5 12 L11 18" fill="none" stroke={color} strokeWidth={weight} strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
-
-function Mail({ size=22, color="currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
-      <rect x="3" y="6" width="18" height="13" rx="2" fill={color}/>
-      <path d="M3 8 L12 14 L21 8" fill="none" stroke="white" strokeWidth="2" strokeLinejoin="round"/>
-    </svg>
-  );
-}
-
-function Gear({ size=20, color="currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
-      <path d="M12 2 L14 5 L17 4 L17 7 L20 8 L18 11 L20 14 L17 15 L17 18 L14 17 L12 20 L10 17 L7 18 L7 15 L4 14 L6 11 L4 8 L7 7 L7 4 L10 5 Z" fill={color}/>
-      <circle cx="12" cy="11" r="3" fill="white"/>
-    </svg>
-  );
-}
-
-function Trash({ size=18, color="currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
-      <path d="M5 6 H19 L18 21 H6 Z" fill={color}/>
-      <rect x="9" y="3" width="6" height="3" rx="1" fill={color}/>
-    </svg>
-  );
-}
-
-function BookStack({ size=22, color="currentColor" }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{display:"block"}}>
-      <rect x="3" y="4" width="14" height="4" rx="1" fill={color}/>
-      <rect x="5" y="10" width="14" height="4" rx="1" fill={color} opacity="0.7"/>
-      <rect x="3" y="16" width="14" height="4" rx="1" fill={color}/>
-    </svg>
-  );
-}
-
-function ConfettiPiece({ size=12, color, rot=0 }) {
-  return (
-    <svg width={size} height={size*1.6} viewBox="0 0 10 16" aria-hidden="true" style={{transform:`rotate(${rot}deg)`,display:"block"}}>
-      <rect x="0" y="0" width="10" height="16" rx="2" fill={color}/>
-    </svg>
-  );
-}
-
-// ─── MASCOT ───────────────────────────────────────────────────────
-function Mascot({ size=120, mood="happy" }) {
-  const p = MASCOT_PALETTE;
-  const eyes = {
-    happy:    <><circle cx="34" cy="48" r="3.2" fill={p.eye}/><circle cx="58" cy="48" r="3.2" fill={p.eye}/></>,
-    proud:    <><path d="M30 48 Q34 44 38 48" fill="none" stroke={p.eye} strokeWidth="3" strokeLinecap="round"/><path d="M54 48 Q58 44 62 48" fill="none" stroke={p.eye} strokeWidth="3" strokeLinecap="round"/></>,
-    thinking: <><circle cx="34" cy="48" r="3.2" fill={p.eye}/><path d="M54 48 Q58 44 62 48" fill="none" stroke={p.eye} strokeWidth="3" strokeLinecap="round"/></>,
-    oops:     <><path d="M30 50 L38 46" stroke={p.eye} strokeWidth="3" strokeLinecap="round"/><path d="M54 46 L62 50" stroke={p.eye} strokeWidth="3" strokeLinecap="round"/></>,
-    cheer:    <><path d="M30 50 Q34 44 38 50" fill="none" stroke={p.eye} strokeWidth="3" strokeLinecap="round"/><path d="M54 50 Q58 44 62 50" fill="none" stroke={p.eye} strokeWidth="3" strokeLinecap="round"/></>,
-  }[mood];
-  const mouth = {
-    happy:    <path d="M40 60 Q46 65 52 60" fill="none" stroke={p.eye} strokeWidth="2.6" strokeLinecap="round"/>,
-    proud:    <path d="M40 60 Q46 67 52 60" fill="none" stroke={p.eye} strokeWidth="2.6" strokeLinecap="round"/>,
-    thinking: <path d="M42 62 L50 62" stroke={p.eye} strokeWidth="2.6" strokeLinecap="round"/>,
-    oops:     <ellipse cx="46" cy="62" rx="3" ry="3.5" fill={p.eye}/>,
-    cheer:    <path d="M38 58 Q46 70 54 58 Z" fill={p.eye}/>,
-  }[mood];
-
-  return (
-    <svg width={size} height={size} viewBox="0 0 96 96" aria-hidden="true" style={{display:"block"}}>
-      <path d="M20 60 Q12 60 12 50 Q12 42 20 40 Q20 28 32 28 Q36 18 48 20 Q60 18 64 28 Q76 28 76 40 Q84 42 84 50 Q84 60 76 60 Q76 72 64 72 L32 72 Q20 72 20 60 Z"
-        fill={p.body} stroke={p.outline} strokeWidth="2.5"/>
-      <ellipse cx="28" cy="56" rx="4" ry="3" fill={p.cheek} opacity="0.9"/>
-      <ellipse cx="64" cy="56" rx="4" ry="3" fill={p.cheek} opacity="0.9"/>
-      {eyes}
-      {mouth}
-      <g transform="translate(58 18) rotate(-15)">
-        {[0,60,120,180,240,300].map(deg=>(
-          <ellipse key={deg} cx="0" cy="-7" rx="4" ry="6" fill={p.bow} transform={`rotate(${deg})`}/>
-        ))}
-        <circle cx="0" cy="0" r="3" fill={p.bowCenter}/>
-      </g>
-    </svg>
-  );
-}
-
-// ─── BASE COMPONENTS ──────────────────────────────────────────────
-function Btn({ children, onClick, variant="primary", size="md", full, type, disabled, style={} }) {
-  const sz = { sm:{padding:"8px 14px",fontSize:14}, md:{padding:"12px 20px",fontSize:16}, lg:{padding:"16px 24px",fontSize:18} }[size];
-  const v  = {
-    primary:  { bg:T.pink,    color:"#fff", shadow:`0 ${size==="lg"?6:4}px 0 ${T.ink}` },
-    secondary:{ bg:T.butter,  color:T.ink,  shadow:`0 ${size==="lg"?6:4}px 0 ${T.ink}` },
-    tertiary: { bg:T.paper,   color:T.ink,  shadow:`0 ${size==="lg"?6:4}px 0 ${T.ink}` },
-    danger:   { bg:T.wrong,   color:"#fff", shadow:`0 ${size==="lg"?6:4}px 0 ${T.ink}` },
-  }[variant] || { bg:T.pink, color:"#fff", shadow:`0 4px 0 ${T.ink}` };
-  const [pressed, setPressed] = useState(false);
-  const pressY = size==="lg" ? 4 : 3;
-  return (
-    <button type={type||"button"} disabled={disabled} onClick={onClick}
-      onMouseDown={()=>setPressed(true)} onMouseUp={()=>setPressed(false)}
-      onMouseLeave={()=>setPressed(false)} onTouchStart={()=>setPressed(true)} onTouchEnd={()=>setPressed(false)}
-      style={{
-        ...sz, background:v.bg, color:v.color,
-        border:T.border, borderRadius:T.radius, fontFamily:T.bFont, fontWeight:700,
-        letterSpacing:"-0.01em", cursor:disabled?"not-allowed":"pointer", opacity:disabled?0.5:1,
-        boxShadow: pressed ? `0 1px 0 ${T.ink}` : v.shadow,
-        transform:pressed?`translateY(${pressY}px)`:"translateY(0)",
-        transition:"transform 80ms, box-shadow 80ms",
-        display:"inline-flex", alignItems:"center", justifyContent:"center", gap:8,
-        width:full?"100%":"auto", outline:"none",
-        ...style,
-      }}>
-      {children}
-    </button>
-  );
-}
-
-function Card({ children, style={}, color, large, onClick }) {
-  return (
-    <div onClick={onClick} style={{
-      background:color||T.paper, border:T.border,
-      borderRadius:large?T.radiusLg:T.radius,
-      boxShadow:large?T.shadowLg:T.shadow,
-      padding:20, cursor:onClick?"pointer":"default", ...style,
-    }}>
-      {children}
-    </div>
-  );
-}
-
-function DotBar({ total, current }) {
-  return (
-    <div style={{ display:"flex", gap:6, alignItems:"center", flexWrap:"wrap" }}>
-      {Array.from({length:total}).map((_,i)=>(
-        <div key={i} style={{
-          width:i===current?28:10, height:10, borderRadius:6,
-          border:`2px solid ${T.ink}`,
-          background:i<current?T.mint:i===current?T.butter:T.paperAlt,
-          transition:"all 200ms",
-        }}/>
-      ))}
-    </div>
-  );
-}
-
-// ─── AUTH ─────────────────────────────────────────────────────────
-function parseJWT(token) {
-  try { return JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))); }
-  catch { return null; }
-}
-function tokenExpired(token) {
-  const p = parseJWT(token);
-  return !p?.exp || Date.now()/1000 > p.exp - 60;
-}
-
-// ─── FEEDBACK BURST ───────────────────────────────────────────────
-function FeedbackBurst({ feedback, anim, keyboardUp }) {
-  if (!feedback || !anim) return null;
-  if (anim === "kiss") return (
-    <div style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex:4 }}>
-      <div style={{ position:"absolute", bottom:keyboardUp?64:78, left:"50%", marginLeft:-14,
-        animation:"greta-heart-burst 1100ms ease-out 250ms both" }}>
-        <Heart size={32} color={T.pink}/>
-      </div>
-    </div>
-  );
-  if (anim === "tada") {
-    const colors=[T.pink,T.butter,T.sky,T.mint,T.rose];
-    const dirs=[{dx:-55,dy:-40},{dx:55,dy:-40},{dx:-70,dy:0},{dx:70,dy:0},{dx:0,dy:-65}];
-    return (
-      <div style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex:4 }}>
-        {dirs.map((d,i)=>(
-          <div key={i} style={{ position:"absolute", left:"50%", top:"50%",
-            "--dx":d.dx+"px", "--dy":d.dy+"px",
-            animation:`greta-sparkle-arc 900ms ease-out ${i*50}ms both` }}>
-            <Spark size={keyboardUp?18:22} color={colors[i%colors.length]}/>
-          </div>
-        ))}
-      </div>
-    );
-  }
-  if (anim === "bigbounce") {
-    const colors=[T.pink,T.butter,T.sky,T.mint,T.rose];
-    const pieces=Array.from({length:18}).map((_,i)=>({
-      cdx:(i*47)%320+"px", cdx2:(((i*13)%60)-30)+"px",
-      delay:(i*35)%400, rot:(i*47)%360, color:colors[i%colors.length],
-    }));
-    return (
-      <div style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex:4, overflow:"hidden" }}>
-        {pieces.map((p,i)=>(
-          <div key={i} style={{ position:"absolute", top:0, left:0,
-            "--cdx":p.cdx, "--cdx2":p.cdx2,
-            animation:`greta-confetti-rain 1200ms ease-in ${p.delay}ms both` }}>
-            <ConfettiPiece size={9} color={p.color} rot={p.rot}/>
-          </div>
-        ))}
-      </div>
-    );
-  }
-  if (anim === "cartwheel") {
-    const colors=[T.pink,T.butter,T.mint];
-    const dirs=[{dx:-10,dy:-10,rot:0},{dx:-30,dy:-30,rot:40},{dx:-50,dy:-50,rot:80},{dx:-70,dy:-55,rot:120},{dx:-85,dy:-45,rot:160}];
-    return (
-      <div style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex:4 }}>
-        {dirs.map((d,i)=>(
-          <div key={i} style={{ position:"absolute", bottom:keyboardUp?16:24, right:keyboardUp?16:24,
-            "--dx":d.dx+"px", "--dy":d.dy+"px", "--rot":d.rot+"deg",
-            animation:`greta-petal-trail 1000ms ease-out ${i*80}ms both` }}>
-            <Bloom size={keyboardUp?16:20} color={colors[i%colors.length]} center={T.paper}/>
-          </div>
-        ))}
-      </div>
-    );
-  }
-  if (anim === "sink") return (
-    <div style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex:4 }}>
-      <div style={{ position:"absolute", bottom:keyboardUp?30:38, right:keyboardUp?50:62,
-        animation:"greta-droplet-fall 1000ms ease-in 200ms both" }}>
-        <svg width="14" height="20" viewBox="0 0 14 20" aria-hidden="true">
-          <path d="M7 1 C 11 9 13 13 13 16 a6 6 0 0 1 -12 0 C 1 13 3 9 7 1 Z" fill={T.sky}/>
-          <ellipse cx="9" cy="13" rx="1.5" ry="3" fill="#fff" opacity="0.6"/>
-        </svg>
-      </div>
-    </div>
-  );
-  if (anim === "headtilt") return (
-    <div style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex:4 }}>
-      <div style={{ position:"absolute", bottom:keyboardUp?58:80, right:keyboardUp?18:26,
-        animation:"greta-qmark-pop 1000ms ease-out 100ms both",
-        fontFamily:T.hFont, fontSize:keyboardUp?28:36, color:T.wrong, fontWeight:700 }}>?</div>
-    </div>
-  );
-  if (anim === "spin") return (
-    <div style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex:2 }}>
-      <div style={{ position:"absolute", bottom:keyboardUp?-4:-8, right:keyboardUp?-4:-8,
-        width:keyboardUp?80:110, height:keyboardUp?80:110, borderRadius:"50%",
-        background:T.inkSoft, animation:"greta-puff 850ms ease-out both", opacity:0.5 }}/>
-    </div>
-  );
-  return null;
-}
-
-const ANIM_MAP = {
-  kiss:      "greta-kiss 1100ms cubic-bezier(.4,1.4,.6,1) both",
-  tada:      "greta-tada 950ms ease-in-out both",
-  bigbounce: "greta-bigbounce 1100ms ease-out both",
-  cartwheel: "greta-cartwheel 1000ms cubic-bezier(.5,.9,.5,1) both",
-  shake:     "greta-oops 620ms ease-in-out both",
-  sink:      "greta-sink 900ms ease-in-out both",
-  headtilt:  "greta-headtilt 950ms ease-in-out both",
-  spin:      "greta-spin-shrink 850ms cubic-bezier(.5,1.4,.5,1) both",
-};
-
-// ─── SCREEN: LOGIN ────────────────────────────────────────────────
-function ScreenLogin({ onLogin, currentUser, onSendLink }) {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState("");
-
-  const send = async (e) => {
-    e?.preventDefault();
-    if (!email.includes("@")) { setErr("Enter a valid email"); return; }
-    setErr(""); setLoading(true);
-    try {
-      const res = await fetch(`${SUPABASE_URL}/auth/v1/otp`, {
-        method:"POST",
-        headers:{"Content-Type":"application/json","apikey":SUPABASE_ANON_KEY},
-        body:JSON.stringify({ email, create_user:true, options:{ emailRedirectTo: location.href.split("#")[0] } }),
+async function initAuth(){
+  const params=new URLSearchParams(location.hash.substring(1));
+  const ht=params.get("access_token"), hr=params.get("refresh_token");
+  if(ht){applySession(ht,hr);history.replaceState(null,"",location.pathname+location.search);return;}
+  try{
+    const saved=localStorage.getItem("greta_session");
+    if(!saved)return;
+    let{token,refresh}=JSON.parse(saved);
+    if(tokenExpired(token)&&refresh){
+      const res=await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`,{
+        method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_ANON_KEY},
+        body:JSON.stringify({refresh_token:refresh}),
       });
-      if (!res.ok) { const d=await res.json(); throw new Error(d.msg||d.error_description||"Could not send link"); }
-      setSent(true);
-    } catch(e) { setErr(e.message||"Could not send link"); }
-    finally { setLoading(false); }
-  };
-
-  return (
-    <div style={{ padding:"24px 24px", display:"flex", flexDirection:"column", alignItems:"center", textAlign:"center", gap:20, minHeight:"100%", justifyContent:"center" }}>
-      {!sent ? (<>
-        <Mascot size={140} mood="happy"/>
-        <div>
-          <h1 style={{ fontFamily:T.hFont, fontSize:44, margin:0, color:T.ink, letterSpacing:"-0.02em", lineHeight:1 }}>Hej!</h1>
-          <p style={{ fontFamily:T.bFont, color:T.inkSoft, fontSize:16, marginTop:8, marginBottom:0, maxWidth:260 }}>
-            I'm Poppins. Drop your email and I'll send a magic link — no passwords, promise.
-          </p>
-        </div>
-        <form onSubmit={send} style={{ width:"100%", display:"flex", flexDirection:"column", gap:12 }}>
-          <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@email.com"
-            style={{ width:"100%", padding:"14px 18px", border:T.border, borderRadius:T.radius,
-              fontFamily:T.bFont, fontSize:16, background:T.paper, color:T.ink,
-              outline:"none", boxSizing:"border-box", boxShadow:`inset 0 2px 0 ${T.paperAlt}` }}/>
-          {err && <div style={{ fontFamily:T.bFont, color:T.wrong, fontSize:14 }}>{err}</div>}
-          <Btn variant="primary" size="lg" full type="submit" disabled={loading}>
-            <Spark size={18} color="#fff"/> {loading ? "Sending…" : "Send magic link"}
-          </Btn>
-          <button type="button" onClick={onLogin}
-            style={{ background:"none", border:"none", color:T.inkSoft, fontFamily:T.bFont, fontSize:14, cursor:"pointer", marginTop:4, textDecoration:"underline" }}>
-            skip — try Poppins first
-          </button>
-        </form>
-      </>) : (<>
-        <Mascot size={140} mood="cheer"/>
-        <div>
-          <h1 style={{ fontFamily:T.hFont, fontSize:36, margin:0, color:T.ink, letterSpacing:"-0.02em", lineHeight:1.05 }}>Check your inbox</h1>
-          <p style={{ fontFamily:T.bFont, color:T.inkSoft, fontSize:15, marginTop:12, marginBottom:0, maxWidth:280 }}>
-            I sent a sparkly link to <strong style={{ color:T.ink }}>{email}</strong>. Tap it to come on in.
-          </p>
-        </div>
-        <Btn variant="secondary" size="md" onClick={onLogin}>
-          I clicked it — let me in <ArrowRight size={16} color={T.ink}/>
-        </Btn>
-      </>)}
-    </div>
-  );
+      if(!res.ok){clearSession();return;}
+      const d=await res.json();token=d.access_token;refresh=d.refresh_token;
+    }else if(tokenExpired(token)){clearSession();return;}
+    applySession(token,refresh);
+  }catch{clearSession();}
 }
 
-// ─── SCREEN: HOME ─────────────────────────────────────────────────
-function ScreenHome({ lists, activeListId, pair, onPickList, onAddList, onStart, onSettings, onPickPair }) {
-  const list = lists.find(l=>l.id===activeListId);
-  return (
-    <div style={{ padding:"18px 22px 24px", display:"flex", flexDirection:"column", gap:22, minHeight:"100%" }}>
-      {/* header */}
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-          <Bloom size={26} color={T.pink} center={T.butter} spinning/>
-          <span style={{ fontFamily:T.hFont, fontSize:24, color:T.ink, letterSpacing:"-0.02em" }}>Poppins</span>
-        </div>
-        <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-          <button onClick={onPickPair} style={{ display:"flex", alignItems:"center", gap:6,
-            background:T.paper, border:T.border, borderRadius:999, padding:"5px 10px 5px 6px",
-            cursor:"pointer", boxShadow:`0 2px 0 ${T.ink}`, fontFamily:T.mFont, fontSize:12, fontWeight:700, color:T.ink, outline:"none" }}>
-            <span style={{ width:18,height:18,borderRadius:999,border:T.borderThin,background:LANGUAGES[pair.from]?.color||"#888",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:9,color:T.ink,fontWeight:800 }}>{LANGUAGES[pair.from]?.code||"??"}</span>
-            <ArrowRight size={12} color={T.ink} weight={3}/>
-            <span style={{ width:18,height:18,borderRadius:999,border:T.borderThin,background:LANGUAGES[pair.to]?.color||"#888",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:9,color:T.ink,fontWeight:800 }}>{LANGUAGES[pair.to]?.code||"??"}</span>
-          </button>
-          <button onClick={onSettings} style={{ background:T.paperAlt, border:T.borderThin, borderRadius:999,
-            width:38,height:38, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", outline:"none" }}>
-            <Gear size={18} color={T.ink}/>
-          </button>
-        </div>
-      </div>
+// ── APP STATE ─────────────────────────────────────────────────────
+let state={
+  screen:"home",
+  lists:[...SAMPLE_LISTS],
+  pair:{from:"sv",to:"en"},
+  activeListId:"djur",
+  result:null,
+  // quiz
+  quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],
+  // paste
+  pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",
+  // login
+  loginEmail:"",loginSent:false,loginErr:"",loginLoading:false,
+};
 
-      {/* mascot */}
-      <div style={{ display:"flex", justifyContent:"center", marginTop:-4 }}>
-        <Mascot size={120} mood="happy"/>
-      </div>
+function setState(patch){Object.assign(state,patch);render();}
+function pairLists(){return state.lists.filter(l=>(l.from||"sv")===state.pair.from&&(l.to||"en")===state.pair.to);}
+function activeList(){return state.lists.find(l=>l.id===state.activeListId);}
 
-      {!list ? (
-        <Card large color={T.butterSoft} style={{ textAlign:"center", padding:"28px 22px" }}>
-          <h2 style={{ fontFamily:T.hFont, fontSize:28, margin:0, color:T.ink, lineHeight:1.1, letterSpacing:"-0.02em" }}>No words yet!</h2>
-          <p style={{ fontFamily:T.bFont, color:T.inkSoft, fontSize:15, marginTop:8, marginBottom:16 }}>Pick a list to start, or paste your own words.</p>
-          <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-            <Btn variant="primary" size="md" full onClick={onPickList}><BookStack size={18} color="#fff"/> Pick a list</Btn>
-            <Btn variant="tertiary" size="md" full onClick={onAddList}><Plus size={16} color={T.ink}/> Paste my own</Btn>
-          </div>
-        </Card>
-      ) : (<>
-        <Card large color={COLOR_MAP[list.color]||T.pinkSoft} style={{ position:"relative", overflow:"hidden" }}>
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
-            <div>
-              <div style={{ fontFamily:T.bFont, fontSize:12, fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:T.ink, opacity:0.75 }}>Today's list</div>
-              <h2 style={{ fontFamily:T.hFont, fontSize:32, margin:"4px 0 0", color:T.ink, lineHeight:1, letterSpacing:"-0.02em" }}>{list.name}</h2>
-              <div style={{ fontFamily:T.mFont, fontSize:13, color:T.ink, marginTop:8, opacity:0.8 }}>
-                {list.words.length} words · {LANGUAGES[list.from]?.code||"SV"} → {LANGUAGES[list.to]?.code||"EN"}
-              </div>
-            </div>
-            <Bloom size={42} color={T.ink} center={COLOR_MAP[list.color]||T.pinkSoft}/>
-          </div>
-          <div style={{ marginTop:18 }}>
-            <Btn variant="primary" size="lg" full onClick={onStart}>Start practice <ArrowRight size={18} color="#fff"/></Btn>
-          </div>
-        </Card>
-        <div style={{ marginTop:"auto", display:"flex", gap:10 }}>
-          <Btn variant="tertiary" size="md" onClick={onPickList}><BookStack size={16} color={T.ink}/> My lists</Btn>
-          <Btn variant="tertiary" size="md" onClick={onAddList}><Plus size={16} color={T.ink}/> New</Btn>
-        </div>
-      </>)}
-    </div>
-  );
-}
+// ── SCREEN LOADER ─────────────────────────────────────────────────
+function navigate(screen,extra={}){setState({screen,...extra});}
 
-// ─── SCREEN: LISTS ────────────────────────────────────────────────
-function ScreenLists({ lists, activeListId, onPick, onAdd, onClose, onDelete }) {
-  return (
-    <div style={{ padding:"24px 20px", display:"flex", flexDirection:"column", gap:16, minHeight:"100%" }}>
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-        <div>
-          <h2 style={{ fontFamily:T.hFont, fontSize:30, margin:0, color:T.ink, letterSpacing:"-0.02em" }}>My lists</h2>
-          <div style={{ fontFamily:T.mFont, fontSize:11, color:T.inkSoft, letterSpacing:"0.08em", marginTop:4 }}>
-            {lists.length} {lists.length===1?"list":"lists"}
-          </div>
-        </div>
-        <button onClick={onClose} style={{ background:T.paperAlt, border:T.borderThin, borderRadius:999, width:36,height:36,
-          cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", outline:"none" }}>
-          <Cross size={16} color={T.ink} weight={3}/>
-        </button>
-      </div>
-      <div style={{ display:"flex", flexDirection:"column", gap:12, flex:1, overflowY:"auto" }}>
-        {lists.length===0 && (
-          <div style={{ textAlign:"center", padding:"32px 0", fontFamily:T.bFont, color:T.inkSoft, fontSize:15 }}>
-            No lists yet — add one!
-          </div>
-        )}
-        {lists.map(list=>(
-          <Card key={list.id} color={COLOR_MAP[list.color]||T.pinkSoft}
-            style={{ padding:"16px 18px", display:"flex", alignItems:"center", gap:14, cursor:"pointer",
-              transform:activeListId===list.id?"translateX(4px)":"translateX(0)", transition:"transform 120ms" }}
-            onClick={()=>onPick(list.id)}>
-            <div style={{ width:48,height:48,borderRadius:14,background:T.paper,border:T.borderThin,
-              display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0 }}>
-              <Bloom size={28} color={T.ink} center={COLOR_MAP[list.color]}/>
-            </div>
-            <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ fontFamily:T.hFont, fontSize:20, color:T.ink, lineHeight:1.1, letterSpacing:"-0.01em", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{list.name}</div>
-              <div style={{ fontFamily:T.mFont, fontSize:12, color:T.ink, opacity:0.7, marginTop:2 }}>
-                {list.words.length} words{activeListId===list.id?" · active":""}
-              </div>
-            </div>
-            {activeListId===list.id && (
-              <div style={{ background:T.ink, borderRadius:999, width:28,height:28, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                <Check size={16} color="#fff" weight={4}/>
-              </div>
-            )}
-            {onDelete && (
-              <button onClick={e=>{e.stopPropagation();onDelete(list);}}
-                style={{ background:"transparent", border:"none", cursor:"pointer", padding:4, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                <Trash size={16} color={T.ink}/>
-              </button>
-            )}
-          </Card>
-        ))}
-      </div>
-      <Btn variant="primary" size="lg" full onClick={onAdd} style={{ marginTop:8 }}>
-        <Plus size={18} color="#fff" weight={4}/> Add a new list
-      </Btn>
-    </div>
-  );
-}
-
-// ─── SCREEN: PASTE ────────────────────────────────────────────────
-function ScreenPaste({ pair, onSave, onCancel }) {
-  const [name, setName]   = useState("");
-  const [text, setText]   = useState("");
-  const [parsed, setParsed] = useState([]);
-  const [step, setStep]   = useState("paste");
-  const [saving, setSaving] = useState(false);
-
-  const parse = () => {
-    const lines = text.split("\n").map(l=>l.trim()).filter(Boolean);
-    const out = [];
-    for (const line of lines) {
-      const m = line.match(/^(.+?)\s*[=\-–→:\t]+\s*(.+)$/);
-      if (m) { out.push({ [pair.from]:m[1].trim(), [pair.to]:m[2].trim() }); }
-      else if (line.split(/\s{2,}/).length===2) {
-        const [a,b]=line.split(/\s{2,}/);
-        out.push({ [pair.from]:a.trim(), [pair.to]:b.trim() });
-      }
-    }
-    setParsed(out);
-    setStep("review");
-  };
-
-  const save = () => {
-    setSaving(true);
-    onSave({
-      id: "user-"+Date.now(),
-      name: name||"My new list",
-      color: ["rose","butter","sky","mint"][Math.floor(Math.random()*4)],
-      words: parsed,
-      from: pair.from, to: pair.to,
+// ── AUTH ACTIONS ──────────────────────────────────────────────────
+async function sendMagicLink(){
+  const email=state.loginEmail.trim();
+  if(!email.includes("@")){setState({loginErr:"Enter a valid email"});return;}
+  setState({loginErr:"",loginLoading:true});
+  try{
+    const res=await fetch(`${SUPABASE_URL}/auth/v1/otp`,{
+      method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_ANON_KEY},
+      body:JSON.stringify({email,create_user:true,options:{emailRedirectTo:location.href.split("#")[0]}}),
     });
-  };
+    if(!res.ok){const d=await res.json();throw new Error(d.msg||d.error_description||"Could not send link");}
+    setState({loginSent:true,loginLoading:false});
+  }catch(e){setState({loginErr:e.message||"Could not send link",loginLoading:false});}
+}
 
-  return (
-    <div style={{ padding:"24px 20px", display:"flex", flexDirection:"column", gap:16, minHeight:"100%" }}>
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-        <h2 style={{ fontFamily:T.hFont, fontSize:28, margin:0, color:T.ink, letterSpacing:"-0.02em", lineHeight:1.1 }}>
-          {step==="paste"?"Paste a word list":"Look right?"}
-        </h2>
-        <button onClick={onCancel} style={{ background:T.paperAlt, border:T.borderThin, borderRadius:999, width:36,height:36,
-          cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", outline:"none" }}>
-          <Cross size={16} color={T.ink} weight={3}/>
-        </button>
-      </div>
+async function loadUserLists(){
+  if(!sessionToken)return;
+  try{
+    const res=await fetch(`${API}/sets`,{headers:{"Authorization":`Bearer ${sessionToken}`}});
+    if(!res.ok)return;
+    const sets=await res.json();
+    const COLORS=["rose","butter","sky","mint","pink"];
+    const mapped=sets.map((s,i)=>({
+      id:s.id,name:s.topic,color:COLORS[i%COLORS.length],
+      words:(s.vocab||[]).map(p=>({sv:p.sv,en:typeof p.en==="string"&&p.en.includes("|")?p.en.split("|").map(x=>x.trim()):p.en})),
+      from:"sv",to:"en",
+    }));
+    if(mapped.length>0)setState({lists:mapped,activeListId:mapped[0].id});
+  }catch{}
+}
 
-      {step==="paste" && (<>
-        <div style={{ display:"inline-flex", alignItems:"center", gap:6, alignSelf:"flex-start",
-          padding:"4px 10px", borderRadius:999, background:T.butterSoft, border:T.borderThin,
-          fontFamily:T.mFont, fontSize:11, fontWeight:700, color:T.ink }}>
-          <span>{LANGUAGES[pair.from]?.code||"SV"}</span>
-          <ArrowRight size={10} color={T.ink} weight={3}/>
-          <span>{LANGUAGES[pair.to]?.code||"EN"}</span>
-        </div>
-        <p style={{ fontFamily:T.bFont, color:T.inkSoft, fontSize:14, margin:0, lineHeight:1.6 }}>
-          Copy from anywhere — Notes, a PDF, a screenshot. Use any separator:{" "}
-          {["=","-",":","→"].map(s=>(
-            <code key={s} style={{ fontFamily:T.mFont, background:T.paperAlt, padding:"1px 6px", borderRadius:6, marginRight:4 }}>{s}</code>
-          ))}
+async function saveList(newList){
+  const words=newList.words.map(w=>({sv:w[newList.from]||w.sv,en:w[newList.to]||w.en}));
+  if(!sessionToken){
+    setState({lists:[...state.lists,newList],activeListId:newList.id,screen:"home"});
+    return;
+  }
+  try{
+    const res=await fetch(`${API}/sets`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":`Bearer ${sessionToken}`},
+      body:JSON.stringify({topic:newList.name,vocab:words}),
+    });
+    const saved=await res.json();
+    if(!res.ok)throw new Error(saved.error||"Save failed");
+    const stamped={...newList,id:saved.id};
+    setState({lists:[...state.lists,stamped],activeListId:stamped.id,screen:"home"});
+  }catch{
+    setState({lists:[...state.lists,newList],activeListId:newList.id,screen:"home"});
+  }
+}
+
+async function deleteList(list){
+  if(sessionToken){
+    fetch(`${API}/sets/${list.id}`,{method:"DELETE",headers:{"Authorization":`Bearer ${sessionToken}`}}).catch(()=>{});
+  }
+  const newLists=state.lists.filter(x=>x.id!==list.id);
+  setState({lists:newLists,activeListId:state.activeListId===list.id?null:state.activeListId});
+}
+
+async function signOut(){
+  if(sessionToken){
+    fetch(`${SUPABASE_URL}/auth/v1/logout`,{method:"POST",headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":`Bearer ${sessionToken}`}}).catch(()=>{});
+  }
+  clearSession();
+  setState({lists:[...SAMPLE_LISTS],activeListId:"djur",screen:"home"});
+}
+
+// ── QUIZ LOGIC ────────────────────────────────────────────────────
+const ANIM_CORRECT=["kiss","tada","bigbounce","cartwheel"];
+const ANIM_WRONG  =["shake","sink","headtilt","spin"];
+
+function quizSubmit(){
+  const list=activeList(); if(!list||state.quizFeedback)return;
+  const answer=state.quizAnswer.trim(); if(!answer)return;
+  const lh=langHelpers(list);
+  const word=list.words[state.quizIdx];
+  const ok=answer.toLowerCase()===lh.tgt(word).toLowerCase();
+  const pool=ok?ANIM_CORRECT:ANIM_WRONG;
+  const anim=pool[Math.floor(Math.random()*pool.length)];
+  if(ok){
+    setState({quizRight:state.quizRight+1,quizFeedback:"correct",quizAnim:anim});
+    setTimeout(quizAdvance,1200);
+  }else{
+    setState({quizWrong:state.quizWrong+1,quizFeedback:"wrong",quizAnim:anim});
+    setTimeout(()=>setState({quizWriteMode:true}),1400);
+  }
+}
+
+function quizAdvance(){
+  const list=activeList(); if(!list)return;
+  const nextIdx=state.quizIdx+1;
+  if(nextIdx>=list.words.length){
+    setState({screen:"done",result:{right:state.quizRight,wrong:state.quizWrong,total:list.words.length}});
+    return;
+  }
+  setState({quizIdx:nextIdx,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""]});
+  setTimeout(()=>document.getElementById("quiz-input")?.focus(),50);
+}
+
+function write5Check(i,val){
+  const list=activeList(); if(!list)return;
+  const lh=langHelpers(list);
+  const word=list.words[state.quizIdx];
+  const target=lh.tgt(word).toLowerCase();
+  const newReps=[...state.quizReps]; newReps[i]=val; setState({quizReps:newReps});
+  if(val.trim().toLowerCase()===target&&i<4){
+    setTimeout(()=>document.getElementById(`w5-${i+1}`)?.focus(),100);
+  }
+}
+
+function parsePasteText(text,pair){
+  const lines=text.split("\n").map(l=>l.trim()).filter(Boolean);
+  const out=[];
+  for(const line of lines){
+    const m=line.match(/^(.+?)\s*[=\-–→:\t]+\s*(.+)$/);
+    if(m){out.push({[pair.from]:m[1].trim(),[pair.to]:m[2].trim()});}
+    else if(line.split(/\s{2,}/).length===2){
+      const[a,b]=line.split(/\s{2,}/);
+      out.push({[pair.from]:a.trim(),[pair.to]:b.trim()});
+    }
+  }
+  return out;
+}
+
+// ── RENDER ────────────────────────────────────────────────────────
+function render(){
+  const sc=document.getElementById("screen");
+  if(!sc)return;
+  sc.innerHTML=screens[state.screen]?screens[state.screen]():"";
+  bindEvents();
+}
+
+// ── SCREEN RENDERERS ──────────────────────────────────────────────
+const screens={
+
+login(){
+  const {loginEmail,loginSent,loginErr,loginLoading}=state;
+  if(!loginSent)return `
+    <div style="padding:28px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px;min-height:100%;justify-content:center;">
+      ${mascotSVG(140,"happy")}
+      <div>
+        <h1 class="h-font" style="font-size:44px;color:var(--ink);letter-spacing:-0.02em;line-height:1;">Hej!</h1>
+        <p class="b-font" style="color:var(--ink-soft);font-size:16px;margin-top:8px;max-width:260px;">
+          I'm Poppins. Drop your email and I'll send a magic link — no passwords, promise.
         </p>
-        <input value={name} onChange={e=>setName(e.target.value)} placeholder="What's this list called?"
-          style={{ padding:"12px 16px", border:T.border, borderRadius:T.radius,
-            fontFamily:T.hFont, fontSize:18, background:T.paper, color:T.ink, outline:"none" }}/>
-        <textarea value={text} onChange={e=>setText(e.target.value)}
-          placeholder={"katt = cat\nhund - dog\nhäst → horse\nfågel: bird"} rows={9}
-          style={{ padding:"14px 16px", border:T.border, borderRadius:T.radius,
-            fontFamily:T.mFont, fontSize:14, background:T.paper, color:T.ink, outline:"none",
-            resize:"none", boxShadow:`inset 0 2px 0 ${T.paperAlt}`, lineHeight:1.6 }}/>
-        <div style={{ display:"flex", gap:10 }}>
-          <Btn variant="tertiary" size="md" onClick={onCancel}>Cancel</Btn>
-          <Btn variant="primary" size="md" onClick={parse} disabled={!text.trim()} style={{ flex:1 }}>
-            <Spark size={16} color="#fff"/> Sort it out
-          </Btn>
-        </div>
-      </>)}
-
-      {step==="review" && (<>
-        <div style={{ background:T.mintSoft, border:T.borderThin, borderRadius:T.radius,
-          padding:"10px 14px", display:"flex", alignItems:"center", gap:8 }}>
-          <Check size={18} color={T.ink} weight={4}/>
-          <span style={{ fontFamily:T.bFont, fontSize:14, color:T.ink, fontWeight:600 }}>
-            Found <strong>{parsed.length}</strong> words
-          </span>
-        </div>
-        <div style={{ flex:1, overflowY:"auto", display:"flex", flexDirection:"column", gap:6 }}>
-          {parsed.map((w,i)=>(
-            <div key={i} style={{ display:"flex", alignItems:"center", gap:12,
-              background:T.paper, border:T.borderThin, borderRadius:14, padding:"10px 14px", fontFamily:T.bFont, fontSize:15 }}>
-              <span style={{ color:T.ink, fontWeight:700, flex:1 }}>{w[pair.from]||w.sv}</span>
-              <ArrowRight size={14} color={T.inkSoft} weight={2.5}/>
-              <span style={{ color:T.inkSoft, flex:1 }}>{w[pair.to]||w.en}</span>
-            </div>
-          ))}
-        </div>
-        <div style={{ display:"flex", gap:10 }}>
-          <Btn variant="tertiary" size="md" onClick={()=>setStep("paste")}>Edit</Btn>
-          <Btn variant="primary" size="md" onClick={save} disabled={parsed.length===0||saving} style={{ flex:1 }}>
-            {saving?"Saving…":"Save list"} <ArrowRight size={16} color="#fff"/>
-          </Btn>
-        </div>
-      </>)}
-    </div>
-  );
-}
-
-// ─── SCREEN: LANGUAGE PICKER ──────────────────────────────────────
-function ScreenLangPicker({ pair, lists, onPick, onClose }) {
-  const seen=new Set(); const pairs=[];
-  lists.forEach(l=>{
-    if(!l.from||!l.to) return;
-    const k=l.from+">"+l.to;
-    if(seen.has(k)) return;
-    seen.add(k);
-    pairs.push({ from:l.from, to:l.to, count:lists.filter(x=>x.from===l.from&&x.to===l.to).length });
-  });
-  const Chip=({code,color})=>(
-    <span style={{ width:32,height:32,borderRadius:999,border:T.border,background:color||"#ccc",
-      display:"inline-flex",alignItems:"center",justifyContent:"center",
-      fontFamily:T.mFont,fontSize:11,fontWeight:800,color:T.ink,boxShadow:`0 2px 0 ${T.ink}` }}>{code}</span>
-  );
-  return (
-    <div style={{ padding:"24px 20px", display:"flex", flexDirection:"column", gap:16, minHeight:"100%" }}>
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-        <h2 style={{ fontFamily:T.hFont, fontSize:30, margin:0, color:T.ink, letterSpacing:"-0.02em" }}>Which language?</h2>
-        <button onClick={onClose} style={{ background:T.paperAlt, border:T.borderThin, borderRadius:999, width:36,height:36,
-          cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", outline:"none" }}>
-          <Cross size={16} color={T.ink} weight={3}/>
+      </div>
+      <div style="width:100%;display:flex;flex-direction:column;gap:12px;">
+        <input id="login-email" class="inp" type="email" placeholder="you@email.com" value="${loginEmail}" autocomplete="email"/>
+        ${loginErr?`<div style="color:var(--wrong);font-size:14px;">${loginErr}</div>`:""}
+        <button id="login-submit" class="btn btn-primary btn-lg btn-full" ${loginLoading?"disabled":""}>
+          ${SVG.spark(18,"#fff")} ${loginLoading?"Sending…":"Send magic link"}
+        </button>
+        <button id="login-skip" style="background:none;border:none;color:var(--ink-soft);font-size:14px;cursor:pointer;text-decoration:underline;">
+          skip — try Poppins first
         </button>
       </div>
-      <p style={{ fontFamily:T.bFont, color:T.inkSoft, fontSize:14, margin:0 }}>Pick a language you're learning from another.</p>
-      <div style={{ display:"flex", flexDirection:"column", gap:10, flex:1 }}>
-        {pairs.length===0 && (
-          <div style={{ fontFamily:T.bFont, color:T.inkSoft, textAlign:"center", padding:"32px 0" }}>
-            Add some lists first!
+    </div>`;
+  return `
+    <div style="padding:28px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:22px;min-height:100%;justify-content:center;">
+      ${mascotSVG(140,"cheer")}
+      <div>
+        <h1 class="h-font" style="font-size:36px;color:var(--ink);letter-spacing:-0.02em;line-height:1.05;">Check your inbox</h1>
+        <p class="b-font" style="color:var(--ink-soft);font-size:15px;margin-top:12px;max-width:280px;">
+          I sent a sparkly link to <strong style="color:var(--ink);">${loginEmail}</strong>. Tap it to come on in.
+        </p>
+      </div>
+      <button id="login-skip" class="btn btn-secondary">
+        I clicked it — let me in ${SVG.arrowRight(16,"#241F3D")}
+      </button>
+    </div>`;
+},
+
+home(){
+  const pl=pairLists(), list=activeList();
+  const pair=state.pair;
+  const fromL=LANGUAGES[pair.from]||{code:"SV",color:"#FFD66B"};
+  const toL  =LANGUAGES[pair.to]  ||{code:"EN",color:"#E8447B"};
+  const listCard=list?`
+    <div class="card-lg" style="background:${COLOR_MAP[list.color]||"#FFB0C8"};position:relative;overflow:hidden;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div class="label-caps">Today's list</div>
+          <h2 class="h-font" style="font-size:32px;color:var(--ink);margin:4px 0 0;letter-spacing:-0.02em;line-height:1;">${list.name}</h2>
+          <div class="m-font" style="font-size:13px;color:var(--ink);margin-top:8px;opacity:.8;">
+            ${list.words.length} words · ${LANGUAGES[list.from]?.code||"SV"} → ${LANGUAGES[list.to]?.code||"EN"}
           </div>
-        )}
-        {pairs.map(p=>{
-          const isActive=p.from===pair.from&&p.to===pair.to;
-          const fromL=LANGUAGES[p.from]||{code:p.from.toUpperCase(),color:"#ccc",name:p.from};
-          const toL  =LANGUAGES[p.to]  ||{code:p.to.toUpperCase()  ,color:"#ccc",name:p.to  };
-          return (
-            <div key={p.from+p.to} onClick={()=>onPick(p)}
-              style={{ padding:"14px 16px", background:isActive?T.butterSoft:T.paper,
-                border:T.border, borderRadius:T.radius, boxShadow:T.shadow,
-                cursor:"pointer", display:"flex", alignItems:"center", gap:14 }}>
-              <Chip code={fromL.code} color={fromL.color}/>
-              <ArrowRight size={16} color={T.ink} weight={3}/>
-              <Chip code={toL.code} color={toL.color}/>
-              <div style={{ flex:1, marginLeft:6 }}>
-                <div style={{ fontFamily:T.hFont, fontSize:18, color:T.ink, lineHeight:1.1, letterSpacing:"-0.01em" }}>
-                  {fromL.name} → {toL.name}
-                </div>
-                <div style={{ fontFamily:T.mFont, fontSize:12, color:T.inkSoft, marginTop:2 }}>
-                  {p.count} list{p.count!==1?"s":""}
-                </div>
-              </div>
-              {isActive && (
-                <div style={{ background:T.ink, borderRadius:999, width:26,height:26, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                  <Check size={14} color="#fff" weight={4}/>
-                </div>
-              )}
-            </div>
-          );
-        })}
+        </div>
+        ${SVG.bloom(42,"#241F3D",COLOR_MAP[list.color]||"#FFB0C8",false)}
       </div>
-      <div style={{ padding:"12px 14px", background:T.paperAlt, border:T.borderThin, borderRadius:T.radius,
-        fontFamily:T.bFont, fontSize:13, color:T.inkSoft }}>
-        <strong style={{ color:T.ink }}>Want a different pair?</strong>{" "}
-        Paste a list in any language and Poppins will tag it automatically.
+      <div style="margin-top:18px;">
+        <button id="home-start" class="btn btn-primary btn-lg btn-full">Start practice ${SVG.arrowRight(18,"#fff")}</button>
       </div>
     </div>
-  );
-}
+    <div style="margin-top:auto;display:flex;gap:10px;">
+      <button id="home-lists" class="btn btn-tertiary">${SVG.books(16,"#241F3D")} My lists</button>
+      <button id="home-new" class="btn btn-tertiary">${SVG.plus(16,"#241F3D")} New</button>
+    </div>`:
+    `<div class="card-lg" style="background:var(--butter-soft);text-align:center;padding:28px 22px;">
+      <h2 class="h-font" style="font-size:28px;color:var(--ink);">No words yet!</h2>
+      <p class="b-font" style="color:var(--ink-soft);font-size:15px;margin:8px 0 16px;">Pick a list to start, or paste your own words.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button id="home-lists" class="btn btn-primary btn-full">${SVG.books(18,"#fff")} Pick a list</button>
+        <button id="home-new" class="btn btn-tertiary btn-full">${SVG.plus(16,"#241F3D")} Paste my own</button>
+      </div>
+    </div>`;
+  return `
+    <div class="screen-pad">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span id="bloom-spin">${SVG.bloom(26,"#B583E8","#F2EE5B",true)}</span>
+          <span class="h-font" style="font-size:24px;color:var(--ink);">Poppins</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button id="home-pair" class="pair-chip">
+            <span class="lang-circle" style="background:${fromL.color};">${fromL.code}</span>
+            ${SVG.arrowRight(12,"#241F3D")}
+            <span class="lang-circle" style="background:${toL.color};">${toL.code}</span>
+          </button>
+          <button id="home-settings" class="icon-btn">${SVG.gear(18,"#241F3D")}</button>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:center;">${mascotSVG(120,"happy")}</div>
+      ${listCard}
+    </div>`;
+},
 
-// ─── SCREEN: QUIZ ─────────────────────────────────────────────────
-function ScreenQuiz({ list, onDone, onExit }) {
-  const [idx, setIdx]         = useState(0);
-  const [answer, setAnswer]   = useState("");
-  const [feedback, setFeedback] = useState(null);
-  const [right, setRight]     = useState(0);
-  const [wrong, setWrong]     = useState(0);
-  const [writeMode, setWriteMode] = useState(false);
-  const [anim, setAnim]       = useState(null);
-  const inputRef = useRef(null);
+lists(){
+  const pl=pairLists();
+  const items=pl.map(l=>`
+    <div class="card" data-list-id="${l.id}" style="background:${COLOR_MAP[l.color]||"#FFB0C8"};padding:16px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;transform:${state.activeListId===l.id?"translateX(4px)":"translateX(0)"};transition:transform 120ms;">
+      <div style="width:48px;height:48px;border-radius:14px;background:var(--paper);border:var(--border-thin);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        ${SVG.bloom(28,"#241F3D",COLOR_MAP[l.color],false)}
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div class="h-font" style="font-size:20px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.name}</div>
+        <div class="m-font" style="font-size:12px;color:var(--ink);opacity:.7;margin-top:2px;">${l.words.length} words${state.activeListId===l.id?" · active":""}</div>
+      </div>
+      ${state.activeListId===l.id?`<div style="background:var(--ink);border-radius:999px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${SVG.check(16,"#fff",4)}</div>`:""}
+      <button class="list-delete" data-delete-id="${l.id}" style="background:transparent;border:none;cursor:pointer;padding:4px;flex-shrink:0;">${SVG.trash(16,"#241F3D")}</button>
+    </div>`).join("");
+  return `
+    <div class="screen-pad">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <h2 class="h-font" style="font-size:30px;color:var(--ink);">My lists</h2>
+          <div class="m-font" style="font-size:11px;color:var(--ink-soft);margin-top:4px;">${pl.length} list${pl.length!==1?"s":""}</div>
+        </div>
+        <button id="lists-close" class="icon-btn-xs">${SVG.cross(16,"#241F3D",3)}</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;flex:1;overflow-y:auto;">
+        ${items||`<div style="text-align:center;padding:32px 0;color:var(--ink-soft);" class="b-font">No lists yet — add one!</div>`}
+      </div>
+      <button id="lists-add" class="btn btn-primary btn-lg btn-full">${SVG.plus(18,"#fff")} Add a new list</button>
+    </div>`;
+},
 
-  const lh    = langHelpers(list);
-  const word  = list.words[idx];
-  const total = list.words.length;
-
-  // Keep refs so the auto-advance timeout always sees fresh values
-  const idxRef   = useRef(idx);
-  const rightRef = useRef(right);
-  const wrongRef = useRef(wrong);
-  useEffect(()=>{ idxRef.current   = idx;   }, [idx]);
-  useEffect(()=>{ rightRef.current = right; }, [right]);
-  useEffect(()=>{ wrongRef.current = wrong; }, [wrong]);
-
-  useEffect(()=>{ if(inputRef.current && !feedback) inputRef.current.focus(); }, [idx, feedback]);
-
-  const advance = () => {
-    const nextIdx = idxRef.current + 1;
-    if(nextIdx >= total) { onDone({ right:rightRef.current, wrong:wrongRef.current, total }); return; }
-    setIdx(nextIdx); setAnswer(""); setFeedback(null); setAnim(null); setWriteMode(false);
-  };
-
-  const submit = () => {
-    if(!answer.trim()||feedback) return;
-    const guess   = answer.trim().toLowerCase();
-    const correct = lh.tgt(word).toLowerCase();
-    const ok      = guess===correct;
-    const pool    = ok ? ["kiss","tada","bigbounce","cartwheel"] : ["shake","sink","headtilt","spin"];
-    setAnim(pool[Math.floor(Math.random()*pool.length)]);
-    if(ok) { setRight(r=>r+1); setFeedback("correct"); }
-    else   { setWrong(w=>w+1); setFeedback("wrong"); }
-  };
-
-  const advanceRef = useRef(advance);
-  useEffect(()=>{ advanceRef.current = advance; });
-
-  useEffect(()=>{
-    if(!feedback) return;
-    const delay = feedback==="correct" ? 1200 : 1400;
-    const id = setTimeout(()=>{
-      if(feedback==="correct") advanceRef.current();
-      else setWriteMode(true);
-    }, delay);
-    return ()=>clearTimeout(id);
-  }, [feedback]);
-
-  if(writeMode) return <ScreenWriteFive list={list} word={word} onDone={advance}/>;
-
-  const fbCard   = feedback==="correct"?T.mintSoft:feedback==="wrong"?T.pinkSoft:T.paper;
-  const cardAnim = feedback==="correct"?"greta-card-correct 700ms ease-out":feedback==="wrong"?"greta-card-wrong 480ms ease-in-out":"none";
-  const mascotMood = feedback==="correct"?(anim==="tada"?"proud":"cheer"):feedback==="wrong"?"oops":"happy";
-
-  return (
-    <div style={{ padding:"20px 20px 24px", display:"flex", flexDirection:"column", gap:14, minHeight:"100%", boxSizing:"border-box" }}>
-      {/* HUD */}
-      <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-        <button onClick={onExit} style={{ background:T.paperAlt, border:T.borderThin, borderRadius:999,
-          width:34,height:34, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center",
-          flexShrink:0, outline:"none" }}>
-          <ArrowBack size={14} color={T.ink} weight={3}/>
+paste(){
+  const {pasteName,pasteText,pasteParsed,pasteStep,pair}=state;
+  const fromCode=LANGUAGES[pair.from]?.code||"SV", toCode=LANGUAGES[pair.to]?.code||"EN";
+  if(pasteStep==="paste")return `
+    <div class="screen-pad">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 class="h-font" style="font-size:28px;color:var(--ink);">Paste a word list</h2>
+        <button id="paste-close" class="icon-btn-xs">${SVG.cross(16,"#241F3D",3)}</button>
+      </div>
+      <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--butter-soft);border:var(--border-thin);font-family:var(--m-font);font-size:11px;font-weight:700;color:var(--ink);">
+        ${fromCode} ${SVG.arrowRight(10,"#241F3D")} ${toCode}
+      </div>
+      <p class="b-font" style="color:var(--ink-soft);font-size:14px;line-height:1.6;">
+        Copy from anywhere. Use any separator: <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">=</code>
+        <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">-</code>
+        <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">:</code>
+        <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">→</code>
+      </p>
+      <input id="paste-name" class="inp inp-header" placeholder="What's this list called?" value="${pasteName}"/>
+      <textarea id="paste-text" class="inp inp-mono" rows="9" placeholder="katt = cat&#10;hund - dog&#10;häst → horse">${pasteText}</textarea>
+      <div style="display:flex;gap:10px;">
+        <button id="paste-cancel" class="btn btn-tertiary">Cancel</button>
+        <button id="paste-parse" class="btn btn-primary" style="flex:1;" ${!pasteText.trim()?"disabled":""}>
+          ${SVG.spark(16,"#fff")} Sort it out
         </button>
-        <div style={{ flex:1, display:"flex", flexDirection:"column", gap:4 }}>
-          <DotBar total={total} current={idx}/>
-          <div style={{ display:"flex", justifyContent:"space-between", fontFamily:T.mFont, fontSize:11, color:T.inkSoft }}>
-            <span>{idx+1} / {total}</span>
-            <span style={{ display:"flex", gap:10 }}>
-              <span style={{ color:T.correct, fontWeight:700 }}>✓{right}</span>
-              <span style={{ color:T.wrong, fontWeight:700 }}>✗{wrong}</span>
+      </div>
+    </div>`;
+  const reviewItems=pasteParsed.map(w=>`
+    <div style="display:flex;align-items:center;gap:12px;background:var(--paper);border:var(--border-thin);border-radius:14px;padding:10px 14px;" class="b-font">
+      <span style="color:var(--ink);font-weight:700;flex:1;">${w[pair.from]||w.sv}</span>
+      ${SVG.arrowRight(14,"#6B638A")}
+      <span style="color:var(--ink-soft);flex:1;">${w[pair.to]||w.en}</span>
+    </div>`).join("");
+  return `
+    <div class="screen-pad">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 class="h-font" style="font-size:28px;color:var(--ink);">Look right?</h2>
+        <button id="paste-close" class="icon-btn-xs">${SVG.cross(16,"#241F3D",3)}</button>
+      </div>
+      <div style="background:var(--mint-soft);border:var(--border-thin);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:8px;">
+        ${SVG.check(18,"#241F3D",4)}
+        <span class="b-font" style="font-size:14px;color:var(--ink);font-weight:600;">Found <strong>${pasteParsed.length}</strong> words</span>
+      </div>
+      <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">${reviewItems}</div>
+      <div style="display:flex;gap:10px;">
+        <button id="paste-back" class="btn btn-tertiary">Edit</button>
+        <button id="paste-save" class="btn btn-primary" style="flex:1;" ${!pasteParsed.length?"disabled":""}>
+          Save list ${SVG.arrowRight(16,"#fff")}
+        </button>
+      </div>
+    </div>`;
+},
+
+langpicker(){
+  const lists=state.lists, pair=state.pair;
+  const seen=new Set(), pairs=[];
+  lists.forEach(l=>{if(!l.from||!l.to)return;const k=l.from+">"+l.to;if(seen.has(k))return;seen.add(k);pairs.push({from:l.from,to:l.to,count:lists.filter(x=>x.from===l.from&&x.to===l.to).length});});
+  const chip=(code,color)=>`<span style="width:32px;height:32px;border-radius:999px;border:var(--border);background:${color};display:inline-flex;align-items:center;justify-content:center;font-family:var(--m-font);font-size:11px;font-weight:800;color:var(--ink);box-shadow:0 2px 0 var(--ink);">${code}</span>`;
+  const items=pairs.map(p=>{
+    const fromL=LANGUAGES[p.from]||{code:p.from.toUpperCase(),color:"#ccc",name:p.from};
+    const toL  =LANGUAGES[p.to]  ||{code:p.to.toUpperCase()  ,color:"#ccc",name:p.to  };
+    const isActive=p.from===pair.from&&p.to===pair.to;
+    return `
+      <div class="lang-pair-row" data-from="${p.from}" data-to="${p.to}"
+        style="padding:14px 16px;background:${isActive?"var(--butter-soft)":"var(--paper)"};border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;gap:14px;">
+        ${chip(fromL.code,fromL.color)} ${SVG.arrowRight(16,"#241F3D")} ${chip(toL.code,toL.color)}
+        <div style="flex:1;margin-left:6px;">
+          <div class="h-font" style="font-size:18px;color:var(--ink);">${fromL.name} → ${toL.name}</div>
+          <div class="m-font" style="font-size:12px;color:var(--ink-soft);margin-top:2px;">${p.count} list${p.count!==1?"s":""}</div>
+        </div>
+        ${isActive?`<div style="background:var(--ink);border-radius:999px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;">${SVG.check(14,"#fff",4)}</div>`:""}
+      </div>`;}).join("");
+  return `
+    <div class="screen-pad">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 class="h-font" style="font-size:30px;color:var(--ink);">Which language?</h2>
+        <button id="lang-close" class="icon-btn-xs">${SVG.cross(16,"#241F3D",3)}</button>
+      </div>
+      <p class="b-font" style="color:var(--ink-soft);font-size:14px;">Pick a language you're learning from another.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;flex:1;">
+        ${items||`<div class="b-font" style="color:var(--ink-soft);text-align:center;padding:32px 0;">Add some lists first!</div>`}
+      </div>
+      <div style="padding:12px 14px;background:var(--paper-alt);border:var(--border-thin);border-radius:var(--radius);font-size:13px;color:var(--ink-soft);" class="b-font">
+        <strong style="color:var(--ink);">Want a different pair?</strong> Paste a list in any language and Poppins will tag it automatically.
+      </div>
+    </div>`;
+},
+
+quiz(){
+  const list=activeList(); if(!list)return screens.home();
+  const {quizIdx,quizRight,quizWrong,quizAnswer,quizFeedback,quizAnim,quizWriteMode,quizReps}=state;
+  const lh=langHelpers(list), word=list.words[quizIdx], total=list.words.length;
+
+  if(quizWriteMode){
+    const target=lh.tgt(word);
+    const rows=quizReps.map((r,i)=>{
+      const ok=r.trim().toLowerCase()===target.toLowerCase();
+      return `
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:30px;height:30px;border-radius:999px;border:var(--border-thin);background:${ok?"var(--correct)":"var(--paper-alt)"};display:flex;align-items:center;justify-content:center;font-family:var(--m-font);font-size:13px;font-weight:700;color:${ok?"#fff":"var(--ink)"};flex-shrink:0;">
+            ${ok?SVG.check(14,"#fff",4):i+1}
+          </div>
+          <input id="w5-${i}" class="inp" value="${r}" ${ok?"disabled":""} placeholder="${i===0?target:""}"
+            style="background:${ok?"var(--mint-soft)":"var(--paper)"};opacity:${ok?.7:1};" data-w5="${i}"/>
+        </div>`; }).join("");
+    const done=quizReps.filter((r,_)=>r.trim().toLowerCase()===target.toLowerCase()).length;
+    return `
+      <div class="screen-pad">
+        <div style="text-align:center;">
+          <div class="label-caps">Practice</div>
+          <h2 class="h-font" style="font-size:28px;color:var(--ink);margin:4px 0 0;letter-spacing:-0.02em;">
+            Write "<span style="color:var(--pink);">${target}</span>" 5 times
+          </h2>
+          <p class="b-font" style="color:var(--ink-soft);font-size:13px;margin-top:6px;">(${lh.src(word)} in ${lh.srcLang})</p>
+        </div>
+        <div style="display:flex;justify-content:center;">${mascotSVG(80,"thinking")}</div>
+        <div style="display:flex;flex-direction:column;gap:8px;flex:1;">${rows}</div>
+        <button id="w5-done" class="btn btn-primary btn-lg btn-full" ${done<5?"disabled":""}>
+          ${done===5?`Got it — keep going ${SVG.arrowRight(18,"#fff")}`:done+" / 5 done"}
+        </button>
+      </div>`;
+  }
+
+  // dots
+  const dots=Array.from({length:total}).map((_,i)=>{
+    let cls="dot";if(i<quizIdx)cls+=" dot-done";else if(i===quizIdx)cls+=" dot-current";else cls+=" dot-future";
+    return `<div class="${cls}"></div>`;}).join("");
+
+  const fbBg=quizFeedback==="correct"?"var(--mint-soft)":quizFeedback==="wrong"?"var(--pink-soft)":"var(--paper)";
+  const cardAnim=quizFeedback==="correct"?"greta-card-correct 700ms ease-out":quizFeedback==="wrong"?"greta-card-wrong 480ms ease-in-out":"none";
+  const mascotMood=quizFeedback==="correct"?(quizAnim==="tada"?"proud":"cheer"):quizFeedback==="wrong"?"oops":"happy";
+
+  // mascot position & animation
+  const isKiss=quizAnim==="kiss";
+  const mascotStyle=isKiss
+    ?`position:absolute;bottom:14px;right:50%;margin-right:-36px;transform-origin:center bottom;animation:${quizFeedback?`greta-kiss 1100ms cubic-bezier(.4,1.4,.6,1) both`:"none"};z-index:3;`
+    :`position:absolute;bottom:-8px;right:-8px;transform-origin:center bottom;animation:${quizFeedback?`${animName(quizAnim)} both`:"none"};z-index:3;`;
+
+  const burst=feedbackBurst(quizFeedback,quizAnim);
+
+  const wrongAnswer=quizFeedback==="wrong"?`<div class="h-font" style="font-size:30px;color:var(--wrong);animation:greta-answer-rise 360ms ease-out both;">= ${lh.tgt(word)}</div>`:"";
+  const hint=!quizFeedback?`<div style="height:1px;width:40px;background:var(--ink);opacity:.2;"></div><div class="b-font" style="font-size:14px;color:var(--ink);opacity:.7;">What does this mean in ${lh.tgtLang}?</div>`:"";
+  const inpBg=quizFeedback==="correct"?"var(--mint-soft)":quizFeedback==="wrong"?"var(--pink-soft)":"var(--paper)";
+
+  return `
+    <div class="screen-pad-sm">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button id="quiz-exit" class="icon-btn-sm">${SVG.arrowBack(14,"#241F3D")}</button>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+          <div class="dotbar">${dots}</div>
+          <div style="display:flex;justify-content:space-between;font-family:var(--m-font);font-size:11px;color:var(--ink-soft);">
+            <span>${quizIdx+1} / ${total}</span>
+            <span style="display:flex;gap:10px;">
+              <span style="color:var(--correct);font-weight:700;">✓${quizRight}</span>
+              <span style="color:var(--wrong);font-weight:700;">✗${quizWrong}</span>
             </span>
           </div>
         </div>
       </div>
-
-      {/* Question card */}
-      <Card large color={fbCard} style={{
-        flex:1, display:"flex", flexDirection:"column", justifyContent:"center",
-        padding:24, transition:"background 250ms", position:"relative", overflow:"hidden",
-        animation:cardAnim,
-      }}>
-        <div style={{ display:"flex", flexDirection:"column", gap:14, alignItems:"center", textAlign:"center" }}>
-          <div style={{ fontFamily:T.bFont, fontSize:11, fontWeight:700, letterSpacing:"0.16em",
-            textTransform:"uppercase", color:T.ink, opacity:0.5 }}>{lh.srcLang}</div>
-          <div style={{ fontFamily:T.hFont, fontSize:54, lineHeight:0.95, color:T.ink,
-            letterSpacing:"-0.03em", wordBreak:"break-word", maxWidth:"100%" }}>{lh.src(word)}</div>
-          {feedback==="wrong" && (
-            <div style={{ fontFamily:T.hFont, fontSize:30, color:T.wrong, lineHeight:1,
-              letterSpacing:"-0.02em", animation:"greta-answer-rise 360ms ease-out both" }}>
-              = {lh.tgt(word)}
-            </div>
-          )}
-          {!feedback && (<>
-            <div style={{ height:1, width:40, background:T.ink, opacity:0.2 }}/>
-            <div style={{ fontFamily:T.bFont, fontSize:14, color:T.ink, opacity:0.7 }}>
-              What does this mean in {lh.tgtLang}?
-            </div>
-          </>)}
+      <div class="card-lg" style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:24px;background:${fbBg};transition:background 250ms;position:relative;overflow:hidden;animation:${cardAnim};">
+        <div style="display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;">
+          <div class="label-caps">${lh.srcLang}</div>
+          <div class="h-font" style="font-size:54px;line-height:.95;color:var(--ink);letter-spacing:-.03em;word-break:break-word;">${lh.src(word)}</div>
+          ${wrongAnswer}${hint}
         </div>
+        ${burst}
+        <div style="${mascotStyle}">${mascotSVG(86,mascotMood)}</div>
+      </div>
+      <input id="quiz-input" class="inp" value="${quizAnswer}" placeholder="type in ${lh.tgtLang}, then press enter…"
+        style="font-size:18px;font-weight:600;background:${inpBg};transition:background 250ms;text-align:${quizFeedback?"center":"left"};"
+        ${quizFeedback?"disabled":""}/>
+    </div>`;
+},
 
-        {feedback && <FeedbackBurst feedback={feedback} anim={anim}/>}
-
-        <div style={{
-          position:"absolute", bottom:-8, right:-8,
-          transformOrigin:"center bottom",
-          animation:ANIM_MAP[anim]||"none",
-          zIndex:3,
-          ...(anim==="kiss" ? { bottom:14, right:"50%", marginRight:-36 } : {}),
-        }}>
-          <Mascot size={86} mood={mascotMood}/>
-        </div>
-      </Card>
-
-      {/* Input */}
-      <input ref={inputRef} value={answer} onChange={e=>setAnswer(e.target.value)}
-        onKeyDown={e=>{ if(e.key==="Enter") submit(); }}
-        disabled={!!feedback}
-        placeholder={`type in ${lh.tgtLang}, then press enter…`}
-        style={{ padding:"16px 18px", border:T.border, borderRadius:T.radius,
-          fontFamily:T.bFont, fontSize:18, fontWeight:600,
-          background:feedback==="correct"?T.mintSoft:feedback==="wrong"?T.pinkSoft:T.paper,
-          color:T.ink, outline:"none", boxShadow:`inset 0 2px 0 ${T.paperAlt}`,
-          transition:"background 250ms", textAlign:feedback?"center":"left" }}/>
-    </div>
-  );
-}
-
-// ─── SCREEN: WRITE 5× ────────────────────────────────────────────
-function ScreenWriteFive({ list, word, onDone }) {
-  const lh = langHelpers(list);
-  const [reps, setReps] = useState(["","","","",""]);
-  const inputRefs = useRef([]);
-
-  useEffect(()=>{ inputRefs.current[0]?.focus(); }, []);
-
-  const setRep = (i, v) => {
-    const next=[...reps]; next[i]=v; setReps(next);
-    if(v.trim().toLowerCase()===lh.tgt(word).toLowerCase() && i<4) {
-      setTimeout(()=>inputRefs.current[i+1]?.focus(), 100);
-    }
-  };
-
-  const completed = reps.filter(r=>r.trim().toLowerCase()===lh.tgt(word).toLowerCase()).length;
-  const allDone   = completed===5;
-
-  return (
-    <div style={{ padding:"20px 20px 24px", display:"flex", flexDirection:"column", gap:16, minHeight:"100%", boxSizing:"border-box" }}>
-      <div style={{ textAlign:"center" }}>
-        <div style={{ fontFamily:T.bFont, fontSize:11, fontWeight:700, letterSpacing:"0.16em", textTransform:"uppercase", color:T.inkSoft }}>Practice</div>
-        <h2 style={{ fontFamily:T.hFont, fontSize:28, margin:"4px 0 0", color:T.ink, letterSpacing:"-0.02em", lineHeight:1.05 }}>
-          Write "<span style={{ color:T.pink }}>{lh.tgt(word)}</span>" 5 times
-        </h2>
-        <p style={{ fontFamily:T.bFont, color:T.inkSoft, fontSize:13, margin:"6px 0 0" }}>
-          ({lh.src(word)} in {lh.srcLang})
+done(){
+  const r=state.result||{right:0,wrong:0,total:1};
+  const pct=Math.round((r.right/r.total)*100);
+  const stars=pct>=90?3:pct>=60?2:1;
+  const colors=["#FFB0C8","#F2EE5B","#8AD7FF","#A8F08C","#B583E8"];
+  const pieces=Array.from({length:24}).map((_,i)=>({color:colors[i%colors.length],left:(i*37)%100,delay:(i*80)%1500,rot:(i*47)%360}));
+  const confetti=pieces.map(p=>`<div style="position:absolute;top:-20px;left:${p.left}%;animation:greta-fall 3s ${p.delay}ms infinite linear;">${SVG.confetti(10,p.color,p.rot)}</div>`).join("");
+  const starBtns=[1,2,3].map(s=>`
+    <div style="width:50px;height:50px;border-radius:999px;background:${s<=stars?"var(--butter)":"var(--paper-alt)"};border:var(--border);display:flex;align-items:center;justify-content:center;transform:scale(${s<=stars?1:.85});box-shadow:${s<=stars?`0 4px 0 var(--ink)`:"none"};">
+      ${SVG.spark(26,s<=stars?"#241F3D":"#6B638A")}
+    </div>`).join("");
+  return `
+    <div style="padding:32px 22px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:18px;min-height:100%;justify-content:center;position:relative;overflow:hidden;">
+      ${confetti}
+      ${mascotSVG(150,"proud")}
+      <div style="display:flex;gap:6px;">${starBtns}</div>
+      <div>
+        <h1 class="h-font" style="font-size:44px;color:var(--ink);letter-spacing:-.03em;line-height:1;">You did it!</h1>
+        <p class="b-font" style="color:var(--ink-soft);font-size:16px;margin-top:8px;">
+          ${pct}% right · <span class="m-font">${r.right}/${r.total}</span> on the first try
         </p>
       </div>
-
-      <div style={{ display:"flex", justifyContent:"center" }}>
-        <Mascot size={80} mood="thinking"/>
+      <div style="display:flex;gap:10px;width:100%;">
+        <button id="done-home" class="btn btn-tertiary">Home</button>
+        <button id="done-again" class="btn btn-primary" style="flex:1;">Play again ${SVG.arrowRight(16,"#fff")}</button>
       </div>
+    </div>`;
+},
 
-      <div style={{ display:"flex", flexDirection:"column", gap:8, flex:1 }}>
-        {reps.map((r,i)=>{
-          const ok=r.trim().toLowerCase()===lh.tgt(word).toLowerCase();
-          return (
-            <div key={i} style={{ display:"flex", alignItems:"center", gap:10 }}>
-              <div style={{ width:30,height:30,borderRadius:999,border:T.borderThin,
-                background:ok?T.correct:T.paperAlt,display:"flex",alignItems:"center",justifyContent:"center",
-                fontFamily:T.mFont,fontSize:13,fontWeight:700,color:ok?"#fff":T.ink,flexShrink:0 }}>
-                {ok?<Check size={14} color="#fff" weight={4}/>:i+1}
-              </div>
-              <input ref={el=>inputRefs.current[i]=el} value={r} onChange={e=>setRep(i,e.target.value)}
-                disabled={ok} placeholder={i===0?lh.tgt(word):""}
-                style={{ flex:1, padding:"12px 14px", border:T.border, borderRadius:T.radius,
-                  fontFamily:T.bFont, fontSize:16, fontWeight:600,
-                  background:ok?T.mintSoft:T.paper, color:T.ink, outline:"none", opacity:ok?0.7:1 }}/>
-            </div>
-          );
-        })}
+settings(){
+  const pair=state.pair;
+  return `
+    <div class="screen-pad">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 class="h-font" style="font-size:30px;color:var(--ink);">Settings</h2>
+        <button id="settings-close" class="icon-btn-xs">${SVG.cross(16,"#241F3D",3)}</button>
       </div>
-
-      <Btn variant="primary" size="lg" full onClick={onDone} disabled={!allDone}>
-        {allDone ? <>Got it — keep going <ArrowRight size={18} color="#fff"/></> : `${completed} / 5 done`}
-      </Btn>
-    </div>
-  );
-}
-
-// ─── SCREEN: CELEBRATION ──────────────────────────────────────────
-function ScreenDone({ result, onAgain, onHome }) {
-  const pct   = Math.round((result.right/result.total)*100);
-  const stars = pct>=90?3:pct>=60?2:1;
-  const colors=[T.pink,T.butter,T.sky,T.mint,T.rose];
-  const pieces=Array.from({length:24}).map((_,i)=>({
-    color:colors[i%colors.length], left:(i*37)%100, delay:(i*80)%1500, rot:(i*47)%360,
-  }));
-  return (
-    <div style={{ padding:"32px 22px", display:"flex", flexDirection:"column", alignItems:"center",
-      textAlign:"center", gap:18, minHeight:"100%", justifyContent:"center", position:"relative", overflow:"hidden" }}>
-      {pieces.map((p,i)=>(
-        <div key={i} style={{ position:"absolute", top:-20, left:`${p.left}%`,
-          animation:`greta-fall 3s ${p.delay}ms infinite linear` }}>
-          <ConfettiPiece size={10} color={p.color} rot={p.rot}/>
-        </div>
-      ))}
-      <Mascot size={150} mood="proud"/>
-      <div style={{ display:"flex", gap:6 }}>
-        {[1,2,3].map(s=>(
-          <div key={s} style={{ width:50,height:50,borderRadius:999,
-            background:s<=stars?T.butter:T.paperAlt, border:T.border,
-            display:"flex", alignItems:"center", justifyContent:"center",
-            transform:s<=stars?"scale(1)":"scale(0.85)", transition:"transform 300ms",
-            boxShadow:s<=stars?`0 4px 0 ${T.ink}`:"none" }}>
-            <Spark size={26} color={s<=stars?T.ink:T.inkSoft}/>
+      <div class="card" style="background:var(--pink-soft);">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:56px;height:56px;border-radius:999px;background:var(--paper);border:var(--border-thin);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            ${mascotSVG(48,"happy")}
           </div>
-        ))}
+          <div>
+            <div class="h-font" style="font-size:18px;color:var(--ink);">Hej there!</div>
+            <div class="m-font" style="font-size:12px;color:var(--ink-soft);">${currentUser?.email||"Not signed in"}</div>
+          </div>
+        </div>
       </div>
       <div>
-        <h1 style={{ fontFamily:T.hFont, fontSize:44, margin:0, color:T.ink, letterSpacing:"-0.03em", lineHeight:1 }}>You did it!</h1>
-        <p style={{ fontFamily:T.bFont, color:T.inkSoft, fontSize:16, marginTop:8, marginBottom:0 }}>
-          {pct}% right · <span style={{ fontFamily:T.mFont }}>{result.right}/{result.total}</span> on the first try
-        </p>
-      </div>
-      <div style={{ display:"flex", gap:10, width:"100%", maxWidth:320 }}>
-        <Btn variant="tertiary" size="md" onClick={onHome}>Home</Btn>
-        <Btn variant="primary" size="md" onClick={onAgain} style={{ flex:1 }}>
-          Play again <ArrowRight size={16} color="#fff"/>
-        </Btn>
-      </div>
-    </div>
-  );
-}
-
-// ─── SCREEN: SETTINGS ────────────────────────────────────────────
-function ScreenSettings({ pair, currentUser, onClose, onLogout, onChangePair }) {
-  return (
-    <div style={{ padding:"24px 20px", display:"flex", flexDirection:"column", gap:16, minHeight:"100%" }}>
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-        <h2 style={{ fontFamily:T.hFont, fontSize:30, margin:0, color:T.ink, letterSpacing:"-0.02em" }}>Settings</h2>
-        <button onClick={onClose} style={{ background:T.paperAlt, border:T.borderThin, borderRadius:999, width:36,height:36,
-          cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", outline:"none" }}>
-          <Cross size={16} color={T.ink} weight={3}/>
-        </button>
-      </div>
-
-      <Card color={T.pinkSoft}>
-        <div style={{ display:"flex", alignItems:"center", gap:14 }}>
-          <div style={{ width:56,height:56,borderRadius:999,background:T.paper,border:T.borderThin,
-            display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0 }}>
-            <Mascot size={48} mood="happy"/>
-          </div>
-          <div style={{ flex:1 }}>
-            <div style={{ fontFamily:T.hFont, fontSize:18, color:T.ink, lineHeight:1.1 }}>Hej there!</div>
-            <div style={{ fontFamily:T.mFont, fontSize:12, color:T.inkSoft }}>
-              {currentUser?.email||"Not signed in"}
-            </div>
+        <div class="label-caps" style="margin-bottom:8px;">Language</div>
+        <div id="settings-lang" class="card" style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;">
+          <span style="width:32px;height:32px;border-radius:999px;border:var(--border);background:${LANGUAGES[pair.from]?.color||"#ccc"};display:inline-flex;align-items:center;justify-content:center;font-family:var(--m-font);font-size:11px;font-weight:800;">${LANGUAGES[pair.from]?.code||"SV"}</span>
+          ${SVG.arrowRight(14,"#241F3D")}
+          <span style="width:32px;height:32px;border-radius:999px;border:var(--border);background:${LANGUAGES[pair.to]?.color||"#ccc"};display:inline-flex;align-items:center;justify-content:center;font-family:var(--m-font);font-size:11px;font-weight:800;">${LANGUAGES[pair.to]?.code||"EN"}</span>
+          <div style="flex:1;margin-left:4px;">
+            <div class="b-font" style="font-weight:600;font-size:14px;color:var(--ink);">${LANGUAGES[pair.from]?.name||"Swedish"} → ${LANGUAGES[pair.to]?.name||"English"}</div>
+            <div class="m-font" style="font-size:11px;color:var(--ink-soft);">Tap to change</div>
           </div>
         </div>
-      </Card>
-
+      </div>
       <div>
-        <div style={{ fontFamily:T.bFont, fontSize:11, fontWeight:700, letterSpacing:"0.16em",
-          textTransform:"uppercase", color:T.inkSoft, marginBottom:8 }}>Language</div>
-        <Card onClick={onChangePair} style={{ padding:"14px 16px", display:"flex", alignItems:"center", gap:12, cursor:"pointer" }}>
-          <span style={{ width:32,height:32,borderRadius:999,border:T.border,
-            background:LANGUAGES[pair.from]?.color||"#ccc",display:"inline-flex",alignItems:"center",justifyContent:"center",
-            fontFamily:T.mFont,fontSize:11,fontWeight:800,color:T.ink }}>{LANGUAGES[pair.from]?.code||"SV"}</span>
-          <ArrowRight size={14} color={T.ink} weight={3}/>
-          <span style={{ width:32,height:32,borderRadius:999,border:T.border,
-            background:LANGUAGES[pair.to]?.color||"#ccc",display:"inline-flex",alignItems:"center",justifyContent:"center",
-            fontFamily:T.mFont,fontSize:11,fontWeight:800,color:T.ink }}>{LANGUAGES[pair.to]?.code||"EN"}</span>
-          <div style={{ flex:1, marginLeft:4 }}>
-            <div style={{ fontFamily:T.bFont, fontWeight:600, color:T.ink, fontSize:14 }}>
-              {LANGUAGES[pair.from]?.name||"Swedish"} → {LANGUAGES[pair.to]?.name||"English"}
-            </div>
-            <div style={{ fontFamily:T.mFont, fontSize:11, color:T.inkSoft, marginTop:1 }}>Tap to change</div>
-          </div>
-        </Card>
-      </div>
-
-      <div>
-        <div style={{ fontFamily:T.bFont, fontSize:11, fontWeight:700, letterSpacing:"0.16em",
-          textTransform:"uppercase", color:T.inkSoft, marginBottom:8 }}>Practice</div>
-        <Card style={{ padding:0, overflow:"hidden" }}>
-          {[
-            {label:"Daily reminder",value:"Every day at 4pm"},
-            {label:"Sound effects",value:"On"},
-            {label:"Show pronunciation",value:"On"},
-          ].map((row,i,arr)=>(
-            <div key={row.label} style={{ padding:"14px 16px",
-              borderBottom:i<arr.length-1?`1.5px solid ${T.paperAlt}`:"none",
-              display:"flex", justifyContent:"space-between", alignItems:"center", fontFamily:T.bFont }}>
-              <span style={{ color:T.ink, fontWeight:600 }}>{row.label}</span>
-              <span style={{ color:T.inkSoft, fontSize:13 }}>{row.value}</span>
-            </div>
-          ))}
-        </Card>
-      </div>
-
-      <Btn variant="tertiary" size="md" full onClick={onLogout}>Log out</Btn>
-
-      <div style={{ textAlign:"center", fontFamily:T.mFont, fontSize:11, color:T.inkSoft, marginTop:"auto" }}>
-        Poppins v1 · made with <Heart size={12} color={T.pink}/>
-      </div>
-    </div>
-  );
-}
-
-// ─── APP SHELL ────────────────────────────────────────────────────
-function App() {
-  // Auth state
-  const [currentUser,   setCurrentUser]   = useState(null);
-  const [sessionToken,  setSessionToken]  = useState(null);
-  const [authLoading,   setAuthLoading]   = useState(true);
-
-  // App state
-  const [screen,        setScreen]        = useState("home");
-  const [lists,         setLists]         = useState(SAMPLE_LISTS);
-  const [pair,          setPair]          = useState({ from:"sv", to:"en" });
-  const [activeListId,  setActiveListId]  = useState("djur");
-  const [result,        setResult]        = useState(null);
-
-  const pairLists = lists.filter(l=>(l.from||"sv")===pair.from&&(l.to||"en")===pair.to);
-
-  // ── Auth helpers ──────────────────────────────────────────────
-  function saveSession(token, refresh) {
-    localStorage.setItem("greta_session", JSON.stringify({token,refresh}));
-  }
-  function clearSession() {
-    localStorage.removeItem("greta_session");
-    setCurrentUser(null); setSessionToken(null);
-  }
-
-  function applySession(token, refresh) {
-    const p = parseJWT(token);
-    const user = p ? { id:p.sub, email:p.email } : null;
-    setCurrentUser(user); setSessionToken(token);
-    saveSession(token, refresh);
-    return user;
-  }
-
-  useEffect(()=>{
-    (async()=>{
-      // Handle magic link redirect
-      const params = new URLSearchParams(location.hash.substring(1));
-      const hashToken = params.get("access_token");
-      const hashRefresh = params.get("refresh_token");
-      if(hashToken) {
-        applySession(hashToken, hashRefresh);
-        history.replaceState(null, "", location.pathname+location.search);
-        setAuthLoading(false);
-        return;
-      }
-      // Restore saved session
-      try {
-        const saved = localStorage.getItem("greta_session");
-        if(!saved) { setAuthLoading(false); return; }
-        let { token, refresh } = JSON.parse(saved);
-        if(tokenExpired(token) && refresh) {
-          const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
-            method:"POST",
-            headers:{"Content-Type":"application/json","apikey":SUPABASE_ANON_KEY},
-            body:JSON.stringify({refresh_token:refresh}),
-          });
-          if(!res.ok) { clearSession(); setAuthLoading(false); return; }
-          const d = await res.json();
-          token=d.access_token; refresh=d.refresh_token;
-        } else if(tokenExpired(token)) { clearSession(); setAuthLoading(false); return; }
-        applySession(token, refresh);
-      } catch { clearSession(); }
-      setAuthLoading(false);
-    })();
-  }, []);
-
-  // ── Load lists from Supabase ──────────────────────────────────
-  useEffect(()=>{
-    if(!sessionToken) return;
-    loadLists();
-  }, [sessionToken]);
-
-  async function loadLists() {
-    try {
-      const res = await fetch(`${API}/sets`, { headers:{"Authorization":`Bearer ${sessionToken}`} });
-      if(!res.ok) return;
-      const sets = await res.json();
-      const COLORS = ["rose","butter","sky","mint","pink"];
-      const mapped = sets.map((s,i)=>({
-        id:    s.id,
-        name:  s.topic,
-        color: COLORS[i % COLORS.length],
-        words: (s.vocab||[]).map(p=>({sv:p.sv, en:typeof p.en==="string"&&p.en.includes("|")?p.en.split("|").map(x=>x.trim()):p.en})),
-        from:  "sv",
-        to:    "en",
-      }));
-      if(mapped.length>0) {
-        setLists(mapped);
-        setActiveListId(mapped[0].id);
-      }
-    } catch {}
-  }
-
-  async function saveList(newList) {
-    const words = newList.words.map(w=>({ sv:w[newList.from]||w.sv, en:w[newList.to]||w.en }));
-    if(!sessionToken) {
-      // Guest mode — keep in memory only
-      setLists(l=>[...l, newList]);
-      setActiveListId(newList.id);
-      setScreen("home");
-      return;
-    }
-    try {
-      const res = await fetch(`${API}/sets`, {
-        method:"POST",
-        headers:{"Content-Type":"application/json","Authorization":`Bearer ${sessionToken}`},
-        body:JSON.stringify({ topic:newList.name, vocab:words }),
-      });
-      const saved = await res.json();
-      if(!res.ok) throw new Error(saved.error||"Save failed");
-      const stamped = { ...newList, id:saved.id };
-      setLists(l=>[...l, stamped]);
-      setActiveListId(stamped.id);
-    } catch {
-      setLists(l=>[...l, newList]);
-      setActiveListId(newList.id);
-    }
-    setScreen("home");
-  }
-
-  async function deleteList(list) {
-    if(sessionToken) {
-      try {
-        await fetch(`${API}/sets/${list.id}`, { method:"DELETE", headers:{"Authorization":`Bearer ${sessionToken}`} });
-      } catch {}
-    }
-    setLists(l=>l.filter(x=>x.id!==list.id));
-    if(activeListId===list.id) setActiveListId(null);
-  }
-
-  async function signOut() {
-    if(sessionToken) {
-      fetch(`${SUPABASE_URL}/auth/v1/logout`, {
-        method:"POST",
-        headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":`Bearer ${sessionToken}`},
-      }).catch(()=>{});
-    }
-    clearSession();
-    setLists(SAMPLE_LISTS);
-    setActiveListId("djur");
-    setScreen("home");
-  }
-
-  function changePair(p) {
-    setPair({ from:p.from, to:p.to });
-    const first = lists.find(l=>l.from===p.from&&l.to===p.to);
-    setActiveListId(first?first.id:null);
-    setScreen("home");
-  }
-
-  const activeList = lists.find(l=>l.id===activeListId);
-
-  if(authLoading) return (
-    <div style={{ display:"flex", alignItems:"center", justifyContent:"center",
-      width:360, height:720, background:T.paper, borderRadius:T.radiusLg }}>
-      <Bloom size={40} color={T.pink} center={T.butter} spinning/>
-    </div>
-  );
-
-  // Screen rendering
-  let body;
-  switch(screen) {
-    case "login":
-      body = <ScreenLogin onLogin={()=>setScreen("home")} currentUser={currentUser}/>;
-      break;
-    case "home":
-      body = <ScreenHome
-        lists={pairLists} activeListId={activeListId} pair={pair}
-        onPickList={()=>setScreen("lists")}
-        onAddList={()=>setScreen("paste")}
-        onStart={()=>activeList&&setScreen("quiz")}
-        onSettings={()=>setScreen("settings")}
-        onPickPair={()=>setScreen("langpicker")}/>;
-      break;
-    case "lists":
-      body = <ScreenLists
-        lists={pairLists} activeListId={activeListId}
-        onPick={id=>{ setActiveListId(id); setScreen("home"); }}
-        onAdd={()=>setScreen("paste")}
-        onClose={()=>setScreen("home")}
-        onDelete={deleteList}/>;
-      break;
-    case "paste":
-      body = <ScreenPaste pair={pair} onSave={saveList} onCancel={()=>setScreen(activeListId?"home":"lists")}/>;
-      break;
-    case "quiz":
-      if(!activeList) { setScreen("home"); return null; }
-      body = <ScreenQuiz list={activeList} onDone={r=>{ setResult(r); setScreen("done"); }} onExit={()=>setScreen("home")}/>;
-      break;
-    case "done":
-      body = <ScreenDone
-        result={result||{right:0,wrong:0,total:0}}
-        onAgain={()=>{ setResult(null); setScreen("quiz"); }}
-        onHome={()=>{ setResult(null); setScreen("home"); }}/>;
-      break;
-    case "settings":
-      body = <ScreenSettings pair={pair} currentUser={currentUser}
-        onClose={()=>setScreen("home")} onLogout={signOut} onChangePair={()=>setScreen("langpicker")}/>;
-      break;
-    case "langpicker":
-      body = <ScreenLangPicker pair={pair} lists={lists} onPick={changePair} onClose={()=>setScreen("home")}/>;
-      break;
-    default:
-      body = <div/>;
-  }
-
-  return (
-    <div style={{
-      width:360, height:720,
-      background:T.paperAlt,
-      border:`4px solid ${T.ink}`,
-      borderRadius:44,
-      overflow:"hidden",
-      boxShadow:T.shadowLg,
-      position:"relative",
-    }}>
-      {/* Dynamic island */}
-      <div style={{
-        position:"absolute", top:14, left:"50%", transform:"translateX(-50%)",
-        width:90, height:22, background:T.ink, borderRadius:999, zIndex:20,
-      }}/>
-      <div style={{ width:"100%", height:"100%", borderRadius:36, overflow:"hidden", position:"relative", display:"flex", flexDirection:"column" }}>
-        {/* Status bar */}
-        <div style={{ height:46, flexShrink:0, display:"flex", alignItems:"flex-end",
-          justifyContent:"space-between", padding:"0 24px 6px",
-          fontFamily:T.mFont, fontWeight:700, fontSize:13, color:T.ink, background:T.paper }}>
-          <div>9:41</div>
-          <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-            <svg width="17" height="10" viewBox="0 0 17 10" aria-hidden="true">
-              <rect x="0"    y="6" width="3" height="4"  rx="0.5" fill={T.ink}/>
-              <rect x="4.5" y="4" width="3" height="6"  rx="0.5" fill={T.ink}/>
-              <rect x="9"   y="2" width="3" height="8"  rx="0.5" fill={T.ink}/>
-              <rect x="13.5" y="0" width="3" height="10" rx="0.5" fill={T.ink} opacity="0.35"/>
-            </svg>
-            <svg width="24" height="11" viewBox="0 0 24 11" aria-hidden="true">
-              <rect x="0.75" y="0.75" width="19.5" height="9.5" rx="2.5" fill="none" stroke={T.ink} strokeWidth="1.2" opacity="0.9"/>
-              <rect x="2" y="2" width="13" height="7" rx="1" fill={T.ink}/>
-              <rect x="21.5" y="3.5" width="1.8" height="4" rx="0.6" fill={T.ink} opacity="0.6"/>
-            </svg>
-          </div>
-        </div>
-        {/* Screen body */}
-        <div style={{ flex:1, minHeight:0, overflowY:"auto", background:T.paper, position:"relative" }}>
-          {body}
+        <div class="label-caps" style="margin-bottom:8px;">Practice</div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          ${[["Daily reminder","Every day at 4pm"],["Sound effects","On"],["Show pronunciation","On"]].map(([l,v],i,a)=>`
+          <div style="padding:14px 16px;border-bottom:${i<a.length-1?`1.5px solid var(--paper-alt)`:"none"};display:flex;justify-content:space-between;align-items:center;" class="b-font">
+            <span style="font-weight:600;color:var(--ink);">${l}</span>
+            <span style="font-size:13px;color:var(--ink-soft);">${v}</span>
+          </div>`).join("")}
         </div>
       </div>
-    </div>
-  );
+      <button id="settings-logout" class="btn btn-tertiary btn-full">Log out</button>
+      <div style="text-align:center;font-size:11px;color:var(--ink-soft);margin-top:auto;" class="m-font">
+        Poppins v1 · made with ${SVG.heart(12,"#B583E8")}
+      </div>
+    </div>`;
+},
+
+};
+
+// ── ANIMATION NAME HELPER ─────────────────────────────────────────
+function animName(a){
+  return {kiss:"greta-kiss 1100ms cubic-bezier(.4,1.4,.6,1)",tada:"greta-tada 950ms ease-in-out",bigbounce:"greta-bigbounce 1100ms ease-out",cartwheel:"greta-cartwheel 1000ms cubic-bezier(.5,.9,.5,1)",shake:"greta-oops 620ms ease-in-out",sink:"greta-sink 900ms ease-in-out",headtilt:"greta-headtilt 950ms ease-in-out",spin:"greta-spin-shrink 850ms cubic-bezier(.5,1.4,.5,1)"}[a]||"none";
 }
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App/>);
+// ── FEEDBACK BURST HTML ───────────────────────────────────────────
+function feedbackBurst(feedback,anim){
+  if(!feedback||!anim)return"";
+  const colors=["#B583E8","#F2EE5B","#8AD7FF","#A8F08C","#FFB0C8"];
+  if(anim==="kiss")return`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;"><div style="position:absolute;bottom:78px;left:50%;margin-left:-14px;animation:greta-heart-burst 1100ms ease-out 250ms both;">${SVG.heart(32,"#B583E8")}</div></div>`;
+  if(anim==="tada"){
+    const dirs=[{dx:-55,dy:-40},{dx:55,dy:-40},{dx:-70,dy:0},{dx:70,dy:0},{dx:0,dy:-65}];
+    return`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;">${dirs.map((d,i)=>`<div style="position:absolute;left:50%;top:50%;--dx:${d.dx}px;--dy:${d.dy}px;animation:greta-sparkle-arc 900ms ease-out ${i*50}ms both;">${SVG.spark(22,colors[i])}</div>`).join("")}</div>`;
+  }
+  if(anim==="bigbounce"){
+    const pieces=Array.from({length:18}).map((_,i)=>({cdx:(i*47)%320+"px",cdx2:(((i*13)%60)-30)+"px",delay:(i*35)%400,rot:(i*47)%360,color:colors[i%colors.length]}));
+    return`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;overflow:hidden;">${pieces.map(p=>`<div style="position:absolute;top:0;left:0;--cdx:${p.cdx};--cdx2:${p.cdx2};animation:greta-confetti-rain 1200ms ease-in ${p.delay}ms both;">${SVG.confetti(9,p.color,p.rot)}</div>`).join("")}</div>`;
+  }
+  if(anim==="cartwheel"){
+    const dirs=[{dx:-10,dy:-10,rot:0},{dx:-30,dy:-30,rot:40},{dx:-50,dy:-50,rot:80},{dx:-70,dy:-55,rot:120},{dx:-85,dy:-45,rot:160}];
+    return`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;">${dirs.map((d,i)=>`<div style="position:absolute;bottom:24px;right:24px;--dx:${d.dx}px;--dy:${d.dy}px;--rot:${d.rot}deg;animation:greta-petal-trail 1000ms ease-out ${i*80}ms both;">${SVG.bloom(20,colors[i%colors.length],"#F4F1E8",false)}</div>`).join("")}</div>`;
+  }
+  if(anim==="sink")return`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;"><div style="position:absolute;bottom:38px;right:62px;animation:greta-droplet-fall 1000ms ease-in 200ms both;"><svg width="14" height="20" viewBox="0 0 14 20"><path d="M7 1 C 11 9 13 13 13 16 a6 6 0 0 1 -12 0 C 1 13 3 9 7 1 Z" fill="#8AD7FF"/><ellipse cx="9" cy="13" rx="1.5" ry="3" fill="#fff" opacity=".6"/></svg></div></div>`;
+  if(anim==="headtilt")return`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;"><div style="position:absolute;bottom:80px;right:26px;animation:greta-qmark-pop 1000ms ease-out 100ms both;font-family:var(--h-font);font-size:36px;color:var(--wrong);font-weight:700;">?</div></div>`;
+  if(anim==="spin")return`<div style="position:absolute;inset:0;pointer-events:none;z-index:2;"><div style="position:absolute;bottom:-8px;right:-8px;width:110px;height:110px;border-radius:50%;background:var(--ink-soft);animation:greta-puff 850ms ease-out both;opacity:.5;"></div></div>`;
+  return"";
+}
+
+// ── EVENT BINDING ─────────────────────────────────────────────────
+function bindEvents(){
+  on("login-email","input",e=>setState({loginEmail:e.target.value}));
+  on("login-submit","click",sendMagicLink);
+  on("login-skip","click",()=>navigate("home",{loginEmail:"",loginSent:false,loginErr:""}));
+
+  on("home-start","click",()=>{if(activeList())navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""]});});
+  on("home-lists","click",()=>navigate("lists"));
+  on("home-new","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste"}));
+  on("home-pair","click",()=>navigate("langpicker"));
+  on("home-settings","click",()=>navigate("settings"));
+
+  on("lists-close","click",()=>navigate("home"));
+  on("lists-add","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste"}));
+  document.querySelectorAll("[data-list-id]").forEach(el=>{
+    el.addEventListener("click",e=>{
+      if(e.target.closest(".list-delete"))return;
+      setState({activeListId:el.dataset.listId,screen:"home"});
+    });
+  });
+  document.querySelectorAll(".list-delete").forEach(el=>{
+    el.addEventListener("click",e=>{
+      e.stopPropagation();
+      const list=state.lists.find(l=>l.id===el.dataset.deleteId);
+      if(list)deleteList(list);
+    });
+  });
+
+  on("paste-close","click",()=>navigate(state.activeListId?"home":"lists"));
+  on("paste-cancel","click",()=>navigate(state.activeListId?"home":"lists"));
+  on("paste-name","input",e=>setState({pasteName:e.target.value}));
+  on("paste-text","input",e=>setState({pasteText:e.target.value}));
+  on("paste-parse","click",()=>{
+    const parsed=parsePasteText(state.pasteText,state.pair);
+    setState({pasteParsed:parsed,pasteStep:"review"});
+  });
+  on("paste-back","click",()=>setState({pasteStep:"paste"}));
+  on("paste-save","click",()=>{
+    saveList({id:"user-"+Date.now(),name:state.pasteName||"My new list",color:["rose","butter","sky","mint"][Math.floor(Math.random()*4)],words:state.pasteParsed,from:state.pair.from,to:state.pair.to});
+  });
+
+  on("lang-close","click",()=>navigate("home"));
+  document.querySelectorAll(".lang-pair-row").forEach(el=>{
+    el.addEventListener("click",()=>{
+      const from=el.dataset.from,to=el.dataset.to;
+      const firstList=state.lists.find(l=>l.from===from&&l.to===to);
+      setState({pair:{from,to},activeListId:firstList?firstList.id:null,screen:"home"});
+    });
+  });
+
+  on("quiz-exit","click",()=>navigate("home"));
+  const qi=document.getElementById("quiz-input");
+  if(qi){qi.focus();qi.addEventListener("keydown",e=>{if(e.key==="Enter")quizSubmit();});qi.addEventListener("input",e=>setState({quizAnswer:e.target.value}));}
+  on("w5-done","click",quizAdvance);
+  document.querySelectorAll("[data-w5]").forEach(el=>{
+    el.addEventListener("input",e=>write5Check(parseInt(el.dataset.w5),e.target.value));
+  });
+
+  on("done-home",  "click",()=>navigate("home"));
+  on("done-again", "click",()=>navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""]}));
+
+  on("settings-close", "click",()=>navigate("home"));
+  on("settings-logout","click",signOut);
+  on("settings-lang",  "click",()=>navigate("langpicker"));
+}
+
+function on(id,evt,fn){const el=document.getElementById(id);if(el)el.addEventListener(evt,fn);}
+
+// ── BOOT ──────────────────────────────────────────────────────────
+(async()=>{
+  await initAuth();
+  if(sessionToken)await loadUserLists();
+  render();
+})();
 </script>
 </body>
 </html>
