@@ -988,11 +988,15 @@ function bindEvents(){
 function on(id,evt,fn){const el=document.getElementById(id);if(el)el.addEventListener(evt,fn);}
 
 // ── BOOT ──────────────────────────────────────────────────────────
+window.addEventListener('unhandledrejection',e=>{
+  console.error('[Poppins] unhandled rejection at:',e.reason?.stack||e.reason);
+});
+
 (async()=>{
   try{await initAuth();}catch{}
   try{if(sessionToken)await loadUserLists();}catch{}
-  render();
-})();
+  try{render();}catch(e){console.error('[Poppins] render error:',e);}
+})().catch(e=>console.error('[Poppins] boot error:',e));
 </script>
 </body>
 </html>
