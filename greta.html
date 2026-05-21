@@ -989,7 +989,9 @@ function on(id,evt,fn){const el=document.getElementById(id);if(el)el.addEventLis
 
 // ── BOOT ──────────────────────────────────────────────────────────
 window.addEventListener('unhandledrejection',e=>{
-  console.error('[Poppins] unhandled rejection at:',e.reason?.stack||e.reason);
+  const msg=e.reason?.stack||e.reason?.message||String(e.reason);
+  const sc=document.getElementById('screen');
+  if(sc)sc.innerHTML=`<div style="padding:16px;font-family:monospace;font-size:11px;color:#c00;word-break:break-all;white-space:pre-wrap;background:#fff5f5;border:2px solid #c00;margin:12px;border-radius:8px;"><strong>Debug error — screenshot this:</strong>\n\n${msg}</div>`;
 });
 
 (async()=>{
