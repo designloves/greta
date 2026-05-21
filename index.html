@@ -208,6 +208,16 @@ html,body{background:#2A2530;min-height:100vh;display:flex;align-items:center;ju
 ::-webkit-scrollbar{width:0;height:0;}
 input,textarea,button{font:inherit;}
 svg{display:block;}
+
+/* ── Desktop: extend the background, drop phone chrome ── */
+@media(min-width:600px){
+  html,body{background:var(--paper);align-items:flex-start;justify-content:center;}
+  #frame{width:100%;max-width:520px;height:100vh;border:none;border-radius:0;box-shadow:none;background:var(--paper);}
+  #notch{display:none;}
+  #shell{border-radius:0;}
+  #statusbar{display:none;}
+  #screen{height:100vh;}
+}
 </style>
 </head>
 <body>
