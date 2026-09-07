@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>Poppins — vocabulary tutor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -93,8 +93,8 @@ html,body{background:var(--paper);min-height:100dvh;display:flex;align-items:fle
 .label-caps{font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-soft);}
 
 /* ── Screen layout ── */
-.screen-pad{padding:20px 22px 24px;display:flex;flex-direction:column;gap:18px;min-height:100%;}
-.screen-pad-sm{padding:16px 20px 20px;display:flex;flex-direction:column;gap:14px;min-height:100%;}
+.screen-pad{padding:20px 22px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:18px;min-height:100%;}
+.screen-pad-sm{padding:16px 20px calc(20px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;min-height:100%;}
 
 /* ── Dot progress bar ── */
 .dotbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
@@ -115,6 +115,17 @@ html,body{background:var(--paper);min-height:100dvh;display:flex;align-items:fle
   width:18px;height:18px;border-radius:999px;border:var(--border-thin);
   display:inline-flex;align-items:center;justify-content:center;
   font-size:9px;font-weight:800;color:var(--ink);
+}
+.pair-swap-btn{
+  background:none;border:none;padding:2px;margin:0;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;outline:none;
+}
+.pair-chip-lg{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--butter-soft);border:var(--border);border-radius:999px;
+  padding:10px 18px;cursor:pointer;outline:none;
+  box-shadow:0 3px 0 var(--ink);
+  font-family:var(--m-font);font-size:14px;font-weight:800;color:var(--ink);
 }
 
 /* ── Animations ── */
@@ -274,6 +285,7 @@ const SVG={
   plus:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M12 4 V20 M4 12 H20" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round"/></svg>`,
   arrowRight:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M5 12 H19 M13 6 L19 12 L13 18" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   arrowBack:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M19 12 H5 M11 6 L5 12 L11 18" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  swap:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M3 8 H16 M12 4 L16 8 L12 12" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 16 H8 M12 12 L8 16 L12 20" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   gear:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M12 2 L14 5 L17 4 L17 7 L20 8 L18 11 L20 14 L17 15 L17 18 L14 17 L12 20 L10 17 L7 18 L7 15 L4 14 L6 11 L4 8 L7 7 L7 4 L10 5 Z" fill="${color}"/><circle cx="12" cy="11" r="3" fill="white"/></svg>`,
   trash:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M5 6 H19 L18 21 H6 Z" fill="${color}"/><rect x="9" y="3" width="6" height="3" rx="1" fill="${color}"/></svg>`,
   books:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><rect x="3" y="4" width="14" height="4" rx="1" fill="${color}"/><rect x="5" y="10" width="14" height="4" rx="1" fill="${color}" opacity=".7"/><rect x="3" y="16" width="14" height="4" rx="1" fill="${color}"/></svg>`,
@@ -359,6 +371,7 @@ let state={
 
 function setState(patch){Object.assign(state,patch);render();}
 function pairLists(){return state.lists.filter(l=>(l.from||"sv")===state.pair.from&&(l.to||"en")===state.pair.to);}
+function swapPair(){setState({pair:{from:state.pair.to,to:state.pair.from}});}
 function activeList(){return state.lists.find(l=>l.id===state.activeListId);}
 
 // ── SCREEN LOADER ─────────────────────────────────────────────────
@@ -590,11 +603,11 @@ home(){
           <span class="h-font" style="font-size:24px;color:var(--ink);">Poppins</span>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
-          <button id="home-pair" class="pair-chip">
+          <div id="home-pair" class="pair-chip">
             <span class="lang-circle" style="background:${fromL.color};">${fromL.code}</span>
-            ${SVG.arrowRight(12,"#241F3D")}
+            <button id="home-swap" class="pair-swap-btn" title="Swap direction">${SVG.swap(13,"#241F3D")}</button>
             <span class="lang-circle" style="background:${toL.color};">${toL.code}</span>
-          </button>
+          </div>
           <button id="home-settings" class="icon-btn">${SVG.gear(22,"#241F3D")}</button>
         </div>
       </div>
@@ -642,17 +655,19 @@ paste(){
         <h2 class="h-font" style="font-size:28px;color:var(--ink);">Paste a word list</h2>
         <button id="paste-close" class="icon-btn-xs">${SVG.cross(16,"#241F3D",3)}</button>
       </div>
-      <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--butter-soft);border:var(--border-thin);font-family:var(--m-font);font-size:11px;font-weight:700;color:var(--ink);">
-        ${fromCode} ${SVG.arrowRight(10,"#241F3D")} ${toCode}
+      <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:18px;">
+        <button id="paste-pair-swap" class="pair-chip-lg" title="Tap to swap direction">
+          ${fromCode} ${SVG.swap(16,"#241F3D")} ${toCode}
+        </button>
+        <p class="b-font" style="color:var(--ink-soft);font-size:14px;line-height:1.6;">
+          Copy from anywhere. Use any separator: <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">=</code>
+          <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">-</code>
+          <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">:</code>
+          <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">→</code>
+        </p>
+        <input id="paste-name" class="inp inp-header" placeholder="What's this list called?" value="${pasteName}"/>
+        <textarea id="paste-text" class="inp inp-mono" rows="9" placeholder="katt = cat&#10;hund - dog&#10;häst → horse">${pasteText}</textarea>
       </div>
-      <p class="b-font" style="color:var(--ink-soft);font-size:14px;line-height:1.6;">
-        Copy from anywhere. Use any separator: <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">=</code>
-        <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">-</code>
-        <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">:</code>
-        <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">→</code>
-      </p>
-      <input id="paste-name" class="inp inp-header" placeholder="What's this list called?" value="${pasteName}"/>
-      <textarea id="paste-text" class="inp inp-mono" rows="9" placeholder="katt = cat&#10;hund - dog&#10;häst → horse">${pasteText}</textarea>
       <div style="display:flex;gap:10px;">
         <button id="paste-cancel" class="btn btn-tertiary">Cancel</button>
         <button id="paste-parse" class="btn btn-primary" style="flex:1;" ${!pasteText.trim()?"disabled":""}>
@@ -924,6 +939,7 @@ function bindEvents(){
   on("home-lists","click",()=>navigate("lists"));
   on("home-new","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste"}));
   on("home-pair","click",()=>navigate("langpicker"));
+  on("home-swap","click",e=>{e.stopPropagation();swapPair();});
   on("home-settings","click",()=>navigate("settings"));
 
   on("lists-close","click",()=>navigate("home"));
@@ -944,6 +960,7 @@ function bindEvents(){
 
   on("paste-close","click",()=>navigate(state.activeListId?"home":"lists"));
   on("paste-cancel","click",()=>navigate(state.activeListId?"home":"lists"));
+  on("paste-pair-swap","click",swapPair);
   on("paste-name","input",e=>setState({pasteName:e.target.value}));
   on("paste-text","input",e=>setState({pasteText:e.target.value}));
   on("paste-parse","click",()=>{
