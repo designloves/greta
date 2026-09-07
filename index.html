@@ -2,17 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"/>
 <title>Poppins — vocabulary tutor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{background:var(--paper);min-height:100dvh;display:flex;align-items:flex-start;justify-content:center;font-family:'Space Grotesk',system-ui,sans-serif;}
+html,body{background:var(--paper);min-height:var(--app-height,100dvh);display:flex;align-items:flex-start;justify-content:center;font-family:'Space Grotesk',system-ui,sans-serif;}
 
 /* ── Gummy Tech tokens ── */
 :root{
+  --app-height:100dvh;
   --paper:#F4F1E8; --paper-alt:#E9E4D2;
   --ink:#241F3D;   --ink-soft:#6B638A;
   --pink:#B583E8;  --pink-soft:#E5D4F7;
@@ -33,7 +34,7 @@ html,body{background:var(--paper);min-height:100dvh;display:flex;align-items:fle
 
 /* ── App frame (fills the viewport) ── */
 #frame{
-  width:100%;max-width:520px;height:100dvh;background:var(--paper);
+  width:100%;max-width:520px;height:var(--app-height);background:var(--paper);
   position:relative;flex-shrink:0;
 }
 #shell{width:100%;height:100%;display:flex;flex-direction:column;}
@@ -67,7 +68,6 @@ html,body{background:var(--paper);min-height:100dvh;display:flex;align-items:fle
   width:38px;height:38px;cursor:pointer;display:flex;align-items:center;justify-content:center;outline:none;
 }
 .icon-btn-sm{width:34px;height:34px;}
-.icon-btn-xs{width:36px;height:36px;}
 .icon-btn-plain{
   background:none;border:none;box-shadow:none;
   width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;outline:none;
@@ -82,7 +82,7 @@ html,body{background:var(--paper);min-height:100dvh;display:flex;align-items:fle
 .inp:focus{box-shadow:inset 0 2px 0 var(--paper-alt),0 0 0 3px var(--pink-soft);}
 .inp-correct{background:var(--mint-soft)!important;}
 .inp-wrong{background:var(--pink-soft)!important;}
-.inp-mono{font-family:var(--m-font);font-size:14px;resize:none;line-height:1.6;}
+.inp-mono{font-family:var(--m-font);font-size:16px;resize:none;line-height:1.6;}
 .inp-header{font-family:var(--h-font);font-size:18px;}
 
 /* ── Typography helpers ── */
@@ -93,8 +93,8 @@ html,body{background:var(--paper);min-height:100dvh;display:flex;align-items:fle
 .label-caps{font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-soft);}
 
 /* ── Screen layout ── */
-.screen-pad{padding:20px 22px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:18px;min-height:100%;}
-.screen-pad-sm{padding:16px 20px calc(20px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;min-height:100%;}
+.screen-pad{padding:10px 11px calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:18px;min-height:100%;}
+.screen-pad-sm{padding:8px 10px calc(10px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;min-height:100%;}
 
 /* ── Dot progress bar ── */
 .dotbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
@@ -103,29 +103,18 @@ html,body{background:var(--paper);min-height:100dvh;display:flex;align-items:fle
 .dot-done{width:10px;background:var(--mint);}
 .dot-future{width:10px;}
 
-/* ── Pair chip ── */
-.pair-chip{
-  display:flex;align-items:center;gap:6px;
-  background:var(--paper);border:var(--border);border-radius:999px;
-  padding:5px 10px 5px 6px;cursor:pointer;outline:none;
-  box-shadow:0 2px 0 var(--ink);
-  font-family:var(--m-font);font-size:12px;font-weight:700;color:var(--ink);
+/* ── Speech bubble ── */
+.speech-bubble{
+  position:absolute;top:6px;left:58%;transform:translate(-25%,-100%);
+  background:var(--paper);border:var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:10px 16px;font-size:14px;font-weight:600;
+  color:var(--ink);text-align:center;max-width:200px;z-index:5;
 }
-.lang-circle{
-  width:18px;height:18px;border-radius:999px;border:var(--border-thin);
-  display:inline-flex;align-items:center;justify-content:center;
-  font-size:9px;font-weight:800;color:var(--ink);
-}
-.pair-swap-btn{
-  background:none;border:none;padding:2px;margin:0;cursor:pointer;
-  display:inline-flex;align-items:center;justify-content:center;outline:none;
-}
-.pair-chip-lg{
-  display:inline-flex;align-items:center;gap:10px;
-  background:var(--butter-soft);border:var(--border);border-radius:999px;
-  padding:10px 18px;cursor:pointer;outline:none;
-  box-shadow:0 3px 0 var(--ink);
-  font-family:var(--m-font);font-size:14px;font-weight:800;color:var(--ink);
+.speech-bubble::after{
+  content:"";position:absolute;bottom:-9px;left:32%;
+  width:16px;height:16px;background:var(--paper);
+  border-right:var(--border);border-bottom:var(--border);
+  transform:translateX(-50%) rotate(45deg);
 }
 
 /* ── Animations ── */
@@ -206,6 +195,7 @@ html,body{background:var(--paper);min-height:100dvh;display:flex;align-items:fle
 @keyframes greta-puff{0%{transform:scale(0);opacity:0;}40%{transform:scale(1.2);opacity:.85;}100%{transform:scale(1.6);opacity:0;}}
 @keyframes greta-answer-rise{from{transform:translateY(14px);opacity:0;}to{transform:translateY(0);opacity:1;}}
 @keyframes pop-in{from{transform:scale(.92);opacity:0;}to{transform:scale(1);opacity:1;}}
+@keyframes pop-out{from{transform:scale(1);opacity:1;}to{transform:scale(.85);opacity:0;}}
 
 ::-webkit-scrollbar{width:0;height:0;}
 input,textarea,button{font:inherit;}
@@ -225,6 +215,20 @@ svg{display:block;}
 const API              = 'https://ivcnjkzuggwpxvnalbol.supabase.co/functions/v1/greta';
 const SUPABASE_URL     = 'https://ivcnjkzuggwpxvnalbol.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_nvKqUBjP0B-TmROc_aJtdA_U-P0pr_u';
+
+// ── VIEWPORT HEIGHT (tracks the visual viewport so the on-screen keyboard shrinks the app instead of covering it) ──
+function syncAppHeight(){
+  try{
+    const h=window.visualViewport?window.visualViewport.height:window.innerHeight;
+    document.documentElement.style.setProperty('--app-height',h+'px');
+  }catch{}
+}
+syncAppHeight();
+window.addEventListener('resize',syncAppHeight);
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize',syncAppHeight);
+  window.visualViewport.addEventListener('scroll',syncAppHeight);
+}
 
 function esc(s){
   return String(s==null?"":s)
@@ -269,6 +273,7 @@ const SAMPLE_LISTS=[
 ];
 
 const COLOR_MAP={rose:"#FFB0C8",butter:"#F2EE5B",sky:"#8AD7FF",mint:"#A8F08C",pink:"#B583E8"};
+const AVATAR_COLORS={pink:"#B583E8",rose:"#FFB0C8",sky:"#8AD7FF",mint:"#A8F08C",butter:"#F2EE5B"};
 
 // ── SVG ICONS (strings) ───────────────────────────────────────────
 const SVG={
@@ -285,7 +290,6 @@ const SVG={
   plus:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M12 4 V20 M4 12 H20" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round"/></svg>`,
   arrowRight:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M5 12 H19 M13 6 L19 12 L13 18" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   arrowBack:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M19 12 H5 M11 6 L5 12 L11 18" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-  swap:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M3 8 H16 M12 4 L16 8 L12 12" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 16 H8 M12 12 L8 16 L12 20" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   pencil:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M14.5 4.5 L19.5 9.5 L8 21 L3 22 L4 17 Z" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 6.5 L17.5 11.5" stroke="${color}" stroke-width="2" stroke-linecap="round"/></svg>`,
   gear:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M12 2 L14 5 L17 4 L17 7 L20 8 L18 11 L20 14 L17 15 L17 18 L14 17 L12 20 L10 17 L7 18 L7 15 L4 14 L6 11 L4 8 L7 7 L7 4 L10 5 Z" fill="${color}"/><circle cx="12" cy="11" r="3" fill="white"/></svg>`,
   trash:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M5 6 H19 L18 21 H6 Z" fill="${color}"/><rect x="9" y="3" width="6" height="3" rx="1" fill="${color}"/></svg>`,
@@ -294,8 +298,8 @@ const SVG={
 };
 
 // ── MASCOT ────────────────────────────────────────────────────────
-function mascotSVG(size,mood){
-  const p={body:"#fff",outline:"#241F3D",cheek:"#FFB0C8",bow:"#B583E8",bowCenter:"#F2EE5B",eye:"#241F3D"};
+function mascotSVG(size,mood,bowColor){
+  const p={body:"#fff",outline:"#241F3D",cheek:"#FFB0C8",bow:bowColor||"#B583E8",bowCenter:"#F2EE5B",eye:"#241F3D"};
   const eyes={
     happy:`<circle cx="34" cy="48" r="3.2" fill="${p.eye}"/><circle cx="58" cy="48" r="3.2" fill="${p.eye}"/>`,
     proud:`<path d="M30 48 Q34 44 38 48" fill="none" stroke="${p.eye}" stroke-width="3" stroke-linecap="round"/><path d="M54 48 Q58 44 62 48" fill="none" stroke="${p.eye}" stroke-width="3" stroke-linecap="round"/>`,
@@ -369,13 +373,24 @@ let state={
   // login
   loginEmail:"",loginSent:false,loginErr:"",loginLoading:false,
   // mascot
-  showGreeting:false,
+  showGreeting:false,greetingHiding:false,
+  // avatar
+  avatar:"pink",
 };
-let greetTimer=null;
+let greetTimer=null, greetHideTimer=null;
+
+function speak(text,lang){
+  try{
+    if(!window.speechSynthesis)return;
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    if(lang)u.lang=lang;
+    speechSynthesis.speak(u);
+  }catch{}
+}
 
 function setState(patch){Object.assign(state,patch);render();}
 function pairLists(){return state.lists.filter(l=>(l.from||"sv")===state.pair.from&&(l.to||"en")===state.pair.to);}
-function swapPair(){setState({pair:{from:state.pair.to,to:state.pair.from}});}
 function activeList(){return state.lists.find(l=>l.id===state.activeListId);}
 
 // ── SCREEN LOADER ─────────────────────────────────────────────────
@@ -573,26 +588,21 @@ login(){
 
 home(){
   const pl=pairLists(), list=activeList();
-  const pair=state.pair;
-  const fromL=LANGUAGES[pair.from]||{code:"SV",color:"#FFD66B"};
-  const toL  =LANGUAGES[pair.to]  ||{code:"EN",color:"#E8447B"};
   const listCard=list?`
     <div class="card-lg" style="background:${COLOR_MAP[list.color]||"#FFB0C8"};position:relative;overflow:hidden;">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-        <div>
-          <div class="label-caps">Today's list</div>
-          <h2 class="h-font" style="font-size:32px;color:var(--ink);margin:4px 0 0;letter-spacing:-0.02em;line-height:1;">${esc(list.name)}</h2>
-          <div class="m-font" style="font-size:13px;color:var(--ink);margin-top:8px;opacity:.8;">
-            ${list.words.length} words · ${LANGUAGES[list.from]?.code||"SV"} → ${LANGUAGES[list.to]?.code||"EN"}
-          </div>
+      <button id="home-list-edit" title="Edit list" style="position:absolute;top:15px;right:15px;background:var(--paper);border:var(--border-thin);border-radius:999px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;">${SVG.pencil(17,"#241F3D")}</button>
+      <div style="padding-right:46px;">
+        <div class="label-caps">Today's list</div>
+        <h2 class="h-font" style="font-size:32px;color:var(--ink);margin:4px 0 0;letter-spacing:-0.02em;line-height:1;">${esc(list.name)}</h2>
+        <div class="m-font" style="font-size:13px;color:var(--ink);margin-top:8px;opacity:.8;">
+          ${list.words.length} words · ${LANGUAGES[list.from]?.code||"SV"} → ${LANGUAGES[list.to]?.code||"EN"}
         </div>
-        <button id="home-list-edit" title="Edit list" style="background:var(--paper);border:var(--border-thin);border-radius:999px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">${SVG.pencil(17,"#241F3D")}</button>
       </div>
       <div style="margin-top:18px;">
         <button id="home-start" class="btn btn-primary btn-lg btn-full">Start practice ${SVG.arrowRight(18,"#fff")}</button>
       </div>
     </div>
-    <div style="margin-top:auto;display:flex;gap:10px;">
+    <div style="margin-top:auto;display:flex;justify-content:center;gap:10px;">
       <button id="home-lists" class="btn btn-tertiary">${SVG.books(16,"#241F3D")} My lists</button>
       <button id="home-new" class="btn btn-tertiary">${SVG.plus(16,"#241F3D")} New</button>
     </div>`:
@@ -604,6 +614,7 @@ home(){
         <button id="home-new" class="btn btn-tertiary btn-full">${SVG.plus(16,"#241F3D")} Paste my own</button>
       </div>
     </div>`;
+  const avatarColor=AVATAR_COLORS[state.avatar]||AVATAR_COLORS.pink;
   return `
     <div class="screen-pad">
       <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -611,21 +622,18 @@ home(){
           <span id="bloom-spin">${SVG.bloom(26,"#B583E8","#F2EE5B",true)}</span>
           <span class="h-font" style="font-size:24px;color:var(--ink);">Poppins</span>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div id="home-pair" class="pair-chip">
-            <span class="lang-circle" style="background:${fromL.color};">${fromL.code}</span>
-            <button id="home-swap" class="pair-swap-btn" title="Swap direction">${SVG.swap(13,"#241F3D")}</button>
-            <span class="lang-circle" style="background:${toL.color};">${toL.code}</span>
-          </div>
-          <button id="home-settings" class="icon-btn">${SVG.gear(22,"#241F3D")}</button>
-        </div>
+        <button id="home-settings" title="Settings" style="width:38px;height:38px;border-radius:999px;background:var(--paper-alt);border:var(--border-thin);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;overflow:hidden;flex-shrink:0;">
+          ${mascotSVG(30,"happy",avatarColor)}
+        </button>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
-        ${state.showGreeting?`
-        <div class="b-font" style="background:var(--paper);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:10px 16px;font-size:14px;font-weight:600;color:var(--ink);text-align:center;max-width:230px;animation:pop-in 200ms ease-out;">
-          Hi! I'm Poppins. Let's learn some language!
-        </div>`:""}
-        <button id="home-mascot" title="Say hi" style="background:none;border:none;padding:0;cursor:pointer;">${mascotSVG(120,"happy")}</button>
+      <div style="display:flex;justify-content:center;">
+        <div style="position:relative;display:inline-block;">
+          <button id="home-mascot" title="Say hi" style="background:none;border:none;padding:0;cursor:pointer;">${mascotSVG(120,"happy",avatarColor)}</button>
+          ${state.showGreeting?`
+          <div class="speech-bubble b-font" style="animation:${state.greetingHiding?"pop-out 180ms ease-in forwards":"pop-in 200ms ease-out"};">
+            Hi! I'm Poppins. Let's learn some language!
+          </div>`:""}
+        </div>
       </div>
       ${listCard}
     </div>`;
@@ -652,7 +660,7 @@ lists(){
           <h2 class="h-font" style="font-size:30px;color:var(--ink);">My lists</h2>
           <div class="m-font" style="font-size:11px;color:var(--ink-soft);margin-top:4px;">${pl.length} list${pl.length!==1?"s":""}</div>
         </div>
-        <button id="lists-close" class="icon-btn-xs">${SVG.cross(16,"#241F3D",3)}</button>
+        <button id="lists-close" class="icon-btn-plain">${SVG.cross(20,"#241F3D",3)}</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:12px;flex:1;overflow-y:auto;">
         ${items||`<div style="text-align:center;padding:32px 0;color:var(--ink-soft);" class="b-font">No lists yet — add one!</div>`}
@@ -663,17 +671,13 @@ lists(){
 
 paste(){
   const {pasteName,pasteText,pasteParsed,pasteStep,pair,editingListId}=state;
-  const fromCode=LANGUAGES[pair.from]?.code||"SV", toCode=LANGUAGES[pair.to]?.code||"EN";
   if(pasteStep==="paste")return `
     <div class="screen-pad">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <h2 class="h-font" style="font-size:28px;color:var(--ink);">${editingListId?"Edit list":"Paste a word list"}</h2>
-        <button id="paste-close" class="icon-btn-xs">${SVG.cross(16,"#241F3D",3)}</button>
+        <button id="paste-close" class="icon-btn-plain">${SVG.cross(20,"#241F3D",3)}</button>
       </div>
       <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:18px;">
-        <button id="paste-pair-swap" class="pair-chip-lg" title="Tap to swap direction">
-          ${fromCode} ${SVG.swap(16,"#241F3D")} ${toCode}
-        </button>
         <p class="b-font" style="color:var(--ink-soft);font-size:14px;line-height:1.6;">
           Copy from anywhere. Use any separator: <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">=</code>
           <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">-</code>
@@ -700,7 +704,7 @@ paste(){
     <div class="screen-pad">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <h2 class="h-font" style="font-size:28px;color:var(--ink);">Look right?</h2>
-        <button id="paste-close" class="icon-btn-xs">${SVG.cross(16,"#241F3D",3)}</button>
+        <button id="paste-close" class="icon-btn-plain">${SVG.cross(20,"#241F3D",3)}</button>
       </div>
       <div style="background:var(--mint-soft);border:var(--border-thin);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:8px;">
         ${SVG.check(18,"#241F3D",4)}
@@ -739,7 +743,7 @@ langpicker(){
     <div class="screen-pad">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <h2 class="h-font" style="font-size:30px;color:var(--ink);">Which language?</h2>
-        <button id="lang-close" class="icon-btn-xs">${SVG.cross(16,"#241F3D",3)}</button>
+        <button id="lang-close" class="icon-btn-plain">${SVG.cross(20,"#241F3D",3)}</button>
       </div>
       <p class="b-font" style="color:var(--ink-soft);font-size:14px;">Pick a language you're learning from another.</p>
       <div style="display:flex;flex-direction:column;gap:10px;flex:1;">
@@ -779,7 +783,7 @@ quiz(){
           <p class="b-font" style="color:var(--ink-soft);font-size:13px;margin-top:6px;">(${esc(lh.src(word))} in ${esc(lh.srcLang)})</p>
         </div>
         <div style="display:flex;justify-content:center;">${mascotSVG(80,"thinking")}</div>
-        <div style="display:flex;flex-direction:column;gap:8px;flex:1;">${rows}</div>
+        <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-height:0;overflow-y:auto;">${rows}</div>
         <button id="w5-done" class="btn btn-primary btn-lg btn-full" ${done<5?"disabled":""}>
           ${done===5?`Got it — keep going ${SVG.arrowRight(18,"#fff")}`:done+" / 5 done"}
         </button>
@@ -822,10 +826,10 @@ quiz(){
           </div>
         </div>
       </div>
-      <div class="card-lg" style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:24px;background:${fbBg};transition:background 250ms;position:relative;overflow:hidden;animation:${cardAnim};">
-        <div style="display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;">
+      <div class="card-lg" style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;padding:clamp(12px,4vh,24px) 24px;background:${fbBg};transition:background 250ms;position:relative;overflow:hidden;animation:${cardAnim};">
+        <div style="display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;min-height:0;overflow-y:auto;">
           <div class="label-caps">${lh.srcLang}</div>
-          <div class="h-font" style="font-size:54px;line-height:.95;color:var(--ink);letter-spacing:-.03em;word-break:break-word;">${esc(lh.src(word))}</div>
+          <div class="h-font" style="font-size:clamp(30px,9vh,54px);line-height:.95;color:var(--ink);letter-spacing:-.03em;word-break:break-word;">${esc(lh.src(word))}</div>
           ${wrongAnswer}${hint}
         </div>
         ${burst}
@@ -868,6 +872,10 @@ done(){
 
 settings(){
   const pair=state.pair;
+  const avatarSwatches=Object.entries(AVATAR_COLORS).map(([key,color])=>`
+    <button class="avatar-swatch" data-avatar="${key}" title="${key}" style="width:44px;height:44px;border-radius:999px;background:var(--paper-alt);border:${state.avatar===key?"3px solid var(--ink)":"var(--border-thin)"};display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;box-shadow:${state.avatar===key?"0 3px 0 var(--ink)":"none"};">
+      ${mascotSVG(32,"happy",color)}
+    </button>`).join("");
   return `
     <div class="screen-pad">
       <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -877,13 +885,17 @@ settings(){
       <div class="card" style="background:var(--pink-soft);">
         <div style="display:flex;align-items:center;gap:14px;">
           <div style="width:56px;height:56px;border-radius:999px;background:var(--paper);border:var(--border-thin);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            ${mascotSVG(48,"happy")}
+            ${mascotSVG(48,"happy",AVATAR_COLORS[state.avatar]||AVATAR_COLORS.pink)}
           </div>
           <div>
             <div class="h-font" style="font-size:18px;color:var(--ink);">Hej there!</div>
             <div class="m-font" style="font-size:12px;color:var(--ink-soft);">${esc(currentUser?.email||"Not signed in")}</div>
           </div>
         </div>
+      </div>
+      <div>
+        <div class="label-caps" style="margin-bottom:8px;">Avatar</div>
+        <div style="display:flex;gap:10px;">${avatarSwatches}</div>
       </div>
       <div>
         <div class="label-caps" style="margin-bottom:8px;">Language</div>
@@ -953,13 +965,15 @@ function bindEvents(){
   on("home-start","click",()=>{if(activeList())navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""]});});
   on("home-lists","click",()=>navigate("lists"));
   on("home-new","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null}));
-  on("home-pair","click",()=>navigate("langpicker"));
-  on("home-swap","click",e=>{e.stopPropagation();swapPair();});
   on("home-settings","click",()=>navigate("settings"));
   on("home-mascot","click",()=>{
-    setState({showGreeting:true});
-    clearTimeout(greetTimer);
-    greetTimer=setTimeout(()=>setState({showGreeting:false}),3000);
+    clearTimeout(greetTimer);clearTimeout(greetHideTimer);
+    setState({showGreeting:true,greetingHiding:false});
+    speak("Hi! I'm Poppins. Let's learn some language!","en-US");
+    greetTimer=setTimeout(()=>{
+      setState({greetingHiding:true});
+      greetHideTimer=setTimeout(()=>setState({showGreeting:false,greetingHiding:false}),180);
+    },2000);
   });
   on("home-list-edit","click",()=>{
     const list=activeList(); if(!list)return;
@@ -985,7 +999,6 @@ function bindEvents(){
 
   on("paste-close","click",()=>navigate(state.activeListId?"home":"lists"));
   on("paste-cancel","click",()=>navigate(state.activeListId?"home":"lists"));
-  on("paste-pair-swap","click",swapPair);
   on("paste-name","input",e=>setState({pasteName:e.target.value}));
   on("paste-text","input",e=>setState({pasteText:e.target.value}));
   on("paste-parse","click",()=>{
@@ -1024,6 +1037,9 @@ function bindEvents(){
   on("settings-close", "click",()=>navigate("home"));
   on("settings-logout","click",signOut);
   on("settings-lang",  "click",()=>navigate("langpicker"));
+  document.querySelectorAll(".avatar-swatch").forEach(el=>{
+    el.addEventListener("click",()=>setState({avatar:el.dataset.avatar}));
+  });
 }
 
 function on(id,evt,fn){const el=document.getElementById(id);if(el)el.addEventListener(evt,fn);}
