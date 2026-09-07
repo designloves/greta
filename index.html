@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>Poppins — vocabulary tutor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{background:#2A2530;min-height:100dvh;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',system-ui,sans-serif;}
+html,body{background:var(--paper);min-height:100dvh;display:flex;align-items:flex-start;justify-content:center;font-family:'Space Grotesk',system-ui,sans-serif;}
 
 /* ── Gummy Tech tokens ── */
 :root{
@@ -31,25 +31,12 @@ html,body{background:#2A2530;min-height:100dvh;display:flex;align-items:center;j
   --m-font:'JetBrains Mono',ui-monospace,monospace;
 }
 
-/* ── Phone frame ── */
+/* ── App frame (fills the viewport) ── */
 #frame{
-  width:360px;height:min(720px,100dvh);background:var(--paper-alt);
-  border:4px solid var(--ink);border-radius:44px;
-  overflow:hidden;box-shadow:var(--shadow-lg);
+  width:100%;max-width:520px;height:100dvh;background:var(--paper);
   position:relative;flex-shrink:0;
 }
-#notch{
-  position:absolute;top:14px;left:50%;transform:translateX(-50%);
-  width:90px;height:22px;background:var(--ink);border-radius:999px;z-index:20;
-}
-#shell{width:100%;height:100%;border-radius:36px;overflow:hidden;display:flex;flex-direction:column;}
-#statusbar{
-  height:46px;flex-shrink:0;display:flex;align-items:flex-end;
-  justify-content:space-between;padding:0 24px 6px;
-  font-family:var(--m-font);font-weight:700;font-size:13px;
-  color:var(--ink);background:var(--paper);
-}
-#statusbar .sb-right{display:flex;align-items:center;gap:6px;}
+#shell{width:100%;height:100%;display:flex;flex-direction:column;}
 #screen{flex:1;min-height:0;overflow-y:auto;background:var(--paper);position:relative;}
 
 /* ── Cards ── */
@@ -81,6 +68,10 @@ html,body{background:#2A2530;min-height:100dvh;display:flex;align-items:center;j
 }
 .icon-btn-sm{width:34px;height:34px;}
 .icon-btn-xs{width:36px;height:36px;}
+.icon-btn-plain{
+  background:none;border:none;box-shadow:none;
+  width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;outline:none;
+}
 
 /* ── Inputs ── */
 .inp{
@@ -102,8 +93,8 @@ html,body{background:#2A2530;min-height:100dvh;display:flex;align-items:center;j
 .label-caps{font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-soft);}
 
 /* ── Screen layout ── */
-.screen-pad{padding:20px 22px 24px;display:flex;flex-direction:column;gap:18px;min-height:100%;}
-.screen-pad-sm{padding:16px 20px 20px;display:flex;flex-direction:column;gap:14px;min-height:100%;}
+.screen-pad{padding:20px 22px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:18px;min-height:100%;}
+.screen-pad-sm{padding:16px 20px calc(20px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;min-height:100%;}
 
 /* ── Dot progress bar ── */
 .dotbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
@@ -124,6 +115,17 @@ html,body{background:#2A2530;min-height:100dvh;display:flex;align-items:center;j
   width:18px;height:18px;border-radius:999px;border:var(--border-thin);
   display:inline-flex;align-items:center;justify-content:center;
   font-size:9px;font-weight:800;color:var(--ink);
+}
+.pair-swap-btn{
+  background:none;border:none;padding:2px;margin:0;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;outline:none;
+}
+.pair-chip-lg{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--butter-soft);border:var(--border);border-radius:999px;
+  padding:10px 18px;cursor:pointer;outline:none;
+  box-shadow:0 3px 0 var(--ink);
+  font-family:var(--m-font);font-size:14px;font-weight:800;color:var(--ink);
 }
 
 /* ── Animations ── */
@@ -208,30 +210,12 @@ html,body{background:#2A2530;min-height:100dvh;display:flex;align-items:center;j
 ::-webkit-scrollbar{width:0;height:0;}
 input,textarea,button{font:inherit;}
 svg{display:block;}
-
-/* ── Desktop: extend the background, drop phone chrome ── */
-@media(min-width:600px){
-  html,body{background:var(--paper);align-items:flex-start;justify-content:center;}
-  #frame{width:100%;max-width:520px;height:100dvh;border:none;border-radius:0;box-shadow:none;background:var(--paper);}
-  #notch{display:none;}
-  #shell{border-radius:0;}
-  #statusbar{display:none;}
-  #screen{height:100dvh;}
-}
 </style>
 </head>
 <body>
 
 <div id="frame">
-  <div id="notch"></div>
   <div id="shell">
-    <div id="statusbar">
-      <span>9:41</span>
-      <div class="sb-right">
-        <svg width="17" height="10" viewBox="0 0 17 10"><rect x="0" y="6" width="3" height="4" rx=".5" fill="#241F3D"/><rect x="4.5" y="4" width="3" height="6" rx=".5" fill="#241F3D"/><rect x="9" y="2" width="3" height="8" rx=".5" fill="#241F3D"/><rect x="13.5" y="0" width="3" height="10" rx=".5" fill="#241F3D" opacity=".35"/></svg>
-        <svg width="24" height="11" viewBox="0 0 24 11"><rect x=".75" y=".75" width="19.5" height="9.5" rx="2.5" fill="none" stroke="#241F3D" stroke-width="1.2" opacity=".9"/><rect x="2" y="2" width="13" height="7" rx="1" fill="#241F3D"/><rect x="21.5" y="3.5" width="1.8" height="4" rx=".6" fill="#241F3D" opacity=".6"/></svg>
-      </div>
-    </div>
     <div id="screen"></div>
   </div>
 </div>
@@ -301,6 +285,8 @@ const SVG={
   plus:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M12 4 V20 M4 12 H20" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round"/></svg>`,
   arrowRight:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M5 12 H19 M13 6 L19 12 L13 18" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   arrowBack:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M19 12 H5 M11 6 L5 12 L11 18" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  swap:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M3 8 H16 M12 4 L16 8 L12 12" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 16 H8 M12 12 L8 16 L12 20" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  pencil:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M14.5 4.5 L19.5 9.5 L8 21 L3 22 L4 17 Z" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 6.5 L17.5 11.5" stroke="${color}" stroke-width="2" stroke-linecap="round"/></svg>`,
   gear:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M12 2 L14 5 L17 4 L17 7 L20 8 L18 11 L20 14 L17 15 L17 18 L14 17 L12 20 L10 17 L7 18 L7 15 L4 14 L6 11 L4 8 L7 7 L7 4 L10 5 Z" fill="${color}"/><circle cx="12" cy="11" r="3" fill="white"/></svg>`,
   trash:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M5 6 H19 L18 21 H6 Z" fill="${color}"/><rect x="9" y="3" width="6" height="3" rx="1" fill="${color}"/></svg>`,
   books:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><rect x="3" y="4" width="14" height="4" rx="1" fill="${color}"/><rect x="5" y="10" width="14" height="4" rx="1" fill="${color}" opacity=".7"/><rect x="3" y="16" width="14" height="4" rx="1" fill="${color}"/></svg>`,
@@ -379,13 +365,17 @@ let state={
   // quiz
   quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],
   // paste
-  pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",
+  pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null,
   // login
   loginEmail:"",loginSent:false,loginErr:"",loginLoading:false,
+  // mascot
+  showGreeting:false,
 };
+let greetTimer=null;
 
 function setState(patch){Object.assign(state,patch);render();}
 function pairLists(){return state.lists.filter(l=>(l.from||"sv")===state.pair.from&&(l.to||"en")===state.pair.to);}
+function swapPair(){setState({pair:{from:state.pair.to,to:state.pair.from}});}
 function activeList(){return state.lists.find(l=>l.id===state.activeListId);}
 
 // ── SCREEN LOADER ─────────────────────────────────────────────────
@@ -441,6 +431,11 @@ async function saveList(newList){
   }catch{
     setState({lists:[...state.lists,newList],activeListId:newList.id,screen:"home"});
   }
+}
+
+function updateList(id,patch){
+  const lists=state.lists.map(l=>l.id===id?{...l,...patch}:l);
+  setState({lists,activeListId:id,editingListId:null,screen:"home"});
 }
 
 async function deleteList(list){
@@ -591,7 +586,7 @@ home(){
             ${list.words.length} words · ${LANGUAGES[list.from]?.code||"SV"} → ${LANGUAGES[list.to]?.code||"EN"}
           </div>
         </div>
-        ${SVG.bloom(42,"#241F3D",COLOR_MAP[list.color]||"#FFB0C8",false)}
+        <button id="home-list-edit" title="Edit list" style="background:var(--paper);border:var(--border-thin);border-radius:999px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">${SVG.pencil(17,"#241F3D")}</button>
       </div>
       <div style="margin-top:18px;">
         <button id="home-start" class="btn btn-primary btn-lg btn-full">Start practice ${SVG.arrowRight(18,"#fff")}</button>
@@ -617,15 +612,21 @@ home(){
           <span class="h-font" style="font-size:24px;color:var(--ink);">Poppins</span>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
-          <button id="home-pair" class="pair-chip">
+          <div id="home-pair" class="pair-chip">
             <span class="lang-circle" style="background:${fromL.color};">${fromL.code}</span>
-            ${SVG.arrowRight(12,"#241F3D")}
+            <button id="home-swap" class="pair-swap-btn" title="Swap direction">${SVG.swap(13,"#241F3D")}</button>
             <span class="lang-circle" style="background:${toL.color};">${toL.code}</span>
-          </button>
-          <button id="home-settings" class="icon-btn">${SVG.gear(18,"#241F3D")}</button>
+          </div>
+          <button id="home-settings" class="icon-btn">${SVG.gear(22,"#241F3D")}</button>
         </div>
       </div>
-      <div style="display:flex;justify-content:center;">${mascotSVG(120,"happy")}</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+        ${state.showGreeting?`
+        <div class="b-font" style="background:var(--paper);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:10px 16px;font-size:14px;font-weight:600;color:var(--ink);text-align:center;max-width:230px;animation:pop-in 200ms ease-out;">
+          Hi! I'm Poppins. Let's learn some language!
+        </div>`:""}
+        <button id="home-mascot" title="Say hi" style="background:none;border:none;padding:0;cursor:pointer;">${mascotSVG(120,"happy")}</button>
+      </div>
       ${listCard}
     </div>`;
 },
@@ -661,25 +662,27 @@ lists(){
 },
 
 paste(){
-  const {pasteName,pasteText,pasteParsed,pasteStep,pair}=state;
+  const {pasteName,pasteText,pasteParsed,pasteStep,pair,editingListId}=state;
   const fromCode=LANGUAGES[pair.from]?.code||"SV", toCode=LANGUAGES[pair.to]?.code||"EN";
   if(pasteStep==="paste")return `
     <div class="screen-pad">
       <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h2 class="h-font" style="font-size:28px;color:var(--ink);">Paste a word list</h2>
+        <h2 class="h-font" style="font-size:28px;color:var(--ink);">${editingListId?"Edit list":"Paste a word list"}</h2>
         <button id="paste-close" class="icon-btn-xs">${SVG.cross(16,"#241F3D",3)}</button>
       </div>
-      <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--butter-soft);border:var(--border-thin);font-family:var(--m-font);font-size:11px;font-weight:700;color:var(--ink);">
-        ${fromCode} ${SVG.arrowRight(10,"#241F3D")} ${toCode}
+      <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:18px;">
+        <button id="paste-pair-swap" class="pair-chip-lg" title="Tap to swap direction">
+          ${fromCode} ${SVG.swap(16,"#241F3D")} ${toCode}
+        </button>
+        <p class="b-font" style="color:var(--ink-soft);font-size:14px;line-height:1.6;">
+          Copy from anywhere. Use any separator: <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">=</code>
+          <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">-</code>
+          <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">:</code>
+          <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">→</code>
+        </p>
+        <input id="paste-name" class="inp inp-header" placeholder="What's this list called?" value="${pasteName}"/>
+        <textarea id="paste-text" class="inp inp-mono" rows="9" placeholder="katt = cat&#10;hund - dog&#10;häst → horse">${pasteText}</textarea>
       </div>
-      <p class="b-font" style="color:var(--ink-soft);font-size:14px;line-height:1.6;">
-        Copy from anywhere. Use any separator: <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">=</code>
-        <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">-</code>
-        <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">:</code>
-        <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">→</code>
-      </p>
-      <input id="paste-name" class="inp inp-header" placeholder="What's this list called?" value="${pasteName}"/>
-      <textarea id="paste-text" class="inp inp-mono" rows="9" placeholder="katt = cat&#10;hund - dog&#10;häst → horse">${pasteText}</textarea>
       <div style="display:flex;gap:10px;">
         <button id="paste-cancel" class="btn btn-tertiary">Cancel</button>
         <button id="paste-parse" class="btn btn-primary" style="flex:1;" ${!pasteText.trim()?"disabled":""}>
@@ -707,7 +710,7 @@ paste(){
       <div style="display:flex;gap:10px;">
         <button id="paste-back" class="btn btn-tertiary">Edit</button>
         <button id="paste-save" class="btn btn-primary" style="flex:1;" ${!pasteParsed.length?"disabled":""}>
-          Save list ${SVG.arrowRight(16,"#fff")}
+          ${editingListId?"Save changes":"Save list"} ${SVG.arrowRight(16,"#fff")}
         </button>
       </div>
     </div>`;
@@ -869,7 +872,7 @@ settings(){
     <div class="screen-pad">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <h2 class="h-font" style="font-size:30px;color:var(--ink);">Settings</h2>
-        <button id="settings-close" class="icon-btn-xs">${SVG.cross(16,"#241F3D",3)}</button>
+        <button id="settings-close" class="icon-btn-plain">${SVG.cross(20,"#241F3D",3)}</button>
       </div>
       <div class="card" style="background:var(--pink-soft);">
         <div style="display:flex;align-items:center;gap:14px;">
@@ -949,12 +952,23 @@ function bindEvents(){
 
   on("home-start","click",()=>{if(activeList())navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""]});});
   on("home-lists","click",()=>navigate("lists"));
-  on("home-new","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste"}));
+  on("home-new","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null}));
   on("home-pair","click",()=>navigate("langpicker"));
+  on("home-swap","click",e=>{e.stopPropagation();swapPair();});
   on("home-settings","click",()=>navigate("settings"));
+  on("home-mascot","click",()=>{
+    setState({showGreeting:true});
+    clearTimeout(greetTimer);
+    greetTimer=setTimeout(()=>setState({showGreeting:false}),3000);
+  });
+  on("home-list-edit","click",()=>{
+    const list=activeList(); if(!list)return;
+    const text=list.words.map(w=>`${w[list.from]||w.sv} = ${w[list.to]||w.en}`).join("\n");
+    navigate("paste",{pasteName:list.name,pasteText:text,pasteParsed:[],pasteStep:"paste",editingListId:list.id});
+  });
 
   on("lists-close","click",()=>navigate("home"));
-  on("lists-add","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste"}));
+  on("lists-add","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null}));
   document.querySelectorAll("[data-list-id]").forEach(el=>{
     el.addEventListener("click",e=>{
       if(e.target.closest(".list-delete"))return;
@@ -971,6 +985,7 @@ function bindEvents(){
 
   on("paste-close","click",()=>navigate(state.activeListId?"home":"lists"));
   on("paste-cancel","click",()=>navigate(state.activeListId?"home":"lists"));
+  on("paste-pair-swap","click",swapPair);
   on("paste-name","input",e=>setState({pasteName:e.target.value}));
   on("paste-text","input",e=>setState({pasteText:e.target.value}));
   on("paste-parse","click",()=>{
@@ -979,7 +994,11 @@ function bindEvents(){
   });
   on("paste-back","click",()=>setState({pasteStep:"paste"}));
   on("paste-save","click",()=>{
-    saveList({id:"user-"+Date.now(),name:state.pasteName||"My new list",color:["rose","butter","sky","mint"][Math.floor(Math.random()*4)],words:state.pasteParsed,from:state.pair.from,to:state.pair.to});
+    if(state.editingListId){
+      updateList(state.editingListId,{name:state.pasteName||"My new list",words:state.pasteParsed,from:state.pair.from,to:state.pair.to});
+    }else{
+      saveList({id:"user-"+Date.now(),name:state.pasteName||"My new list",color:["rose","butter","sky","mint"][Math.floor(Math.random()*4)],words:state.pasteParsed,from:state.pair.from,to:state.pair.to});
+    }
   });
 
   on("lang-close","click",()=>navigate("home"));
