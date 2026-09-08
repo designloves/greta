@@ -274,7 +274,7 @@ const SAMPLE_LISTS=[
 ];
 
 const COLOR_MAP={rose:"#FFB0C8",butter:"#F2EE5B",sky:"#8AD7FF",mint:"#A8F08C",pink:"#B583E8"};
-const CHARACTERS={poppins:1,ollie:1,luna:1,fin:1,nova:1};
+const CHARACTERS={ollie:1,luna:1,fin:1,nova:1,bramble:1,momo:1};
 const CHARACTER_ART={
   // Ollie — chubby round bear, tan fur, round ears, snout patch
   ollie:size=>`<svg width="${size}" height="${size*84/70}" viewBox="0 0 70 84">
@@ -335,15 +335,47 @@ const CHARACTER_ART={
     <ellipse cx="54" cy="52" rx="3.2" ry="2.2" fill="#FFB0C8" opacity=".8"/>
     <ellipse cx="26" cy="26" rx="4" ry="3" fill="#fff" opacity=".4"/>
   </svg>`,
+  // Bramble — cream bunny, long ears, pink nose, tiny teeth
+  bramble:size=>`<svg width="${size}" height="${size*92/70}" viewBox="0 0 70 92">
+    <path d="M21 40 C13 26 12 4 21 1 C30 4 29 26 25 40 Z" fill="#F7F1E3" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M49 40 C57 26 58 4 49 1 C40 4 41 26 45 40 Z" fill="#F7F1E3" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M21 8 C25 9 25 24 23 36 Z" fill="#FFB0C8" opacity=".8"/>
+    <path d="M49 8 C45 9 45 24 47 36 Z" fill="#FFB0C8" opacity=".8"/>
+    <path d="M35 88 C16 88 9 72 12 57 C7 52 9 40 18 35 C19 24 27 18 35 19 C43 18 51 24 52 35 C61 40 63 52 58 57 C61 72 54 88 35 88 Z" fill="#F7F1E3" stroke="#241F3D" stroke-width="3"/>
+    <circle cx="24" cy="52" r="3.4" fill="#241F3D"/>
+    <circle cx="46" cy="52" r="3.4" fill="#241F3D"/>
+    <ellipse cx="35" cy="63" rx="4" ry="3" fill="#FFB0C8" stroke="#241F3D" stroke-width="2"/>
+    <path d="M28 70 Q35 74 42 70" fill="none" stroke="#241F3D" stroke-width="2.2" stroke-linecap="round"/>
+    <rect x="32.2" y="70" width="2.6" height="4.5" rx="1" fill="#fff" stroke="#241F3D" stroke-width="1.2"/>
+    <rect x="35.2" y="70" width="2.6" height="4.5" rx="1" fill="#fff" stroke="#241F3D" stroke-width="1.2"/>
+    <ellipse cx="17" cy="60" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="53" cy="60" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="24" cy="38" rx="4" ry="3" fill="#fff" opacity=".5"/>
+  </svg>`,
+  // Momo — black-and-white panda, round ears, eye patches
+  momo:size=>`<svg width="${size}" height="${size*84/70}" viewBox="0 0 70 84">
+    <circle cx="15" cy="17" r="10.5" fill="#241F3D"/>
+    <circle cx="55" cy="17" r="10.5" fill="#241F3D"/>
+    <path d="M35 80 C14 80 8 65 11 51 C6 47 6 32 17 27 C18 13 26 8 35 9 C44 8 52 13 53 27 C64 32 64 47 59 51 C62 65 56 80 35 80 Z" fill="#fff" stroke="#241F3D" stroke-width="3"/>
+    <ellipse cx="24" cy="40" rx="7.2" ry="8.8" fill="#241F3D"/>
+    <ellipse cx="46" cy="40" rx="7.2" ry="8.8" fill="#241F3D"/>
+    <circle cx="24" cy="40" r="3" fill="#fff"/>
+    <circle cx="46" cy="40" r="3" fill="#fff"/>
+    <circle cx="24" cy="40" r="1.5" fill="#241F3D"/>
+    <circle cx="46" cy="40" r="1.5" fill="#241F3D"/>
+    <ellipse cx="35" cy="52" rx="3.6" ry="2.6" fill="#241F3D"/>
+    <path d="M28 58 Q35 63 42 58" fill="none" stroke="#241F3D" stroke-width="2.4" stroke-linecap="round"/>
+    <ellipse cx="17" cy="48" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="53" cy="48" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="24" cy="24" rx="4" ry="3" fill="#fff" opacity=".35"/>
+  </svg>`,
 };
 function characterSVG(kind,size){
-  if(kind!=="poppins"&&CHARACTER_ART[kind])return CHARACTER_ART[kind](size);
-  return mascotSVG(size,"happy","#B583E8");
+  return (CHARACTER_ART[kind]||CHARACTER_ART.ollie)(size);
 }
 function avatarButtonInner(kind,diameter){
-  const isPoppins=kind==="poppins"||!CHARACTER_ART[kind];
-  const w=Math.round(diameter*(isPoppins?0.86:0.78));
-  const topOffset=-Math.round(diameter*(isPoppins?0.24:0.32));
+  const w=Math.round(diameter*0.9);
+  const topOffset=-Math.round(diameter*0.32);
   return `<span style="position:absolute;top:${topOffset}px;left:50%;transform:translateX(-50%);line-height:0;">${characterSVG(kind,w)}</span>`;
 }
 
@@ -446,7 +478,7 @@ let state={
   // mascot
   showGreeting:false,greetingHiding:false,
   // avatar
-  avatar:"poppins",
+  avatar:"ollie",
 };
 let greetTimer=null, greetHideTimer=null;
 
@@ -692,8 +724,8 @@ home(){
           <span id="bloom-spin">${SVG.bloom(26,"#B583E8","#F2EE5B",true)}</span>
           <span class="h-font" style="font-size:24px;color:var(--ink);">Poppins</span>
         </div>
-        <button id="home-settings" title="Settings" style="position:relative;overflow:visible;width:38px;height:38px;border-radius:999px;background:var(--paper-alt);border:var(--border-thin);cursor:pointer;padding:0;flex-shrink:0;">
-          ${avatarButtonInner(state.avatar,38)}
+        <button id="home-settings" title="Settings" style="position:relative;overflow:visible;width:44px;height:44px;border-radius:999px;background:var(--paper-alt);border:var(--border-thin);cursor:pointer;padding:0;flex-shrink:0;">
+          ${avatarButtonInner(state.avatar,44)}
         </button>
       </div>
       <div style="display:flex;justify-content:center;">
@@ -963,8 +995,8 @@ done(){
 settings(){
   const pair=state.pair;
   const avatarSwatches=Object.keys(CHARACTERS).map(key=>`
-    <button class="avatar-swatch" data-avatar="${key}" title="${key}" style="position:relative;overflow:visible;width:44px;height:44px;border-radius:999px;background:var(--paper-alt);border:${state.avatar===key?"3px solid var(--ink)":"var(--border-thin)"};cursor:pointer;padding:0;box-shadow:${state.avatar===key?"0 3px 0 var(--ink)":"none"};">
-      ${avatarButtonInner(key,44)}
+    <button class="avatar-swatch" data-avatar="${key}" title="${key}" style="position:relative;overflow:visible;width:52px;height:52px;border-radius:999px;background:var(--paper-alt);border:${state.avatar===key?"3px solid var(--ink)":"var(--border-thin)"};cursor:pointer;padding:0;box-shadow:${state.avatar===key?"0 3px 0 var(--ink)":"none"};flex-shrink:0;">
+      ${avatarButtonInner(key,52)}
     </button>`).join("");
   return `
     <div class="screen-pad">
@@ -974,8 +1006,8 @@ settings(){
       </div>
       <div class="card" style="background:var(--pink-soft);">
         <div style="display:flex;align-items:center;gap:14px;">
-          <div style="position:relative;overflow:visible;width:56px;height:56px;border-radius:999px;background:var(--paper);border:var(--border-thin);flex-shrink:0;">
-            ${avatarButtonInner(state.avatar,56)}
+          <div style="position:relative;overflow:visible;width:64px;height:64px;border-radius:999px;background:var(--paper);border:var(--border-thin);flex-shrink:0;">
+            ${avatarButtonInner(state.avatar,64)}
           </div>
           <div>
             <div class="h-font" style="font-size:18px;color:var(--ink);">Hej there!</div>
@@ -985,7 +1017,7 @@ settings(){
       </div>
       <div>
         <div class="label-caps" style="margin-bottom:8px;">Avatar</div>
-        <div style="display:flex;gap:10px;">${avatarSwatches}</div>
+        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;">${avatarSwatches}</div>
       </div>
       <div>
         <div class="label-caps" style="margin-bottom:8px;">Language</div>
