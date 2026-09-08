@@ -77,8 +77,10 @@ html,body{background:var(--paper);height:var(--app-height,100dvh);overflow:hidde
 .switch{
   width:44px;height:26px;border-radius:999px;border:var(--border-thin);
   background:var(--paper-alt);position:relative;cursor:pointer;flex-shrink:0;
-  padding:0;outline:none;transition:background 150ms;
+  padding:0;outline:none;transition:background 150ms, box-shadow 150ms, transform 150ms;
+  box-shadow:0 3px 0 var(--ink);
 }
+.switch:active{transform:translateY(3px);box-shadow:0 0 0 var(--ink);}
 .switch[data-on="true"]{background:var(--mint);}
 .switch::after{
   content:"";position:absolute;top:1.5px;left:1.5px;width:19px;height:19px;
@@ -86,6 +88,8 @@ html,body{background:var(--paper);height:var(--app-height,100dvh);overflow:hidde
   transition:transform 150ms;
 }
 .switch[data-on="true"]::after{transform:translateX(18px);}
+.avatar-swatch{transition:transform 150ms, box-shadow 150ms;}
+.avatar-swatch:active{transform:translateY(3px);box-shadow:0 0 0 var(--ink) !important;}
 
 /* ── Inputs ── */
 .inp{
@@ -345,8 +349,6 @@ const UI_STRINGS={
     notSignedIn:"Not signed in",
     avatar:"Avatar",
     appLanguage:"App language",
-    dailyReminder:"Daily reminder",
-    reminderCaveat:"Reminds you while Poppins is open in a tab",
     soundEffects:"Sound effects",
     showPronunciation:"Show pronunciation",
     logOut:"Log out",
@@ -405,8 +407,6 @@ const UI_STRINGS={
     notSignedIn:"Inte inloggad",
     avatar:"Avatar",
     appLanguage:"Appspråk",
-    dailyReminder:"Daglig påminnelse",
-    reminderCaveat:"Påminner dig medan Poppins är öppen i en flik",
     soundEffects:"Ljudeffekter",
     showPronunciation:"Visa uttal",
     logOut:"Logga ut",
@@ -658,7 +658,7 @@ let state={
   // avatar
   avatar:"ollie",
   // practice settings
-  soundOn:true,pronunciationOn:true,reminderOn:false,reminderTime:"16:00",reminderLastFired:"",
+  soundOn:true,pronunciationOn:true,
   // ui language
   uiLang:"sv",
 };
@@ -666,7 +666,7 @@ let greetTimer=null, greetHideTimer=null;
 
 // ── SETTINGS PERSISTENCE ─────────────────────────────────────────
 const SETTINGS_KEY="poppins_settings_v1";
-const PERSISTED_KEYS=["avatar","soundOn","pronunciationOn","reminderOn","reminderTime","reminderLastFired","pair","uiLang"];
+const PERSISTED_KEYS=["avatar","soundOn","pronunciationOn","pair","uiLang"];
 function loadSettings(){
   try{
     const raw=localStorage.getItem(SETTINGS_KEY);
@@ -727,36 +727,6 @@ function speakCurrentWord(){
   const lh=langHelpers(list,state.quizReversed);
   const word=list.words[state.quizIdx]; if(!word)return;
   speak(lh.src(word),TTS_LOCALE[lh.from]);
-}
-
-// ── DAILY REMINDER ────────────────────────────────────────────────
-// Best-effort only: a plain web page can only notify while it's open
-// in a tab (no service worker / push backend here), so this checks
-// the clock every 30s rather than truly reminding in the background.
-function todayKey(){const d=new Date();return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;}
-function checkReminder(){
-  if(!state.reminderOn)return;
-  if(typeof Notification==="undefined"||Notification.permission!=="granted")return;
-  const today=todayKey();
-  if(state.reminderLastFired===today)return;
-  const now=new Date();
-  const hhmm=`${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
-  if(hhmm!==state.reminderTime)return;
-  try{new Notification("Time to practice with Poppins! 🌸",{body:"Keep your streak going — a quick round of words awaits."});}catch{}
-  setState({reminderLastFired:today});
-}
-async function enableReminder(){
-  if(typeof Notification==="undefined"){
-    alert("This browser doesn't support notifications.");
-    return;
-  }
-  let perm=Notification.permission;
-  if(perm==="default")perm=await Notification.requestPermission();
-  if(perm!=="granted"){
-    alert("Notifications are blocked — allow them in your browser settings to get a reminder.");
-    return;
-  }
-  setState({reminderOn:true});
 }
 
 function setState(patch){
@@ -995,7 +965,7 @@ login(){
 home(){
   const list=activeList();
   const listCard=list?`
-    <div class="card-lg" style="background:${COLOR_MAP[list.color]||"#FFB0C8"};position:relative;overflow:hidden;">
+    <div class="card-lg" style="background:${COLOR_MAP[list.color]||"#FFB0C8"};position:relative;overflow:hidden;padding:16px;">
       <button id="home-list-edit" title="${t("editList")}" style="position:absolute;top:15px;right:15px;background:var(--paper);border:var(--border-thin);border-radius:999px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;">${SVG.pencil(17,"#241F3D")}</button>
       <div style="padding-right:46px;">
         <div class="label-caps">${t("todaysList")}</div>
@@ -1012,7 +982,7 @@ home(){
       <button id="home-lists" class="btn btn-tertiary">${SVG.books(16,"#241F3D")} ${t("myLists")}</button>
       <button id="home-new" class="btn btn-tertiary">${SVG.plus(16,"#241F3D")} ${t("newList")}</button>
     </div>`:
-    `<div class="card-lg" style="background:var(--butter-soft);text-align:center;padding:28px 22px;">
+    `<div class="card-lg" style="background:var(--butter-soft);text-align:center;padding:16px;">
       <h2 class="h-font" style="font-size:28px;color:var(--ink);">${t("noWordsYet")}</h2>
       <p class="b-font" style="color:var(--ink-soft);font-size:15px;margin:8px 0 16px;">${t("pickListOrPaste")}</p>
       <div style="display:flex;flex-direction:column;gap:10px;">
@@ -1022,7 +992,7 @@ home(){
     </div>`;
   return `
     <div class="screen-pad" style="padding-top:8px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:0 -8px;">
         <div style="display:flex;align-items:center;gap:8px;">
           <span id="bloom-spin">${SVG.bloom(26,"#B583E8","#F2EE5B",true)}</span>
           <span class="h-font" style="font-size:24px;color:var(--ink);">Poppins</span>
@@ -1083,18 +1053,6 @@ paste(){
         <button id="paste-close" class="icon-btn-plain">${SVG.cross(20,"#241F3D",3)}</button>
       </div>
       <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:18px;">
-        <div>
-          <div class="label-caps" style="margin-bottom:6px;">${t("language")}</div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <select id="paste-from" class="inp" style="flex:1;padding:10px 12px;font-size:14px;">
-              ${Object.keys(LANGUAGES).map(code=>`<option value="${code}" ${pair.from===code?"selected":""}>${langName(code)}</option>`).join("")}
-            </select>
-            ${SVG.arrowRight(16,"#241F3D")}
-            <select id="paste-to" class="inp" style="flex:1;padding:10px 12px;font-size:14px;">
-              ${Object.keys(LANGUAGES).map(code=>`<option value="${code}" ${pair.to===code?"selected":""}>${langName(code)}</option>`).join("")}
-            </select>
-          </div>
-        </div>
         <p class="b-font" style="color:var(--ink-soft);font-size:14px;line-height:1.6;">
           ${t("pasteInstructions",{from:`<strong style="color:var(--ink);">${langName(pair.from)}</strong>`,to:`<strong style="color:var(--ink);">${langName(pair.to)}</strong>`})} <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">=</code>
           <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">-</code>
@@ -1126,6 +1084,18 @@ paste(){
       <div style="background:var(--mint-soft);border:var(--border-thin);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:8px;">
         ${SVG.check(18,"#241F3D",4)}
         <span class="b-font" style="font-size:14px;color:var(--ink);font-weight:600;">${t("foundWords",{n:`<strong>${pasteParsed.length}</strong>`})}</span>
+      </div>
+      <div>
+        <div class="label-caps" style="margin-bottom:6px;">${t("language")}</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <select id="paste-from" class="inp" style="flex:1;padding:10px 12px;font-size:14px;">
+            ${Object.keys(LANGUAGES).map(code=>`<option value="${code}" ${pair.from===code?"selected":""}>${langName(code)}</option>`).join("")}
+          </select>
+          ${SVG.arrowRight(16,"#241F3D")}
+          <select id="paste-to" class="inp" style="flex:1;padding:10px 12px;font-size:14px;">
+            ${Object.keys(LANGUAGES).map(code=>`<option value="${code}" ${pair.to===code?"selected":""}>${langName(code)}</option>`).join("")}
+          </select>
+        </div>
       </div>
       <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">${reviewItems}</div>
       <div style="display:flex;gap:10px;">
@@ -1210,7 +1180,7 @@ quiz(){
   const burst=feedbackBurst(quizFeedback,quizAnim);
 
   const wrongAnswer=quizFeedback==="wrong"?`<div class="h-font" style="font-size:30px;color:var(--wrong);animation:greta-answer-rise 360ms ease-out both;">= ${esc(lh.tgt(word))}</div>`:"";
-  const hint=!quizFeedback?`<div style="height:1px;width:40px;background:var(--ink);opacity:.2;"></div><div class="b-font" style="font-size:14px;color:var(--ink);opacity:.7;">${t("whatMeanIn",{lang:lh.tgtLang})}</div>`:"";
+  const hint=!quizFeedback?`<div class="b-font" style="font-size:14px;color:var(--ink);opacity:.7;">${t("whatMeanIn",{lang:lh.tgtLang})}</div><div style="height:1px;width:40px;background:var(--ink);opacity:.2;"></div>`:"";
   const inpBg=quizFeedback==="correct"?"var(--mint-soft)":quizFeedback==="wrong"?"var(--pink-soft)":"var(--paper)";
 
   return `
@@ -1230,16 +1200,16 @@ quiz(){
       </div>
       <div class="card-lg" style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;padding:clamp(12px,4vh,24px) 24px;background:${fbBg};transition:background 250ms;position:relative;overflow:hidden;animation:${cardAnim};">
         <div style="display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;min-height:0;overflow-y:auto;">
-          <div class="label-caps">${lh.srcLang}</div>
+          ${hint}
           <div class="h-font" style="font-size:clamp(30px,9vh,54px);line-height:.95;color:var(--ink);letter-spacing:-.03em;word-break:break-word;">${esc(lh.src(word))}</div>
-          ${wrongAnswer}${hint}
+          ${wrongAnswer}
         </div>
         ${burst}
         <div style="${mascotStyle}">${mascotSVG(86,mascotMood)}</div>
       </div>
       <input id="quiz-input" class="inp" value="${quizAnswer}" placeholder="${t("typeInLang",{lang:lh.tgtLang})}"
         style="font-size:18px;font-weight:600;background:${inpBg};transition:background 250ms;text-align:${quizFeedback?"center":"left"};"
-        ${quizFeedback?"disabled":""}/>
+        ${quizFeedback?"readonly":""}/>
     </div>`;
 },
 
@@ -1274,7 +1244,7 @@ done(){
 
 settings(){
   const avatarSwatches=Object.keys(CHARACTERS).map(key=>`
-    <button class="avatar-swatch" data-avatar="${key}" title="${key}" style="position:relative;overflow:visible;width:52px;height:52px;border-radius:999px;background:var(--paper-alt);border:${state.avatar===key?"3px solid var(--ink)":"var(--border-thin)"};cursor:pointer;padding:0;box-shadow:${state.avatar===key?"0 3px 0 var(--ink)":"none"};flex-shrink:0;">
+    <button class="avatar-swatch" data-avatar="${key}" title="${key}" style="position:relative;overflow:visible;width:52px;height:52px;border-radius:999px;background:var(--paper-alt);border:${state.avatar===key?"3px solid var(--ink)":"var(--border-thin)"};cursor:pointer;padding:0;box-shadow:0 3px 0 var(--ink);flex-shrink:0;">
       ${avatarButtonInner(key,52)}
     </button>`).join("");
   const langBtn=(code,label)=>`<button class="ui-lang-btn" data-lang="${code}" style="flex:1;padding:12px;border-radius:var(--radius);border:${state.uiLang===code?"var(--border)":"var(--border-thin)"};background:${state.uiLang===code?"var(--butter-soft)":"var(--paper)"};font-family:var(--b-font);font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;box-shadow:${state.uiLang===code?"0 3px 0 var(--ink)":"none"};">${label}</button>`;
@@ -1309,17 +1279,6 @@ settings(){
       <div>
         <div class="label-caps" style="margin-bottom:8px;">${t("practice")}</div>
         <div class="card" style="padding:0;overflow:hidden;">
-          <div style="padding:14px 16px;border-bottom:1.5px solid var(--paper-alt);" class="b-font">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <span style="font-weight:600;color:var(--ink);">${t("dailyReminder")}</span>
-              <button class="switch" data-setting="reminderOn" data-on="${state.reminderOn}"></button>
-            </div>
-            ${state.reminderOn?`
-            <div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
-              <span style="font-size:12px;color:var(--ink-soft);line-height:1.4;">${t("reminderCaveat")}</span>
-              <input id="reminder-time" type="time" value="${state.reminderTime}" class="inp" style="width:auto;padding:6px 10px;font-size:13px;flex-shrink:0;"/>
-            </div>`:""}
-          </div>
           <div style="padding:14px 16px;border-bottom:1.5px solid var(--paper-alt);display:flex;justify-content:space-between;align-items:center;" class="b-font">
             <span style="font-weight:600;color:var(--ink);">${t("soundEffects")}</span>
             <button class="switch" data-setting="soundOn" data-on="${state.soundOn}"></button>
@@ -1330,7 +1289,7 @@ settings(){
           </div>
         </div>
       </div>
-      <button id="settings-logout" class="btn btn-tertiary btn-full">${t("logOut")}</button>
+      ${currentUser?`<button id="settings-logout" class="btn btn-tertiary btn-full">${t("logOut")}</button>`:""}
       <div style="text-align:center;font-size:11px;color:var(--ink-soft);margin-top:auto;" class="m-font">
         ${t("madeWith")} ${SVG.heart(12,"#B583E8")}
       </div>
@@ -1416,8 +1375,14 @@ function bindEvents(){
   on("paste-cancel","click",()=>navigate(state.activeListId?"home":"lists"));
   on("paste-name","input",e=>setState({pasteName:e.target.value}));
   on("paste-text","input",e=>setState({pasteText:e.target.value}));
-  on("paste-from","change",e=>setState({pair:{...state.pair,from:e.target.value},pasteAutoGuessed:true}));
-  on("paste-to","change",e=>setState({pair:{...state.pair,to:e.target.value},pasteAutoGuessed:true}));
+  on("paste-from","change",e=>{
+    const pair={...state.pair,from:e.target.value};
+    setState({pair,pasteAutoGuessed:true,pasteParsed:parsePasteText(state.pasteText,pair)});
+  });
+  on("paste-to","change",e=>{
+    const pair={...state.pair,to:e.target.value};
+    setState({pair,pasteAutoGuessed:true,pasteParsed:parsePasteText(state.pasteText,pair)});
+  });
   on("paste-parse","click",()=>{
     const guess=!state.pasteAutoGuessed&&guessPairFromText(state.pasteText);
     const pair=guess||state.pair;
@@ -1435,7 +1400,7 @@ function bindEvents(){
 
   on("quiz-exit","click",()=>navigate("home"));
   const qi=document.getElementById("quiz-input");
-  if(qi){qi.focus();qi.addEventListener("keydown",e=>{if(e.key==="Enter")quizSubmit();});qi.addEventListener("input",e=>setState({quizAnswer:e.target.value}));}
+  if(qi){qi.focus();qi.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();quizSubmit();}});qi.addEventListener("input",e=>{state.quizAnswer=e.target.value;});}
   on("w5-done","click",quizAdvance);
   document.querySelectorAll("[data-w5]").forEach(el=>{
     el.addEventListener("input",e=>write5Check(parseInt(el.dataset.w5),e.target.value));
@@ -1455,15 +1420,9 @@ function bindEvents(){
   document.querySelectorAll(".switch[data-setting]").forEach(el=>{
     el.addEventListener("click",()=>{
       const key=el.dataset.setting;
-      if(key==="reminderOn"){
-        if(state.reminderOn)setState({reminderOn:false});
-        else enableReminder();
-        return;
-      }
       setState({[key]:!state[key]});
     });
   });
-  on("reminder-time","change",e=>setState({reminderTime:e.target.value}));
 }
 
 function on(id,evt,fn){const el=document.getElementById(id);if(el)el.addEventListener(evt,fn);}
@@ -1479,7 +1438,6 @@ window.addEventListener('unhandledrejection',e=>{
   try{await initAuth();}catch{}
   try{if(sessionToken)await loadUserLists();}catch{}
   try{render();}catch(e){console.error('[Poppins] render error:',e);}
-  setInterval(checkReminder,30000);
 })().catch(e=>console.error('[Poppins] boot error:',e));
 </script>
 </body>
