@@ -345,8 +345,6 @@ const UI_STRINGS={
     notSignedIn:"Not signed in",
     avatar:"Avatar",
     appLanguage:"App language",
-    dailyReminder:"Daily reminder",
-    reminderCaveat:"Reminds you while Poppins is open in a tab",
     soundEffects:"Sound effects",
     showPronunciation:"Show pronunciation",
     logOut:"Log out",
@@ -405,8 +403,6 @@ const UI_STRINGS={
     notSignedIn:"Inte inloggad",
     avatar:"Avatar",
     appLanguage:"Appspråk",
-    dailyReminder:"Daglig påminnelse",
-    reminderCaveat:"Påminner dig medan Poppins är öppen i en flik",
     soundEffects:"Ljudeffekter",
     showPronunciation:"Visa uttal",
     logOut:"Logga ut",
@@ -658,7 +654,7 @@ let state={
   // avatar
   avatar:"ollie",
   // practice settings
-  soundOn:true,pronunciationOn:true,reminderOn:false,reminderTime:"16:00",reminderLastFired:"",
+  soundOn:true,pronunciationOn:true,
   // ui language
   uiLang:"sv",
 };
@@ -666,7 +662,7 @@ let greetTimer=null, greetHideTimer=null;
 
 // ── SETTINGS PERSISTENCE ─────────────────────────────────────────
 const SETTINGS_KEY="poppins_settings_v1";
-const PERSISTED_KEYS=["avatar","soundOn","pronunciationOn","reminderOn","reminderTime","reminderLastFired","pair","uiLang"];
+const PERSISTED_KEYS=["avatar","soundOn","pronunciationOn","pair","uiLang"];
 function loadSettings(){
   try{
     const raw=localStorage.getItem(SETTINGS_KEY);
@@ -727,36 +723,6 @@ function speakCurrentWord(){
   const lh=langHelpers(list,state.quizReversed);
   const word=list.words[state.quizIdx]; if(!word)return;
   speak(lh.src(word),TTS_LOCALE[lh.from]);
-}
-
-// ── DAILY REMINDER ────────────────────────────────────────────────
-// Best-effort only: a plain web page can only notify while it's open
-// in a tab (no service worker / push backend here), so this checks
-// the clock every 30s rather than truly reminding in the background.
-function todayKey(){const d=new Date();return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;}
-function checkReminder(){
-  if(!state.reminderOn)return;
-  if(typeof Notification==="undefined"||Notification.permission!=="granted")return;
-  const today=todayKey();
-  if(state.reminderLastFired===today)return;
-  const now=new Date();
-  const hhmm=`${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
-  if(hhmm!==state.reminderTime)return;
-  try{new Notification("Time to practice with Poppins! 🌸",{body:"Keep your streak going — a quick round of words awaits."});}catch{}
-  setState({reminderLastFired:today});
-}
-async function enableReminder(){
-  if(typeof Notification==="undefined"){
-    alert("This browser doesn't support notifications.");
-    return;
-  }
-  let perm=Notification.permission;
-  if(perm==="default")perm=await Notification.requestPermission();
-  if(perm!=="granted"){
-    alert("Notifications are blocked — allow them in your browser settings to get a reminder.");
-    return;
-  }
-  setState({reminderOn:true});
 }
 
 function setState(patch){
@@ -1210,7 +1176,7 @@ quiz(){
   const burst=feedbackBurst(quizFeedback,quizAnim);
 
   const wrongAnswer=quizFeedback==="wrong"?`<div class="h-font" style="font-size:30px;color:var(--wrong);animation:greta-answer-rise 360ms ease-out both;">= ${esc(lh.tgt(word))}</div>`:"";
-  const hint=!quizFeedback?`<div style="height:1px;width:40px;background:var(--ink);opacity:.2;"></div><div class="b-font" style="font-size:14px;color:var(--ink);opacity:.7;">${t("whatMeanIn",{lang:lh.tgtLang})}</div>`:"";
+  const hint=!quizFeedback?`<div class="b-font" style="font-size:14px;color:var(--ink);opacity:.7;">${t("whatMeanIn",{lang:lh.tgtLang})}</div><div style="height:1px;width:40px;background:var(--ink);opacity:.2;"></div>`:"";
   const inpBg=quizFeedback==="correct"?"var(--mint-soft)":quizFeedback==="wrong"?"var(--pink-soft)":"var(--paper)";
 
   return `
@@ -1230,9 +1196,9 @@ quiz(){
       </div>
       <div class="card-lg" style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;padding:clamp(12px,4vh,24px) 24px;background:${fbBg};transition:background 250ms;position:relative;overflow:hidden;animation:${cardAnim};">
         <div style="display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;min-height:0;overflow-y:auto;">
-          <div class="label-caps">${lh.srcLang}</div>
+          ${hint}
           <div class="h-font" style="font-size:clamp(30px,9vh,54px);line-height:.95;color:var(--ink);letter-spacing:-.03em;word-break:break-word;">${esc(lh.src(word))}</div>
-          ${wrongAnswer}${hint}
+          ${wrongAnswer}
         </div>
         ${burst}
         <div style="${mascotStyle}">${mascotSVG(86,mascotMood)}</div>
@@ -1309,17 +1275,6 @@ settings(){
       <div>
         <div class="label-caps" style="margin-bottom:8px;">${t("practice")}</div>
         <div class="card" style="padding:0;overflow:hidden;">
-          <div style="padding:14px 16px;border-bottom:1.5px solid var(--paper-alt);" class="b-font">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <span style="font-weight:600;color:var(--ink);">${t("dailyReminder")}</span>
-              <button class="switch" data-setting="reminderOn" data-on="${state.reminderOn}"></button>
-            </div>
-            ${state.reminderOn?`
-            <div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
-              <span style="font-size:12px;color:var(--ink-soft);line-height:1.4;">${t("reminderCaveat")}</span>
-              <input id="reminder-time" type="time" value="${state.reminderTime}" class="inp" style="width:auto;padding:6px 10px;font-size:13px;flex-shrink:0;"/>
-            </div>`:""}
-          </div>
           <div style="padding:14px 16px;border-bottom:1.5px solid var(--paper-alt);display:flex;justify-content:space-between;align-items:center;" class="b-font">
             <span style="font-weight:600;color:var(--ink);">${t("soundEffects")}</span>
             <button class="switch" data-setting="soundOn" data-on="${state.soundOn}"></button>
@@ -1455,15 +1410,9 @@ function bindEvents(){
   document.querySelectorAll(".switch[data-setting]").forEach(el=>{
     el.addEventListener("click",()=>{
       const key=el.dataset.setting;
-      if(key==="reminderOn"){
-        if(state.reminderOn)setState({reminderOn:false});
-        else enableReminder();
-        return;
-      }
       setState({[key]:!state[key]});
     });
   });
-  on("reminder-time","change",e=>setState({reminderTime:e.target.value}));
 }
 
 function on(id,evt,fn){const el=document.getElementById(id);if(el)el.addEventListener(evt,fn);}
@@ -1479,7 +1428,6 @@ window.addEventListener('unhandledrejection',e=>{
   try{await initAuth();}catch{}
   try{if(sessionToken)await loadUserLists();}catch{}
   try{render();}catch(e){console.error('[Poppins] render error:',e);}
-  setInterval(checkReminder,30000);
 })().catch(e=>console.error('[Poppins] boot error:',e));
 </script>
 </body>
