@@ -245,8 +245,9 @@ const LANGUAGES = {
   de:{name:"German",  native:"Deutsch", code:"DE", color:"#6FB3E3"},
 };
 
-function langHelpers(list){
-  const f=(list&&list.from)||"sv", t=(list&&list.to)||"en";
+function langHelpers(list,reversed){
+  const f0=(list&&list.from)||"sv", t0=(list&&list.to)||"en";
+  const f=reversed?t0:f0, t=reversed?f0:t0;
   return{
     from:f,to:t,
     src:w=>(w&&(w[f]??w.sv))||"",
@@ -367,7 +368,7 @@ let state={
   activeListId:"djur",
   result:null,
   // quiz
-  quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],
+  quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:false,
   // paste
   pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null,
   // login
@@ -476,7 +477,7 @@ const ANIM_WRONG  =["shake","sink","headtilt","spin"];
 function quizSubmit(){
   const list=activeList(); if(!list||state.quizFeedback)return;
   const answer=state.quizAnswer.trim(); if(!answer)return;
-  const lh=langHelpers(list);
+  const lh=langHelpers(list,state.quizReversed);
   const word=list.words[state.quizIdx];
   const ok=answer.toLowerCase()===lh.tgt(word).toLowerCase();
   const pool=ok?ANIM_CORRECT:ANIM_WRONG;
@@ -503,7 +504,7 @@ function quizAdvance(){
 
 function write5Check(i,val){
   const list=activeList(); if(!list)return;
-  const lh=langHelpers(list);
+  const lh=langHelpers(list,state.quizReversed);
   const word=list.words[state.quizIdx];
   const target=lh.tgt(word).toLowerCase();
   const newReps=[...state.quizReps]; newReps[i]=val; setState({quizReps:newReps});
@@ -755,10 +756,30 @@ langpicker(){
     </div>`;
 },
 
+practiceSetup(){
+  const list=activeList(); if(!list)return screens.home();
+  const lh=langHelpers(list,false);
+  return `
+    <div class="screen-pad" style="justify-content:center;">
+      <div style="display:flex;justify-content:flex-end;">
+        <button id="setup-close" class="icon-btn-plain">${SVG.cross(20,"#241F3D",3)}</button>
+      </div>
+      <div style="display:flex;justify-content:center;">${mascotSVG(90,"thinking")}</div>
+      <div style="text-align:center;">
+        <h2 class="h-font" style="font-size:26px;color:var(--ink);">Which language will you answer in?</h2>
+        <p class="b-font" style="color:var(--ink-soft);font-size:14px;margin-top:6px;">Starting "${esc(list.name)}"</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <button id="setup-normal" class="btn btn-primary btn-lg btn-full">Answer in ${lh.tgtLang}</button>
+        <button id="setup-reversed" class="btn btn-secondary btn-lg btn-full">Answer in ${lh.srcLang}</button>
+      </div>
+    </div>`;
+},
+
 quiz(){
   const list=activeList(); if(!list)return screens.home();
-  const {quizIdx,quizRight,quizWrong,quizAnswer,quizFeedback,quizAnim,quizWriteMode,quizReps}=state;
-  const lh=langHelpers(list), word=list.words[quizIdx], total=list.words.length;
+  const {quizIdx,quizRight,quizWrong,quizAnswer,quizFeedback,quizAnim,quizWriteMode,quizReps,quizReversed}=state;
+  const lh=langHelpers(list,quizReversed), word=list.words[quizIdx], total=list.words.length;
 
   if(quizWriteMode){
     const target=lh.tgt(word);
@@ -962,7 +983,11 @@ function bindEvents(){
   on("login-submit","click",sendMagicLink);
   on("login-skip","click",()=>navigate("home",{loginEmail:"",loginSent:false,loginErr:""}));
 
-  on("home-start","click",()=>{if(activeList())navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""]});});
+  on("home-start","click",()=>{if(activeList())navigate("practiceSetup");});
+
+  on("setup-close","click",()=>navigate("home"));
+  on("setup-normal","click",()=>navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:false}));
+  on("setup-reversed","click",()=>navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:true}));
   on("home-lists","click",()=>navigate("lists"));
   on("home-new","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null}));
   on("home-settings","click",()=>navigate("settings"));
