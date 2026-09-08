@@ -991,14 +991,14 @@ home(){
       </div>
     </div>`;
   return `
-    <div class="screen-pad" style="padding-top:4px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
+    <div class="screen-pad" style="padding-top:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:0 -8px;">
         <div style="display:flex;align-items:center;gap:8px;">
           <span id="bloom-spin">${SVG.bloom(26,"#B583E8","#F2EE5B",true)}</span>
           <span class="h-font" style="font-size:24px;color:var(--ink);">Poppins</span>
         </div>
-        <button id="home-settings" title="${t("settingsTitle")}" style="position:relative;overflow:visible;width:40px;height:40px;border-radius:999px;background:var(--paper-alt);border:var(--border-thin);cursor:pointer;padding:0;flex-shrink:0;">
-          ${avatarButtonInner(state.avatar,40)}
+        <button id="home-settings" title="${t("settingsTitle")}" style="position:relative;overflow:visible;width:44px;height:44px;border-radius:999px;background:var(--paper-alt);border:var(--border-thin);cursor:pointer;padding:0;flex-shrink:0;">
+          ${avatarButtonInner(state.avatar,44)}
         </button>
       </div>
       <div style="display:flex;justify-content:center;">
