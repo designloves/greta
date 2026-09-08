@@ -497,13 +497,13 @@ let state={
   // avatar
   avatar:"ollie",
   // practice settings
-  soundOn:true,pronunciationOn:true,reminderOn:false,reminderTime:"16:00",
+  soundOn:true,pronunciationOn:true,reminderOn:false,reminderTime:"16:00",reminderLastFired:"",
 };
 let greetTimer=null, greetHideTimer=null;
 
 // ── SETTINGS PERSISTENCE ─────────────────────────────────────────
 const SETTINGS_KEY="poppins_settings_v1";
-const PERSISTED_KEYS=["avatar","soundOn","pronunciationOn","reminderOn","reminderTime"];
+const PERSISTED_KEYS=["avatar","soundOn","pronunciationOn","reminderOn","reminderTime","reminderLastFired"];
 function loadSettings(){
   try{
     const raw=localStorage.getItem(SETTINGS_KEY);
@@ -564,6 +564,36 @@ function speakCurrentWord(){
   const lh=langHelpers(list,state.quizReversed);
   const word=list.words[state.quizIdx]; if(!word)return;
   speak(lh.src(word),TTS_LOCALE[lh.from]);
+}
+
+// ── DAILY REMINDER ────────────────────────────────────────────────
+// Best-effort only: a plain web page can only notify while it's open
+// in a tab (no service worker / push backend here), so this checks
+// the clock every 30s rather than truly reminding in the background.
+function todayKey(){const d=new Date();return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;}
+function checkReminder(){
+  if(!state.reminderOn)return;
+  if(typeof Notification==="undefined"||Notification.permission!=="granted")return;
+  const today=todayKey();
+  if(state.reminderLastFired===today)return;
+  const now=new Date();
+  const hhmm=`${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
+  if(hhmm!==state.reminderTime)return;
+  try{new Notification("Time to practice with Poppins! 🌸",{body:"Keep your streak going — a quick round of words awaits."});}catch{}
+  setState({reminderLastFired:today});
+}
+async function enableReminder(){
+  if(typeof Notification==="undefined"){
+    alert("This browser doesn't support notifications.");
+    return;
+  }
+  let perm=Notification.permission;
+  if(perm==="default")perm=await Notification.requestPermission();
+  if(perm!=="granted"){
+    alert("Notifications are blocked — allow them in your browser settings to get a reminder.");
+    return;
+  }
+  setState({reminderOn:true});
 }
 
 function setState(patch){
@@ -1066,9 +1096,16 @@ settings(){
       <div>
         <div class="label-caps" style="margin-bottom:8px;">Practice</div>
         <div class="card" style="padding:0;overflow:hidden;">
-          <div style="padding:14px 16px;border-bottom:1.5px solid var(--paper-alt);display:flex;justify-content:space-between;align-items:center;" class="b-font">
-            <span style="font-weight:600;color:var(--ink);">Daily reminder</span>
-            <span style="font-size:13px;color:var(--ink-soft);">Every day at 4pm</span>
+          <div style="padding:14px 16px;border-bottom:1.5px solid var(--paper-alt);" class="b-font">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-weight:600;color:var(--ink);">Daily reminder</span>
+              <button class="switch" data-setting="reminderOn" data-on="${state.reminderOn}"></button>
+            </div>
+            ${state.reminderOn?`
+            <div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+              <span style="font-size:12px;color:var(--ink-soft);line-height:1.4;">Reminds you while Poppins is open in a tab</span>
+              <input id="reminder-time" type="time" value="${state.reminderTime}" class="inp" style="width:auto;padding:6px 10px;font-size:13px;flex-shrink:0;"/>
+            </div>`:""}
           </div>
           <div style="padding:14px 16px;border-bottom:1.5px solid var(--paper-alt);display:flex;justify-content:space-between;align-items:center;" class="b-font">
             <span style="font-weight:600;color:var(--ink);">Sound effects</span>
@@ -1198,9 +1235,15 @@ function bindEvents(){
   document.querySelectorAll(".switch[data-setting]").forEach(el=>{
     el.addEventListener("click",()=>{
       const key=el.dataset.setting;
+      if(key==="reminderOn"){
+        if(state.reminderOn)setState({reminderOn:false});
+        else enableReminder();
+        return;
+      }
       setState({[key]:!state[key]});
     });
   });
+  on("reminder-time","change",e=>setState({reminderTime:e.target.value}));
 }
 
 function on(id,evt,fn){const el=document.getElementById(id);if(el)el.addEventListener(evt,fn);}
@@ -1216,6 +1259,7 @@ window.addEventListener('unhandledrejection',e=>{
   try{await initAuth();}catch{}
   try{if(sessionToken)await loadUserLists();}catch{}
   try{render();}catch(e){console.error('[Poppins] render error:',e);}
+  setInterval(checkReminder,30000);
 })().catch(e=>console.error('[Poppins] boot error:',e));
 </script>
 </body>
