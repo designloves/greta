@@ -1250,7 +1250,7 @@ settings(){
   const langBtn=(code,label)=>`<button class="ui-lang-btn" data-lang="${code}" style="flex:1;padding:12px;border-radius:var(--radius);border:${state.uiLang===code?"var(--border)":"var(--border-thin)"};background:${state.uiLang===code?"var(--butter-soft)":"var(--paper)"};font-family:var(--b-font);font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;box-shadow:${state.uiLang===code?"0 3px 0 var(--ink)":"none"};">${label}</button>`;
   return `
     <div class="screen-pad">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:0 -8px;">
         <h2 class="h-font" style="font-size:30px;color:var(--ink);">${t("settingsTitle")}</h2>
         <button id="settings-close" class="icon-btn-plain">${SVG.cross(20,"#241F3D",3)}</button>
       </div>
