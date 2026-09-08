@@ -275,10 +275,9 @@ const SAMPLE_LISTS=[
 
 const COLOR_MAP={rose:"#FFB0C8",butter:"#F2EE5B",sky:"#8AD7FF",mint:"#A8F08C",pink:"#B583E8"};
 const CHARACTERS={ollie:1,luna:1,fin:1,nova:1,bramble:1,momo:1};
-// Shared round, chubby body (a rounded-square close to a circle) so every
-// character reads as one cute round family — only the head accessory,
-// face and color set them apart.
-const CHAR_BODY=(fill)=>`<rect x="7" y="27" width="56" height="59" rx="27" fill="${fill}" stroke="#241F3D" stroke-width="3"/>`;
+// Each character gets its own hand-shaped, slightly bumpy blob outline
+// (built from 6 uneven "lobes", the same way Poppins' cloud body isn't a
+// plain circle) instead of sharing one uniform rounded shape.
 const CHARACTER_ART={
   // Ollie — chubby tan bear, round ears, snout patch
   ollie:size=>`<svg width="${size}" height="${size*88/70}" viewBox="0 0 70 88">
@@ -286,7 +285,7 @@ const CHARACTER_ART={
     <circle cx="54" cy="20" r="10.5" fill="#D9A066" stroke="#241F3D" stroke-width="3"/>
     <circle cx="16" cy="20" r="4.5" fill="#8B5A2B"/>
     <circle cx="54" cy="20" r="4.5" fill="#8B5A2B"/>
-    ${CHAR_BODY("#D9A066")}
+    <path d="M21.15 34.5 Q35 28 48.86 34.5 Q62.71 41 62.28 56.75 Q61.85 72.5 48.43 81.25 Q35 90 21.58 81.25 Q8.15 72.5 7.72 56.75 Q7.29 41 21.15 34.5 Z" fill="#D9A066" stroke="#241F3D" stroke-width="3" stroke-linejoin="round"/>
     <ellipse cx="35" cy="63" rx="15" ry="12" fill="#F3DBB8" stroke="#241F3D" stroke-width="2.5"/>
     <ellipse cx="35" cy="58" rx="4" ry="3" fill="#241F3D"/>
     <circle cx="24" cy="48" r="3.4" fill="#241F3D"/>
@@ -302,7 +301,7 @@ const CHARACTER_ART={
     <path d="M56 34 L63 8 L41 24 Z" fill="#C9B8F2" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round"/>
     <path d="M17 26 L13 14 L24 21 Z" fill="#FFB0C8"/>
     <path d="M53 26 L57 14 L46 21 Z" fill="#FFB0C8"/>
-    ${CHAR_BODY("#C9B8F2")}
+    <path d="M20.71 33.75 Q35 27 49.29 33.75 Q63.58 40.5 61.85 56 Q60.11 71.5 47.56 76.75 Q35 82 22.45 76.75 Q9.89 71.5 8.16 56 Q6.42 40.5 20.71 33.75 Z" fill="#C9B8F2" stroke="#241F3D" stroke-width="3" stroke-linejoin="round"/>
     <path d="M20 52 Q25 47 30 52" fill="none" stroke="#241F3D" stroke-width="2.6" stroke-linecap="round"/>
     <path d="M40 52 Q45 47 50 52" fill="none" stroke="#241F3D" stroke-width="2.6" stroke-linecap="round"/>
     <path d="M32 61 L38 61 L35 65 Z" fill="#241F3D"/>
@@ -316,7 +315,7 @@ const CHARACTER_ART={
   // Fin — mint dino, back spikes, light belly patch
   fin:size=>`<svg width="${size}" height="${size*88/70}" viewBox="0 0 70 88">
     <path d="M21 30 L26 10 L31 30 M31 30 L36 6 L41 30 M41 30 L46 12 L51 30" fill="#5FBE7D" stroke="#241F3D" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
-    ${CHAR_BODY("#8FE0A8")}
+    <path d="M21.58 36.25 Q35 31 48.43 36.25 Q61.85 41.5 62.72 57.5 Q63.58 73.5 49.29 81.75 Q35 90 20.71 81.75 Q6.42 73.5 7.29 57.5 Q8.15 41.5 21.58 36.25 Z" fill="#8FE0A8" stroke="#241F3D" stroke-width="3" stroke-linejoin="round"/>
     <ellipse cx="35" cy="66" rx="13" ry="15" fill="#D8F5DE"/>
     <circle cx="25" cy="48" r="3.6" fill="#241F3D"/>
     <circle cx="45" cy="48" r="3.6" fill="#241F3D"/>
@@ -329,7 +328,7 @@ const CHARACTER_ART={
   nova:size=>`<svg width="${size}" height="${size*88/70}" viewBox="0 0 70 88">
     <line x1="35" y1="26" x2="35" y2="6" stroke="#241F3D" stroke-width="2.6" stroke-linecap="round"/>
     <circle cx="35" cy="5" r="5.5" fill="#FFD66B" stroke="#241F3D" stroke-width="2.4"/>
-    ${CHAR_BODY("#A8D8FF")}
+    <path d="M21.58 32.75 Q35 24 48.43 32.75 Q61.85 41.5 60.55 56.25 Q59.25 71 47.13 76.5 Q35 82 22.88 76.5 Q10.75 71 9.45 56.25 Q8.15 41.5 21.58 32.75 Z" fill="#A8D8FF" stroke="#241F3D" stroke-width="3" stroke-linejoin="round"/>
     <ellipse cx="24" cy="52" rx="6.4" ry="8.4" fill="#241F3D"/>
     <ellipse cx="46" cy="52" rx="6.4" ry="8.4" fill="#241F3D"/>
     <circle cx="26.5" cy="47" r="1.8" fill="#fff"/>
@@ -345,7 +344,7 @@ const CHARACTER_ART={
     <path d="M48 32 C55 18 56 2 49 0 C42 2 43 18 44 32 Z" fill="#F7F1E3" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round"/>
     <path d="M21 6 C24 7 24 18 23 28 Z" fill="#FFB0C8" opacity=".8"/>
     <path d="M49 6 C46 7 46 18 47 28 Z" fill="#FFB0C8" opacity=".8"/>
-    ${CHAR_BODY("#F7F1E3")}
+    <path d="M20.28 34 Q35 28 49.72 34 Q64.44 40 62.71 56 Q60.98 72 47.99 76.5 Q35 81 22.01 76.5 Q9.02 72 7.29 56 Q5.56 40 20.28 34 Z" fill="#F7F1E3" stroke="#241F3D" stroke-width="3" stroke-linejoin="round"/>
     <circle cx="24" cy="52" r="3.4" fill="#241F3D"/>
     <circle cx="46" cy="52" r="3.4" fill="#241F3D"/>
     <ellipse cx="35" cy="62" rx="4" ry="3" fill="#FFB0C8" stroke="#241F3D" stroke-width="2"/>
@@ -360,7 +359,7 @@ const CHARACTER_ART={
   momo:size=>`<svg width="${size}" height="${size*88/70}" viewBox="0 0 70 88">
     <circle cx="16" cy="20" r="10.5" fill="#241F3D"/>
     <circle cx="54" cy="20" r="10.5" fill="#241F3D"/>
-    ${CHAR_BODY("#fff")}
+    <path d="M22.01 34.5 Q35 27 47.99 34.5 Q60.98 42 61.85 57.5 Q62.71 73 48.86 80.5 Q35 88 21.15 80.5 Q7.29 73 8.16 57.5 Q9.02 42 22.01 34.5 Z" fill="#fff" stroke="#241F3D" stroke-width="3" stroke-linejoin="round"/>
     <ellipse cx="24" cy="50" rx="7.2" ry="8.8" fill="#241F3D"/>
     <ellipse cx="46" cy="50" rx="7.2" ry="8.8" fill="#241F3D"/>
     <circle cx="24" cy="50" r="3" fill="#fff"/>
