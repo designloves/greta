@@ -274,7 +274,113 @@ const SAMPLE_LISTS=[
 ];
 
 const COLOR_MAP={rose:"#FFB0C8",butter:"#F2EE5B",sky:"#8AD7FF",mint:"#A8F08C",pink:"#B583E8"};
-const AVATAR_COLORS={pink:"#B583E8",rose:"#FFB0C8",sky:"#8AD7FF",mint:"#A8F08C",butter:"#F2EE5B"};
+const CHARACTERS={ollie:1,luna:1,fin:1,nova:1,bramble:1,momo:1};
+// Each character gets its own hand-shaped, slightly bumpy blob outline
+// (built from 6 uneven "lobes", the same way Poppins' cloud body isn't a
+// plain circle) instead of sharing one uniform rounded shape.
+const CHARACTER_ART={
+  // Ollie — chubby tan bear, round ears, snout patch
+  ollie:size=>`<svg width="${size}" height="${size*88/70}" viewBox="0 0 70 88">
+    <circle cx="16" cy="20" r="10.5" fill="#D9A066" stroke="#241F3D" stroke-width="3"/>
+    <circle cx="54" cy="20" r="10.5" fill="#D9A066" stroke="#241F3D" stroke-width="3"/>
+    <circle cx="16" cy="20" r="4.5" fill="#8B5A2B"/>
+    <circle cx="54" cy="20" r="4.5" fill="#8B5A2B"/>
+    <path d="M21.15 34.5 Q35 28 48.86 34.5 Q62.71 41 62.28 56.75 Q61.85 72.5 48.43 81.25 Q35 90 21.58 81.25 Q8.15 72.5 7.72 56.75 Q7.29 41 21.15 34.5 Z" fill="#D9A066" stroke="#241F3D" stroke-width="3" stroke-linejoin="round"/>
+    <ellipse cx="35" cy="63" rx="15" ry="12" fill="#F3DBB8" stroke="#241F3D" stroke-width="2.5"/>
+    <ellipse cx="35" cy="58" rx="4" ry="3" fill="#241F3D"/>
+    <circle cx="24" cy="48" r="3.4" fill="#241F3D"/>
+    <circle cx="46" cy="48" r="3.4" fill="#241F3D"/>
+    <path d="M28 67 Q35 72 42 67" fill="none" stroke="#241F3D" stroke-width="2.4" stroke-linecap="round"/>
+    <ellipse cx="17" cy="56" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="53" cy="56" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="23" cy="36" rx="4" ry="3" fill="#fff" opacity=".5"/>
+  </svg>`,
+  // Luna — sleek lilac cat, pointy ears, whiskers, almond eyes
+  luna:size=>`<svg width="${size}" height="${size*88/70}" viewBox="0 0 70 88">
+    <path d="M14 34 L7 8 L29 24 Z" fill="#C9B8F2" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M56 34 L63 8 L41 24 Z" fill="#C9B8F2" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M17 26 L13 14 L24 21 Z" fill="#FFB0C8"/>
+    <path d="M53 26 L57 14 L46 21 Z" fill="#FFB0C8"/>
+    <path d="M20.71 33.75 Q35 27 49.29 33.75 Q63.58 40.5 61.85 56 Q60.11 71.5 47.56 76.75 Q35 82 22.45 76.75 Q9.89 71.5 8.16 56 Q6.42 40.5 20.71 33.75 Z" fill="#C9B8F2" stroke="#241F3D" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M20 52 Q25 47 30 52" fill="none" stroke="#241F3D" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M40 52 Q45 47 50 52" fill="none" stroke="#241F3D" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M32 61 L38 61 L35 65 Z" fill="#241F3D"/>
+    <path d="M35 65 Q30 70 25 68 M35 65 Q40 70 45 68" fill="none" stroke="#241F3D" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M2 58 L18 56 M2 65 L18 63" stroke="#241F3D" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M68 58 L52 56 M68 65 L52 63" stroke="#241F3D" stroke-width="1.6" stroke-linecap="round"/>
+    <ellipse cx="19" cy="60" rx="3.4" ry="2.4" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="51" cy="60" rx="3.4" ry="2.4" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="26" cy="37" rx="4" ry="3" fill="#fff" opacity=".5"/>
+  </svg>`,
+  // Fin — mint dino, back spikes, light belly patch
+  fin:size=>`<svg width="${size}" height="${size*88/70}" viewBox="0 0 70 88">
+    <path d="M21 30 L26 10 L31 30 M31 30 L36 6 L41 30 M41 30 L46 12 L51 30" fill="#5FBE7D" stroke="#241F3D" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M21.58 36.25 Q35 31 48.43 36.25 Q61.85 41.5 62.72 57.5 Q63.58 73.5 49.29 81.75 Q35 90 20.71 81.75 Q6.42 73.5 7.29 57.5 Q8.15 41.5 21.58 36.25 Z" fill="#8FE0A8" stroke="#241F3D" stroke-width="3" stroke-linejoin="round"/>
+    <ellipse cx="35" cy="66" rx="13" ry="15" fill="#D8F5DE"/>
+    <circle cx="25" cy="48" r="3.6" fill="#241F3D"/>
+    <circle cx="45" cy="48" r="3.6" fill="#241F3D"/>
+    <path d="M27 65 Q35 70 43 65" fill="none" stroke="#241F3D" stroke-width="2.4" stroke-linecap="round"/>
+    <ellipse cx="18" cy="55" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="52" cy="55" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="25" cy="35" rx="4" ry="3" fill="#fff" opacity=".5"/>
+  </svg>`,
+  // Nova — pale-blue alien, antenna, big eyes
+  nova:size=>`<svg width="${size}" height="${size*88/70}" viewBox="0 0 70 88">
+    <line x1="35" y1="26" x2="35" y2="6" stroke="#241F3D" stroke-width="2.6" stroke-linecap="round"/>
+    <circle cx="35" cy="5" r="5.5" fill="#FFD66B" stroke="#241F3D" stroke-width="2.4"/>
+    <path d="M21.58 32.75 Q35 24 48.43 32.75 Q61.85 41.5 60.55 56.25 Q59.25 71 47.13 76.5 Q35 82 22.88 76.5 Q10.75 71 9.45 56.25 Q8.15 41.5 21.58 32.75 Z" fill="#A8D8FF" stroke="#241F3D" stroke-width="3" stroke-linejoin="round"/>
+    <ellipse cx="24" cy="52" rx="6.4" ry="8.4" fill="#241F3D"/>
+    <ellipse cx="46" cy="52" rx="6.4" ry="8.4" fill="#241F3D"/>
+    <circle cx="26.5" cy="47" r="1.8" fill="#fff"/>
+    <circle cx="48.5" cy="47" r="1.8" fill="#fff"/>
+    <path d="M29 70 Q35 74 41 70" fill="none" stroke="#241F3D" stroke-width="2.2" stroke-linecap="round"/>
+    <ellipse cx="16" cy="62" rx="3.2" ry="2.2" fill="#FFB0C8" opacity=".8"/>
+    <ellipse cx="54" cy="62" rx="3.2" ry="2.2" fill="#FFB0C8" opacity=".8"/>
+    <ellipse cx="25" cy="36" rx="4" ry="3" fill="#fff" opacity=".4"/>
+  </svg>`,
+  // Bramble — cream bunny, long ears, pink nose, tiny teeth
+  bramble:size=>`<svg width="${size}" height="${size*88/70}" viewBox="0 0 70 88">
+    <path d="M22 32 C15 18 14 2 21 0 C28 2 27 18 26 32 Z" fill="#F7F1E3" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M48 32 C55 18 56 2 49 0 C42 2 43 18 44 32 Z" fill="#F7F1E3" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M21 6 C24 7 24 18 23 28 Z" fill="#FFB0C8" opacity=".8"/>
+    <path d="M49 6 C46 7 46 18 47 28 Z" fill="#FFB0C8" opacity=".8"/>
+    <path d="M20.28 34 Q35 28 49.72 34 Q64.44 40 62.71 56 Q60.98 72 47.99 76.5 Q35 81 22.01 76.5 Q9.02 72 7.29 56 Q5.56 40 20.28 34 Z" fill="#F7F1E3" stroke="#241F3D" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="24" cy="52" r="3.4" fill="#241F3D"/>
+    <circle cx="46" cy="52" r="3.4" fill="#241F3D"/>
+    <ellipse cx="35" cy="62" rx="4" ry="3" fill="#FFB0C8" stroke="#241F3D" stroke-width="2"/>
+    <path d="M28 70 Q35 74 42 70" fill="none" stroke="#241F3D" stroke-width="2.2" stroke-linecap="round"/>
+    <rect x="32.2" y="70" width="2.6" height="4.5" rx="1" fill="#fff" stroke="#241F3D" stroke-width="1.2"/>
+    <rect x="35.2" y="70" width="2.6" height="4.5" rx="1" fill="#fff" stroke="#241F3D" stroke-width="1.2"/>
+    <ellipse cx="17" cy="60" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="53" cy="60" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="24" cy="38" rx="4" ry="3" fill="#fff" opacity=".5"/>
+  </svg>`,
+  // Momo — black-and-white panda, round ears, eye patches
+  momo:size=>`<svg width="${size}" height="${size*88/70}" viewBox="0 0 70 88">
+    <circle cx="16" cy="20" r="10.5" fill="#241F3D"/>
+    <circle cx="54" cy="20" r="10.5" fill="#241F3D"/>
+    <path d="M22.01 34.5 Q35 27 47.99 34.5 Q60.98 42 61.85 57.5 Q62.71 73 48.86 80.5 Q35 88 21.15 80.5 Q7.29 73 8.16 57.5 Q9.02 42 22.01 34.5 Z" fill="#fff" stroke="#241F3D" stroke-width="3" stroke-linejoin="round"/>
+    <ellipse cx="24" cy="50" rx="7.2" ry="8.8" fill="#241F3D"/>
+    <ellipse cx="46" cy="50" rx="7.2" ry="8.8" fill="#241F3D"/>
+    <circle cx="24" cy="50" r="3" fill="#fff"/>
+    <circle cx="46" cy="50" r="3" fill="#fff"/>
+    <circle cx="24" cy="50" r="1.5" fill="#241F3D"/>
+    <circle cx="46" cy="50" r="1.5" fill="#241F3D"/>
+    <ellipse cx="35" cy="62" rx="3.6" ry="2.6" fill="#241F3D"/>
+    <path d="M28 68 Q35 73 42 68" fill="none" stroke="#241F3D" stroke-width="2.4" stroke-linecap="round"/>
+    <ellipse cx="17" cy="58" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="53" cy="58" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="23" cy="36" rx="4" ry="3" fill="#fff" opacity=".35"/>
+  </svg>`,
+};
+function characterSVG(kind,size){
+  return (CHARACTER_ART[kind]||CHARACTER_ART.ollie)(size);
+}
+function avatarButtonInner(kind,diameter){
+  const w=Math.round(diameter*0.9);
+  const topOffset=-Math.round(diameter*0.12);
+  return `<span style="position:absolute;top:${topOffset}px;left:50%;transform:translateX(-50%);line-height:0;">${characterSVG(kind,w)}</span>`;
+}
 
 // ── SVG ICONS (strings) ───────────────────────────────────────────
 const SVG={
@@ -284,17 +390,16 @@ const SVG={
     const spin=spinning?`style="animation:bloom-spin 4s linear infinite"`:"";
     return `<svg width="${size}" height="${size}" viewBox="0 0 32 32" ${spin}>${petals}<circle cx="16" cy="16" r="3" fill="${c}"/></svg>`;
   },
-  spark:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M12 1 L13.5 9.5 L22 11 L13.5 12.5 L12 21 L10.5 12.5 L2 11 L10.5 9.5 Z" fill="${color}"/></svg>`,
-  heart:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M12 21 C 5 16 2 12 2 8 a5 5 0 0 1 10 -1 a5 5 0 0 1 10 1 c 0 4 -3 8 -10 13 z" fill="${color}"/></svg>`,
-  check:(size,color,w=4)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M4 13 L10 19 L20 6" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-  cross:(size,color,w=4)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M6 6 L18 18 M18 6 L6 18" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round"/></svg>`,
-  plus:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M12 4 V20 M4 12 H20" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round"/></svg>`,
-  arrowRight:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M5 12 H19 M13 6 L19 12 L13 18" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-  arrowBack:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M19 12 H5 M11 6 L5 12 L11 18" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-  pencil:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M14.5 4.5 L19.5 9.5 L8 21 L3 22 L4 17 Z" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 6.5 L17.5 11.5" stroke="${color}" stroke-width="2" stroke-linecap="round"/></svg>`,
-  gear:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M12 2 L14 5 L17 4 L17 7 L20 8 L18 11 L20 14 L17 15 L17 18 L14 17 L12 20 L10 17 L7 18 L7 15 L4 14 L6 11 L4 8 L7 7 L7 4 L10 5 Z" fill="${color}"/><circle cx="12" cy="11" r="3" fill="white"/></svg>`,
-  trash:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M5 6 H19 L18 21 H6 Z" fill="${color}"/><rect x="9" y="3" width="6" height="3" rx="1" fill="${color}"/></svg>`,
-  books:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24"><rect x="3" y="4" width="14" height="4" rx="1" fill="${color}"/><rect x="5" y="10" width="14" height="4" rx="1" fill="${color}" opacity=".7"/><rect x="3" y="16" width="14" height="4" rx="1" fill="${color}"/></svg>`,
+  spark:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>`,
+  heart:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`,
+  check:(size,color,w=4)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>`,
+  cross:(size,color,w=4)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`,
+  plus:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>`,
+  arrowRight:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`,
+  arrowBack:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>`,
+  pencil:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .622.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>`,
+  trash:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>`,
+  books:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>`,
   confetti:(size,color,rot)=>`<svg width="${size}" height="${size*1.6}" viewBox="0 0 10 16" style="transform:rotate(${rot}deg)"><rect x="0" y="0" width="10" height="16" rx="2" fill="${color}"/></svg>`,
 };
 
@@ -376,7 +481,7 @@ let state={
   // mascot
   showGreeting:false,greetingHiding:false,
   // avatar
-  avatar:"pink",
+  avatar:"ollie",
 };
 let greetTimer=null, greetHideTimer=null;
 
@@ -615,7 +720,6 @@ home(){
         <button id="home-new" class="btn btn-tertiary btn-full">${SVG.plus(16,"#241F3D")} Paste my own</button>
       </div>
     </div>`;
-  const avatarColor=AVATAR_COLORS[state.avatar]||AVATAR_COLORS.pink;
   return `
     <div class="screen-pad">
       <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -623,13 +727,13 @@ home(){
           <span id="bloom-spin">${SVG.bloom(26,"#B583E8","#F2EE5B",true)}</span>
           <span class="h-font" style="font-size:24px;color:var(--ink);">Poppins</span>
         </div>
-        <button id="home-settings" title="Settings" style="width:38px;height:38px;border-radius:999px;background:var(--paper-alt);border:var(--border-thin);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;overflow:hidden;flex-shrink:0;">
-          ${mascotSVG(30,"happy",avatarColor)}
+        <button id="home-settings" title="Settings" style="position:relative;overflow:visible;width:44px;height:44px;border-radius:999px;background:var(--paper-alt);border:var(--border-thin);cursor:pointer;padding:0;flex-shrink:0;">
+          ${avatarButtonInner(state.avatar,44)}
         </button>
       </div>
       <div style="display:flex;justify-content:center;">
         <div style="position:relative;display:inline-block;">
-          <button id="home-mascot" title="Say hi" style="background:none;border:none;padding:0;cursor:pointer;">${mascotSVG(120,"happy",avatarColor)}</button>
+          <button id="home-mascot" title="Say hi" style="background:none;border:none;padding:0;cursor:pointer;">${mascotSVG(120,"happy")}</button>
           ${state.showGreeting?`
           <div class="speech-bubble b-font" style="animation:${state.greetingHiding?"pop-out 180ms ease-in forwards":"pop-in 200ms ease-out"};">
             Hi! I'm Poppins. Let's learn some language!
@@ -893,9 +997,9 @@ done(){
 
 settings(){
   const pair=state.pair;
-  const avatarSwatches=Object.entries(AVATAR_COLORS).map(([key,color])=>`
-    <button class="avatar-swatch" data-avatar="${key}" title="${key}" style="width:44px;height:44px;border-radius:999px;background:var(--paper-alt);border:${state.avatar===key?"3px solid var(--ink)":"var(--border-thin)"};display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;box-shadow:${state.avatar===key?"0 3px 0 var(--ink)":"none"};">
-      ${mascotSVG(32,"happy",color)}
+  const avatarSwatches=Object.keys(CHARACTERS).map(key=>`
+    <button class="avatar-swatch" data-avatar="${key}" title="${key}" style="position:relative;overflow:visible;width:52px;height:52px;border-radius:999px;background:var(--paper-alt);border:${state.avatar===key?"3px solid var(--ink)":"var(--border-thin)"};cursor:pointer;padding:0;box-shadow:${state.avatar===key?"0 3px 0 var(--ink)":"none"};flex-shrink:0;">
+      ${avatarButtonInner(key,52)}
     </button>`).join("");
   return `
     <div class="screen-pad">
@@ -905,8 +1009,8 @@ settings(){
       </div>
       <div class="card" style="background:var(--pink-soft);">
         <div style="display:flex;align-items:center;gap:14px;">
-          <div style="width:56px;height:56px;border-radius:999px;background:var(--paper);border:var(--border-thin);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            ${mascotSVG(48,"happy",AVATAR_COLORS[state.avatar]||AVATAR_COLORS.pink)}
+          <div style="position:relative;overflow:visible;width:64px;height:64px;border-radius:999px;background:var(--paper);border:var(--border-thin);flex-shrink:0;">
+            ${avatarButtonInner(state.avatar,64)}
           </div>
           <div>
             <div class="h-font" style="font-size:18px;color:var(--ink);">Hej there!</div>
@@ -916,7 +1020,7 @@ settings(){
       </div>
       <div>
         <div class="label-caps" style="margin-bottom:8px;">Avatar</div>
-        <div style="display:flex;gap:10px;">${avatarSwatches}</div>
+        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;">${avatarSwatches}</div>
       </div>
       <div>
         <div class="label-caps" style="margin-bottom:8px;">Language</div>
