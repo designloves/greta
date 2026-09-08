@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{background:var(--paper);min-height:var(--app-height,100dvh);display:flex;align-items:flex-start;justify-content:center;font-family:'Space Grotesk',system-ui,sans-serif;}
+html,body{background:var(--paper);height:var(--app-height,100dvh);overflow:hidden;display:flex;align-items:flex-start;justify-content:center;font-family:'Space Grotesk',system-ui,sans-serif;}
 
 /* ── Gummy Tech tokens ── */
 :root{
@@ -211,8 +211,13 @@ html,body{background:var(--paper);min-height:var(--app-height,100dvh);display:fl
 @keyframes pop-out{from{transform:scale(1);opacity:1;}to{transform:scale(.85);opacity:0;}}
 
 ::-webkit-scrollbar{width:0;height:0;}
-input,textarea,button{font:inherit;}
+input,textarea,button,select{font:inherit;-webkit-appearance:none;-moz-appearance:none;appearance:none;}
 svg{display:block;}
+select.inp{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23241F3D' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;background-size:16px 16px;
+  padding-right:36px!important;
+}
 </style>
 </head>
 <body>
@@ -236,12 +241,30 @@ function syncAppHeight(){
     document.documentElement.style.setProperty('--app-height',h+'px');
   }catch{}
 }
+// Some mobile browsers scroll the outer document itself when a focused
+// input is covered by the keyboard, even with html/body set to
+// overflow:hidden — snap it back so only the inner #screen ever scrolls.
+function resetOuterScroll(){
+  try{
+    window.scrollTo(0,0);
+    document.documentElement.scrollTop=0;
+    document.body.scrollTop=0;
+  }catch{}
+}
 syncAppHeight();
 window.addEventListener('resize',syncAppHeight);
+window.addEventListener('resize',resetOuterScroll);
 if(window.visualViewport){
   window.visualViewport.addEventListener('resize',syncAppHeight);
   window.visualViewport.addEventListener('scroll',syncAppHeight);
+  window.visualViewport.addEventListener('resize',resetOuterScroll);
 }
+document.addEventListener('focusin',e=>{
+  if(e.target&&(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')){
+    setTimeout(resetOuterScroll,50);
+    setTimeout(resetOuterScroll,300);
+  }
+});
 
 function esc(s){
   return String(s==null?"":s)
@@ -259,6 +282,144 @@ const LANGUAGES = {
 };
 const TTS_LOCALE={sv:"sv-SE",en:"en-US",es:"es-ES",fr:"fr-FR",de:"de-DE"};
 
+// ── UI LOCALIZATION ───────────────────────────────────────────────
+const LANG_NAME_TRANSLATIONS={
+  en:{sv:"Swedish",en:"English",es:"Spanish",fr:"French",de:"German"},
+  sv:{sv:"svenska",en:"engelska",es:"spanska",fr:"franska",de:"tyska"},
+};
+function langName(code){return(LANG_NAME_TRANSLATIONS[state.uiLang]||LANG_NAME_TRANSLATIONS.en)[code]||code;}
+function wordsCountText(n){return state.uiLang==="sv"?`${n} ord`:`${n} word${n!==1?"s":""}`;}
+function listsCountText(n){return state.uiLang==="sv"?`${n} ${n===1?"lista":"listor"}`:`${n} list${n!==1?"s":""}`;}
+
+const UI_STRINGS={
+  en:{
+    loginGreeting:"Hej!",
+    loginIntro:"I'm Poppins. Drop your email and I'll send a magic link — no passwords, promise.",
+    sending:"Sending…",
+    sendMagicLink:"Send magic link",
+    skipTryFirst:"skip — try Poppins first",
+    checkInbox:"Check your inbox",
+    magicLinkSent:"I sent a sparkly link to {email}. Tap it to come on in.",
+    clickedItLetMeIn:"I clicked it — let me in",
+    todaysList:"Today's list",
+    startPractice:"Start practice",
+    myLists:"My lists",
+    newList:"New",
+    noWordsYet:"No words yet!",
+    pickListOrPaste:"Pick a list to start, or paste your own words.",
+    pickAList:"Pick a list",
+    pasteMyOwn:"Paste my own",
+    sayHi:"Say hi",
+    mascotGreeting:"Hi! I'm Poppins. Let's learn some language!",
+    settingsTitle:"Settings",
+    noListsYet:"No lists yet — add one!",
+    addNewList:"Add a new list",
+    editList:"Edit list",
+    pasteWordList:"Paste a word list",
+    language:"Language",
+    pasteInstructions:"Paste with {from} on the left, {to} on the right. Use any separator:",
+    listNamePlaceholder:"What's this list called?",
+    wordTranslationPlaceholder:"word = translation",
+    cancel:"Cancel",
+    sortItOut:"Sort it out",
+    lookRight:"Look right?",
+    foundWords:"Found {n} words",
+    edit:"Edit",
+    saveChanges:"Save changes",
+    saveList:"Save list",
+    whichLangAnswer:"Which language will you answer in?",
+    starting:"Starting \"{name}\"",
+    answerIn:"Answer in {lang}",
+    practice:"Practice",
+    writeNTimes:"Write \"{word}\" 5 times",
+    inLang:"({source} in {lang})",
+    gotItKeepGoing:"Got it — keep going",
+    doneOfFive:"{n} / 5 done",
+    whatMeanIn:"What does this mean in {lang}?",
+    typeInLang:"type in {lang}, then press enter…",
+    youDidIt:"You did it!",
+    resultLine:"{pct}% right · {fraction} on the first try",
+    home:"Home",
+    playAgain:"Play again",
+    hejThere:"Hej there!",
+    notSignedIn:"Not signed in",
+    avatar:"Avatar",
+    appLanguage:"App language",
+    dailyReminder:"Daily reminder",
+    reminderCaveat:"Reminds you while Poppins is open in a tab",
+    soundEffects:"Sound effects",
+    showPronunciation:"Show pronunciation",
+    logOut:"Log out",
+    madeWith:"Poppins v1 · made with",
+  },
+  sv:{
+    loginGreeting:"Hej!",
+    loginIntro:"Jag är Poppins. Skriv in din e-post så skickar jag en magisk länk — inga lösenord, lovar.",
+    sending:"Skickar…",
+    sendMagicLink:"Skicka magisk länk",
+    skipTryFirst:"hoppa över — prova Poppins först",
+    checkInbox:"Kolla din inkorg",
+    magicLinkSent:"Jag skickade en glittrig länk till {email}. Tryck på den för att komma in.",
+    clickedItLetMeIn:"Jag klickade på den — släpp in mig",
+    todaysList:"Dagens lista",
+    startPractice:"Starta övning",
+    myLists:"Mina listor",
+    newList:"Ny",
+    noWordsYet:"Inga ord än!",
+    pickListOrPaste:"Välj en lista för att börja, eller klistra in egna ord.",
+    pickAList:"Välj en lista",
+    pasteMyOwn:"Klistra in egna",
+    sayHi:"Säg hej",
+    mascotGreeting:"Hej! Jag är Poppins. Nu lär vi oss språk!",
+    settingsTitle:"Inställningar",
+    noListsYet:"Inga listor än — lägg till en!",
+    addNewList:"Lägg till en ny lista",
+    editList:"Redigera lista",
+    pasteWordList:"Klistra in en ordlista",
+    language:"Språk",
+    pasteInstructions:"Klistra in med {from} till vänster, {to} till höger. Använd valfri avgränsare:",
+    listNamePlaceholder:"Vad ska listan heta?",
+    wordTranslationPlaceholder:"ord = översättning",
+    cancel:"Avbryt",
+    sortItOut:"Sortera ut det",
+    lookRight:"Ser det rätt ut?",
+    foundWords:"Hittade {n} ord",
+    edit:"Redigera",
+    saveChanges:"Spara ändringar",
+    saveList:"Spara lista",
+    whichLangAnswer:"Vilket språk vill du svara på?",
+    starting:"Startar \"{name}\"",
+    answerIn:"Svara på {lang}",
+    practice:"Övning",
+    writeNTimes:"Skriv \"{word}\" 5 gånger",
+    inLang:"({source} på {lang})",
+    gotItKeepGoing:"Fixat — fortsätt",
+    doneOfFive:"{n} / 5 klara",
+    whatMeanIn:"Vad betyder detta på {lang}?",
+    typeInLang:"skriv på {lang}, tryck sedan enter…",
+    youDidIt:"Du klarade det!",
+    resultLine:"{pct}% rätt · {fraction} på första försöket",
+    home:"Hem",
+    playAgain:"Spela igen",
+    hejThere:"Hej där!",
+    notSignedIn:"Inte inloggad",
+    avatar:"Avatar",
+    appLanguage:"Appspråk",
+    dailyReminder:"Daglig påminnelse",
+    reminderCaveat:"Påminner dig medan Poppins är öppen i en flik",
+    soundEffects:"Ljudeffekter",
+    showPronunciation:"Visa uttal",
+    logOut:"Logga ut",
+    madeWith:"Poppins v1 · gjord med",
+  },
+};
+function t(key,vars){
+  const dict=UI_STRINGS[state.uiLang]||UI_STRINGS.en;
+  let str=dict[key]??UI_STRINGS.en[key]??key;
+  if(vars)for(const k in vars)str=str.replaceAll(`{${k}}`,vars[k]);
+  return str;
+}
+
 function langHelpers(list,reversed){
   const f0=(list&&list.from)||"sv", t0=(list&&list.to)||"en";
   const f=reversed?t0:f0, t=reversed?f0:t0;
@@ -266,8 +427,8 @@ function langHelpers(list,reversed){
     from:f,to:t,
     src:w=>(w&&(w[f]??w.sv))||"",
     tgt:w=>(w&&(w[t]??w.en))||"",
-    srcLang:(LANGUAGES[f]&&LANGUAGES[f].name)||f.toUpperCase(),
-    tgtLang:(LANGUAGES[t]&&LANGUAGES[t].name)||t.toUpperCase(),
+    srcLang:langName(f),
+    tgtLang:langName(t),
     srcCode:(LANGUAGES[f]&&LANGUAGES[f].code)||f.toUpperCase(),
     tgtCode:(LANGUAGES[t]&&LANGUAGES[t].code)||t.toUpperCase(),
     srcColor:(LANGUAGES[f]&&LANGUAGES[f].color)||"#888",
@@ -489,7 +650,7 @@ let state={
   // quiz
   quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:false,
   // paste
-  pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null,
+  pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null,pasteAutoGuessed:false,
   // login
   loginEmail:"",loginSent:false,loginErr:"",loginLoading:false,
   // mascot
@@ -498,12 +659,14 @@ let state={
   avatar:"ollie",
   // practice settings
   soundOn:true,pronunciationOn:true,reminderOn:false,reminderTime:"16:00",reminderLastFired:"",
+  // ui language
+  uiLang:"sv",
 };
 let greetTimer=null, greetHideTimer=null;
 
 // ── SETTINGS PERSISTENCE ─────────────────────────────────────────
 const SETTINGS_KEY="poppins_settings_v1";
-const PERSISTED_KEYS=["avatar","soundOn","pronunciationOn","reminderOn","reminderTime","reminderLastFired"];
+const PERSISTED_KEYS=["avatar","soundOn","pronunciationOn","reminderOn","reminderTime","reminderLastFired","pair","uiLang"];
 function loadSettings(){
   try{
     const raw=localStorage.getItem(SETTINGS_KEY);
@@ -725,18 +888,48 @@ function write5Check(i,val){
   }
 }
 
+function splitPasteLine(line){
+  const m=line.match(/^(.+?)\s*[=\-–→:\t]+\s*(.+)$/);
+  if(m)return[m[1].trim(),m[2].trim()];
+  const parts=line.split(/\s{2,}/);
+  if(parts.length===2)return[parts[0].trim(),parts[1].trim()];
+  return null;
+}
 function parsePasteText(text,pair){
   const lines=text.split("\n").map(l=>l.trim()).filter(Boolean);
   const out=[];
   for(const line of lines){
-    const m=line.match(/^(.+?)\s*[=\-–→:\t]+\s*(.+)$/);
-    if(m){out.push({[pair.from]:m[1].trim(),[pair.to]:m[2].trim()});}
-    else if(line.split(/\s{2,}/).length===2){
-      const[a,b]=line.split(/\s{2,}/);
-      out.push({[pair.from]:a.trim(),[pair.to]:b.trim()});
-    }
+    const parts=splitPasteLine(line);
+    if(parts)out.push({[pair.from]:parts[0],[pair.to]:parts[1]});
   }
   return out;
+}
+
+// Best-effort language guess from diacritics/marks — not real language
+// detection, just enough to pre-fill the From/To pickers on a strong
+// signal. Never fully trustworthy (e.g. unaccented text gives no signal
+// at all), so it only nudges the pickers, which the user can override.
+function guessLangCode(text){
+  if(/[üÜß]/.test(text))return "de";
+  if(/[åäöÅÄÖ]/.test(text))return "sv";
+  if(/[ñÑ¿¡]/.test(text))return "es";
+  if(/[çÇœŒàâêëîïôûÀÂÊËÎÏÔÛ]/.test(text))return "fr";
+  if(/[áéíóúÁÉÍÓÚ]/.test(text))return "es";
+  return null;
+}
+function guessPairFromText(text){
+  const lines=text.split("\n").map(l=>l.trim()).filter(Boolean);
+  let leftGuess=null,rightGuess=null;
+  for(const line of lines){
+    const parts=splitPasteLine(line); if(!parts)continue;
+    if(!leftGuess)leftGuess=guessLangCode(parts[0]);
+    if(!rightGuess)rightGuess=guessLangCode(parts[1]);
+    if(leftGuess&&rightGuess)break;
+  }
+  if(leftGuess&&rightGuess&&leftGuess!==rightGuess)return{from:leftGuess,to:rightGuess};
+  if(leftGuess&&!rightGuess)return{from:leftGuess,to:leftGuess==="en"?"sv":"en"};
+  if(rightGuess&&!leftGuess)return{from:rightGuess==="en"?"sv":"en",to:rightGuess};
+  return null;
 }
 
 // ── RENDER ────────────────────────────────────────────────────────
@@ -768,19 +961,19 @@ login(){
     <div style="padding:24px 16px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px;min-height:100%;justify-content:center;">
       ${mascotSVG(140,"happy")}
       <div>
-        <h1 class="h-font" style="font-size:44px;color:var(--ink);letter-spacing:-0.02em;line-height:1;">Hej!</h1>
+        <h1 class="h-font" style="font-size:44px;color:var(--ink);letter-spacing:-0.02em;line-height:1;">${t("loginGreeting")}</h1>
         <p class="b-font" style="color:var(--ink-soft);font-size:16px;margin-top:8px;max-width:260px;">
-          I'm Poppins. Drop your email and I'll send a magic link — no passwords, promise.
+          ${t("loginIntro")}
         </p>
       </div>
       <div style="width:100%;display:flex;flex-direction:column;gap:12px;">
         <input id="login-email" class="inp" type="email" placeholder="you@email.com" value="${loginEmail}" autocomplete="email"/>
         ${loginErr?`<div style="color:var(--wrong);font-size:14px;">${esc(loginErr)}</div>`:""}
         <button id="login-submit" class="btn btn-primary btn-lg btn-full" ${loginLoading?"disabled":""}>
-          ${SVG.spark(18,"#fff")} ${loginLoading?"Sending…":"Send magic link"}
+          ${SVG.spark(18,"#fff")} ${loginLoading?t("sending"):t("sendMagicLink")}
         </button>
         <button id="login-skip" style="background:none;border:none;color:var(--ink-soft);font-size:14px;cursor:pointer;text-decoration:underline;">
-          skip — try Poppins first
+          ${t("skipTryFirst")}
         </button>
       </div>
     </div>`;
@@ -788,13 +981,13 @@ login(){
     <div style="padding:24px 16px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:22px;min-height:100%;justify-content:center;">
       ${mascotSVG(140,"cheer")}
       <div>
-        <h1 class="h-font" style="font-size:36px;color:var(--ink);letter-spacing:-0.02em;line-height:1.05;">Check your inbox</h1>
+        <h1 class="h-font" style="font-size:36px;color:var(--ink);letter-spacing:-0.02em;line-height:1.05;">${t("checkInbox")}</h1>
         <p class="b-font" style="color:var(--ink-soft);font-size:15px;margin-top:12px;max-width:280px;">
-          I sent a sparkly link to <strong style="color:var(--ink);">${esc(loginEmail)}</strong>. Tap it to come on in.
+          ${t("magicLinkSent",{email:`<strong style="color:var(--ink);">${esc(loginEmail)}</strong>`})}
         </p>
       </div>
       <button id="login-skip" class="btn btn-secondary">
-        I clicked it — let me in ${SVG.arrowRight(16,"#241F3D")}
+        ${t("clickedItLetMeIn")} ${SVG.arrowRight(16,"#241F3D")}
       </button>
     </div>`;
 },
@@ -803,28 +996,28 @@ home(){
   const list=activeList();
   const listCard=list?`
     <div class="card-lg" style="background:${COLOR_MAP[list.color]||"#FFB0C8"};position:relative;overflow:hidden;">
-      <button id="home-list-edit" title="Edit list" style="position:absolute;top:15px;right:15px;background:var(--paper);border:var(--border-thin);border-radius:999px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;">${SVG.pencil(17,"#241F3D")}</button>
+      <button id="home-list-edit" title="${t("editList")}" style="position:absolute;top:15px;right:15px;background:var(--paper);border:var(--border-thin);border-radius:999px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;">${SVG.pencil(17,"#241F3D")}</button>
       <div style="padding-right:46px;">
-        <div class="label-caps">Today's list</div>
+        <div class="label-caps">${t("todaysList")}</div>
         <h2 class="h-font" style="font-size:32px;color:var(--ink);margin:4px 0 0;letter-spacing:-0.02em;line-height:1;">${esc(list.name)}</h2>
         <div class="m-font" style="font-size:13px;color:var(--ink);margin-top:8px;opacity:.8;">
-          ${list.words.length} words · ${LANGUAGES[list.from]?.code||"SV"} → ${LANGUAGES[list.to]?.code||"EN"}
+          ${wordsCountText(list.words.length)} · ${LANGUAGES[list.from]?.code||"SV"} → ${LANGUAGES[list.to]?.code||"EN"}
         </div>
       </div>
       <div style="margin-top:18px;">
-        <button id="home-start" class="btn btn-primary btn-lg btn-full">Start practice ${SVG.arrowRight(18,"#fff")}</button>
+        <button id="home-start" class="btn btn-primary btn-lg btn-full">${t("startPractice")} ${SVG.arrowRight(18,"#fff")}</button>
       </div>
     </div>
     <div style="margin-top:auto;display:flex;justify-content:center;gap:10px;">
-      <button id="home-lists" class="btn btn-tertiary">${SVG.books(16,"#241F3D")} My lists</button>
-      <button id="home-new" class="btn btn-tertiary">${SVG.plus(16,"#241F3D")} New</button>
+      <button id="home-lists" class="btn btn-tertiary">${SVG.books(16,"#241F3D")} ${t("myLists")}</button>
+      <button id="home-new" class="btn btn-tertiary">${SVG.plus(16,"#241F3D")} ${t("newList")}</button>
     </div>`:
     `<div class="card-lg" style="background:var(--butter-soft);text-align:center;padding:28px 22px;">
-      <h2 class="h-font" style="font-size:28px;color:var(--ink);">No words yet!</h2>
-      <p class="b-font" style="color:var(--ink-soft);font-size:15px;margin:8px 0 16px;">Pick a list to start, or paste your own words.</p>
+      <h2 class="h-font" style="font-size:28px;color:var(--ink);">${t("noWordsYet")}</h2>
+      <p class="b-font" style="color:var(--ink-soft);font-size:15px;margin:8px 0 16px;">${t("pickListOrPaste")}</p>
       <div style="display:flex;flex-direction:column;gap:10px;">
-        <button id="home-lists" class="btn btn-primary btn-full">${SVG.books(18,"#fff")} Pick a list</button>
-        <button id="home-new" class="btn btn-tertiary btn-full">${SVG.plus(16,"#241F3D")} Paste my own</button>
+        <button id="home-lists" class="btn btn-primary btn-full">${SVG.books(18,"#fff")} ${t("pickAList")}</button>
+        <button id="home-new" class="btn btn-tertiary btn-full">${SVG.plus(16,"#241F3D")} ${t("pasteMyOwn")}</button>
       </div>
     </div>`;
   return `
@@ -834,16 +1027,16 @@ home(){
           <span id="bloom-spin">${SVG.bloom(26,"#B583E8","#F2EE5B",true)}</span>
           <span class="h-font" style="font-size:24px;color:var(--ink);">Poppins</span>
         </div>
-        <button id="home-settings" title="Settings" style="position:relative;overflow:visible;width:44px;height:44px;border-radius:999px;background:var(--paper-alt);border:var(--border-thin);cursor:pointer;padding:0;flex-shrink:0;">
+        <button id="home-settings" title="${t("settingsTitle")}" style="position:relative;overflow:visible;width:44px;height:44px;border-radius:999px;background:var(--paper-alt);border:var(--border-thin);cursor:pointer;padding:0;flex-shrink:0;">
           ${avatarButtonInner(state.avatar,44)}
         </button>
       </div>
       <div style="display:flex;justify-content:center;">
         <div style="position:relative;display:inline-block;">
-          <button id="home-mascot" title="Say hi" style="background:none;border:none;padding:0;cursor:pointer;">${mascotSVG(120,"happy")}</button>
+          <button id="home-mascot" title="${t("sayHi")}" style="background:none;border:none;padding:0;cursor:pointer;">${mascotSVG(120,"happy")}</button>
           ${state.showGreeting?`
           <div class="speech-bubble b-font" style="animation:${state.greetingHiding?"pop-out 180ms ease-in forwards":"pop-in 200ms ease-out"};">
-            Hi! I'm Poppins. Let's learn some language!
+            ${t("mascotGreeting")}
           </div>`:""}
         </div>
       </div>
@@ -860,7 +1053,7 @@ lists(){
       </div>
       <div style="flex:1;min-width:0;">
         <div class="h-font" style="font-size:19px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(l.name)}</div>
-        <div class="m-font" style="font-size:12px;color:var(--ink);opacity:.7;margin-top:2px;">${l.words.length} words · ${LANGUAGES[l.from]?.code||"SV"} → ${LANGUAGES[l.to]?.code||"EN"}</div>
+        <div class="m-font" style="font-size:12px;color:var(--ink);opacity:.7;margin-top:2px;">${wordsCountText(l.words.length)} · ${LANGUAGES[l.from]?.code||"SV"} → ${LANGUAGES[l.to]?.code||"EN"}</div>
       </div>
       ${state.activeListId===l.id?`<div style="background:var(--ink);border-radius:999px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${SVG.check(14,"#fff",4)}</div>`:""}
       <button class="list-delete" data-delete-id="${l.id}" style="background:transparent;border:none;cursor:pointer;padding:4px;flex-shrink:0;">${SVG.trash(16,"#241F3D")}</button>
@@ -869,15 +1062,15 @@ lists(){
     <div class="screen-pad">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div>
-          <h2 class="h-font" style="font-size:30px;color:var(--ink);">My lists</h2>
-          <div class="m-font" style="font-size:11px;color:var(--ink-soft);margin-top:4px;">${all.length} list${all.length!==1?"s":""}</div>
+          <h2 class="h-font" style="font-size:30px;color:var(--ink);">${t("myLists")}</h2>
+          <div class="m-font" style="font-size:11px;color:var(--ink-soft);margin-top:4px;">${listsCountText(all.length)}</div>
         </div>
         <button id="lists-close" class="icon-btn-plain">${SVG.cross(20,"#241F3D",3)}</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:12px;flex:1;overflow-y:auto;">
-        ${items||`<div style="text-align:center;padding:32px 0;color:var(--ink-soft);" class="b-font">No lists yet — add one!</div>`}
+        ${items||`<div style="text-align:center;padding:32px 0;color:var(--ink-soft);" class="b-font">${t("noListsYet")}</div>`}
       </div>
-      <button id="lists-add" class="btn btn-primary btn-lg btn-full">${SVG.plus(18,"#fff")} Add a new list</button>
+      <button id="lists-add" class="btn btn-primary btn-lg btn-full">${SVG.plus(18,"#fff")} ${t("addNewList")}</button>
     </div>`;
 },
 
@@ -886,23 +1079,35 @@ paste(){
   if(pasteStep==="paste")return `
     <div class="screen-pad">
       <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h2 class="h-font" style="font-size:28px;color:var(--ink);">${editingListId?"Edit list":"Paste a word list"}</h2>
+        <h2 class="h-font" style="font-size:28px;color:var(--ink);">${editingListId?t("editList"):t("pasteWordList")}</h2>
         <button id="paste-close" class="icon-btn-plain">${SVG.cross(20,"#241F3D",3)}</button>
       </div>
       <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:18px;">
+        <div>
+          <div class="label-caps" style="margin-bottom:6px;">${t("language")}</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <select id="paste-from" class="inp" style="flex:1;padding:10px 12px;font-size:14px;">
+              ${Object.keys(LANGUAGES).map(code=>`<option value="${code}" ${pair.from===code?"selected":""}>${langName(code)}</option>`).join("")}
+            </select>
+            ${SVG.arrowRight(16,"#241F3D")}
+            <select id="paste-to" class="inp" style="flex:1;padding:10px 12px;font-size:14px;">
+              ${Object.keys(LANGUAGES).map(code=>`<option value="${code}" ${pair.to===code?"selected":""}>${langName(code)}</option>`).join("")}
+            </select>
+          </div>
+        </div>
         <p class="b-font" style="color:var(--ink-soft);font-size:14px;line-height:1.6;">
-          Copy from anywhere. Use any separator: <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">=</code>
+          ${t("pasteInstructions",{from:`<strong style="color:var(--ink);">${langName(pair.from)}</strong>`,to:`<strong style="color:var(--ink);">${langName(pair.to)}</strong>`})} <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">=</code>
           <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">-</code>
           <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">:</code>
           <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">→</code>
         </p>
-        <input id="paste-name" class="inp inp-header" placeholder="What's this list called?" value="${pasteName}"/>
-        <textarea id="paste-text" class="inp inp-mono" rows="9" placeholder="katt = cat&#10;hund - dog&#10;häst → horse">${pasteText}</textarea>
+        <input id="paste-name" class="inp inp-header" placeholder="${t("listNamePlaceholder")}" value="${pasteName}"/>
+        <textarea id="paste-text" class="inp inp-mono" rows="9" placeholder="${t("wordTranslationPlaceholder")}">${pasteText}</textarea>
       </div>
       <div style="display:flex;gap:10px;">
-        <button id="paste-cancel" class="btn btn-tertiary">Cancel</button>
+        <button id="paste-cancel" class="btn btn-tertiary">${t("cancel")}</button>
         <button id="paste-parse" class="btn btn-primary" style="flex:1;" ${!pasteText.trim()?"disabled":""}>
-          ${SVG.spark(16,"#fff")} Sort it out
+          ${SVG.spark(16,"#fff")} ${t("sortItOut")}
         </button>
       </div>
     </div>`;
@@ -915,18 +1120,18 @@ paste(){
   return `
     <div class="screen-pad">
       <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h2 class="h-font" style="font-size:28px;color:var(--ink);">Look right?</h2>
+        <h2 class="h-font" style="font-size:28px;color:var(--ink);">${t("lookRight")}</h2>
         <button id="paste-close" class="icon-btn-plain">${SVG.cross(20,"#241F3D",3)}</button>
       </div>
       <div style="background:var(--mint-soft);border:var(--border-thin);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:8px;">
         ${SVG.check(18,"#241F3D",4)}
-        <span class="b-font" style="font-size:14px;color:var(--ink);font-weight:600;">Found <strong>${pasteParsed.length}</strong> words</span>
+        <span class="b-font" style="font-size:14px;color:var(--ink);font-weight:600;">${t("foundWords",{n:`<strong>${pasteParsed.length}</strong>`})}</span>
       </div>
       <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">${reviewItems}</div>
       <div style="display:flex;gap:10px;">
-        <button id="paste-back" class="btn btn-tertiary">Edit</button>
+        <button id="paste-back" class="btn btn-tertiary">${t("edit")}</button>
         <button id="paste-save" class="btn btn-primary" style="flex:1;" ${!pasteParsed.length?"disabled":""}>
-          ${editingListId?"Save changes":"Save list"} ${SVG.arrowRight(16,"#fff")}
+          ${editingListId?t("saveChanges"):t("saveList")} ${SVG.arrowRight(16,"#fff")}
         </button>
       </div>
     </div>`;
@@ -942,12 +1147,12 @@ practiceSetup(){
       </div>
       <div style="display:flex;justify-content:center;">${mascotSVG(90,"thinking")}</div>
       <div style="text-align:center;">
-        <h2 class="h-font" style="font-size:26px;color:var(--ink);">Which language will you answer in?</h2>
-        <p class="b-font" style="color:var(--ink-soft);font-size:14px;margin-top:6px;">Starting "${esc(list.name)}"</p>
+        <h2 class="h-font" style="font-size:26px;color:var(--ink);">${t("whichLangAnswer")}</h2>
+        <p class="b-font" style="color:var(--ink-soft);font-size:14px;margin-top:6px;">${t("starting",{name:esc(list.name)})}</p>
       </div>
       <div style="display:flex;flex-direction:column;gap:12px;">
-        <button id="setup-normal" class="btn btn-primary btn-lg btn-full">Answer in ${lh.tgtLang}</button>
-        <button id="setup-reversed" class="btn btn-secondary btn-lg btn-full">Answer in ${lh.srcLang}</button>
+        <button id="setup-normal" class="btn btn-primary btn-lg btn-full">${t("answerIn",{lang:lh.tgtLang})}</button>
+        <button id="setup-reversed" class="btn btn-secondary btn-lg btn-full">${t("answerIn",{lang:lh.srcLang})}</button>
       </div>
     </div>`;
 },
@@ -973,16 +1178,16 @@ quiz(){
     return `
       <div class="screen-pad">
         <div style="text-align:center;">
-          <div class="label-caps">Practice</div>
+          <div class="label-caps">${t("practice")}</div>
           <h2 class="h-font" style="font-size:28px;color:var(--ink);margin:4px 0 0;letter-spacing:-0.02em;">
-            Write "<span style="color:var(--pink);">${esc(target)}</span>" 5 times
+            ${t("writeNTimes",{word:`<span style="color:var(--pink);">${esc(target)}</span>`})}
           </h2>
-          <p class="b-font" style="color:var(--ink-soft);font-size:13px;margin-top:6px;">(${esc(lh.src(word))} in ${esc(lh.srcLang)})</p>
+          <p class="b-font" style="color:var(--ink-soft);font-size:13px;margin-top:6px;">${t("inLang",{source:esc(lh.src(word)),lang:esc(lh.srcLang)})}</p>
         </div>
         <div style="display:flex;justify-content:center;">${mascotSVG(80,"thinking")}</div>
         <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-height:0;overflow-y:auto;">${rows}</div>
         <button id="w5-done" class="btn btn-primary btn-lg btn-full" ${done<5?"disabled":""}>
-          ${done===5?`Got it — keep going ${SVG.arrowRight(18,"#fff")}`:done+" / 5 done"}
+          ${done===5?`${t("gotItKeepGoing")} ${SVG.arrowRight(18,"#fff")}`:t("doneOfFive",{n:done})}
         </button>
       </div>`;
   }
@@ -1005,7 +1210,7 @@ quiz(){
   const burst=feedbackBurst(quizFeedback,quizAnim);
 
   const wrongAnswer=quizFeedback==="wrong"?`<div class="h-font" style="font-size:30px;color:var(--wrong);animation:greta-answer-rise 360ms ease-out both;">= ${esc(lh.tgt(word))}</div>`:"";
-  const hint=!quizFeedback?`<div style="height:1px;width:40px;background:var(--ink);opacity:.2;"></div><div class="b-font" style="font-size:14px;color:var(--ink);opacity:.7;">What does this mean in ${lh.tgtLang}?</div>`:"";
+  const hint=!quizFeedback?`<div style="height:1px;width:40px;background:var(--ink);opacity:.2;"></div><div class="b-font" style="font-size:14px;color:var(--ink);opacity:.7;">${t("whatMeanIn",{lang:lh.tgtLang})}</div>`:"";
   const inpBg=quizFeedback==="correct"?"var(--mint-soft)":quizFeedback==="wrong"?"var(--pink-soft)":"var(--paper)";
 
   return `
@@ -1032,7 +1237,7 @@ quiz(){
         ${burst}
         <div style="${mascotStyle}">${mascotSVG(86,mascotMood)}</div>
       </div>
-      <input id="quiz-input" class="inp" value="${quizAnswer}" placeholder="type in ${lh.tgtLang}, then press enter…"
+      <input id="quiz-input" class="inp" value="${quizAnswer}" placeholder="${t("typeInLang",{lang:lh.tgtLang})}"
         style="font-size:18px;font-weight:600;background:${inpBg};transition:background 250ms;text-align:${quizFeedback?"center":"left"};"
         ${quizFeedback?"disabled":""}/>
     </div>`;
@@ -1055,14 +1260,14 @@ done(){
       ${mascotSVG(150,"proud")}
       <div style="display:flex;gap:6px;">${starBtns}</div>
       <div>
-        <h1 class="h-font" style="font-size:44px;color:var(--ink);letter-spacing:-.03em;line-height:1;">You did it!</h1>
+        <h1 class="h-font" style="font-size:44px;color:var(--ink);letter-spacing:-.03em;line-height:1;">${t("youDidIt")}</h1>
         <p class="b-font" style="color:var(--ink-soft);font-size:16px;margin-top:8px;">
-          ${pct}% right · <span class="m-font">${r.right}/${r.total}</span> on the first try
+          ${t("resultLine",{pct,fraction:`<span class="m-font">${r.right}/${r.total}</span>`})}
         </p>
       </div>
       <div style="display:flex;gap:10px;width:100%;">
-        <button id="done-home" class="btn btn-tertiary">Home</button>
-        <button id="done-again" class="btn btn-primary" style="flex:1;">Play again ${SVG.arrowRight(16,"#fff")}</button>
+        <button id="done-home" class="btn btn-tertiary">${t("home")}</button>
+        <button id="done-again" class="btn btn-primary" style="flex:1;">${t("playAgain")} ${SVG.arrowRight(16,"#fff")}</button>
       </div>
     </div>`;
 },
@@ -1072,10 +1277,11 @@ settings(){
     <button class="avatar-swatch" data-avatar="${key}" title="${key}" style="position:relative;overflow:visible;width:52px;height:52px;border-radius:999px;background:var(--paper-alt);border:${state.avatar===key?"3px solid var(--ink)":"var(--border-thin)"};cursor:pointer;padding:0;box-shadow:${state.avatar===key?"0 3px 0 var(--ink)":"none"};flex-shrink:0;">
       ${avatarButtonInner(key,52)}
     </button>`).join("");
+  const langBtn=(code,label)=>`<button class="ui-lang-btn" data-lang="${code}" style="flex:1;padding:12px;border-radius:var(--radius);border:${state.uiLang===code?"var(--border)":"var(--border-thin)"};background:${state.uiLang===code?"var(--butter-soft)":"var(--paper)"};font-family:var(--b-font);font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;box-shadow:${state.uiLang===code?"0 3px 0 var(--ink)":"none"};">${label}</button>`;
   return `
     <div class="screen-pad">
       <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h2 class="h-font" style="font-size:30px;color:var(--ink);">Settings</h2>
+        <h2 class="h-font" style="font-size:30px;color:var(--ink);">${t("settingsTitle")}</h2>
         <button id="settings-close" class="icon-btn-plain">${SVG.cross(20,"#241F3D",3)}</button>
       </div>
       <div class="card" style="background:var(--pink-soft);">
@@ -1084,42 +1290,49 @@ settings(){
             ${avatarButtonInner(state.avatar,64)}
           </div>
           <div>
-            <div class="h-font" style="font-size:18px;color:var(--ink);">Hej there!</div>
-            <div class="m-font" style="font-size:12px;color:var(--ink-soft);">${esc(currentUser?.email||"Not signed in")}</div>
+            <div class="h-font" style="font-size:18px;color:var(--ink);">${t("hejThere")}</div>
+            <div class="m-font" style="font-size:12px;color:var(--ink-soft);">${esc(currentUser?.email||t("notSignedIn"))}</div>
           </div>
         </div>
       </div>
       <div>
-        <div class="label-caps" style="margin-bottom:8px;">Avatar</div>
+        <div class="label-caps" style="margin-bottom:8px;">${t("avatar")}</div>
         <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;">${avatarSwatches}</div>
       </div>
       <div>
-        <div class="label-caps" style="margin-bottom:8px;">Practice</div>
+        <div class="label-caps" style="margin-bottom:8px;">${t("appLanguage")}</div>
+        <div style="display:flex;gap:10px;">
+          ${langBtn("sv","Svenska")}
+          ${langBtn("en","English")}
+        </div>
+      </div>
+      <div>
+        <div class="label-caps" style="margin-bottom:8px;">${t("practice")}</div>
         <div class="card" style="padding:0;overflow:hidden;">
           <div style="padding:14px 16px;border-bottom:1.5px solid var(--paper-alt);" class="b-font">
             <div style="display:flex;justify-content:space-between;align-items:center;">
-              <span style="font-weight:600;color:var(--ink);">Daily reminder</span>
+              <span style="font-weight:600;color:var(--ink);">${t("dailyReminder")}</span>
               <button class="switch" data-setting="reminderOn" data-on="${state.reminderOn}"></button>
             </div>
             ${state.reminderOn?`
             <div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
-              <span style="font-size:12px;color:var(--ink-soft);line-height:1.4;">Reminds you while Poppins is open in a tab</span>
+              <span style="font-size:12px;color:var(--ink-soft);line-height:1.4;">${t("reminderCaveat")}</span>
               <input id="reminder-time" type="time" value="${state.reminderTime}" class="inp" style="width:auto;padding:6px 10px;font-size:13px;flex-shrink:0;"/>
             </div>`:""}
           </div>
           <div style="padding:14px 16px;border-bottom:1.5px solid var(--paper-alt);display:flex;justify-content:space-between;align-items:center;" class="b-font">
-            <span style="font-weight:600;color:var(--ink);">Sound effects</span>
+            <span style="font-weight:600;color:var(--ink);">${t("soundEffects")}</span>
             <button class="switch" data-setting="soundOn" data-on="${state.soundOn}"></button>
           </div>
           <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;" class="b-font">
-            <span style="font-weight:600;color:var(--ink);">Show pronunciation</span>
+            <span style="font-weight:600;color:var(--ink);">${t("showPronunciation")}</span>
             <button class="switch" data-setting="pronunciationOn" data-on="${state.pronunciationOn}"></button>
           </div>
         </div>
       </div>
-      <button id="settings-logout" class="btn btn-tertiary btn-full">Log out</button>
+      <button id="settings-logout" class="btn btn-tertiary btn-full">${t("logOut")}</button>
       <div style="text-align:center;font-size:11px;color:var(--ink-soft);margin-top:auto;" class="m-font">
-        Poppins v1 · made with ${SVG.heart(12,"#B583E8")}
+        ${t("madeWith")} ${SVG.heart(12,"#B583E8")}
       </div>
     </div>`;
 },
@@ -1166,12 +1379,12 @@ function bindEvents(){
   on("setup-normal","click",()=>{navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:false});speakCurrentWord();});
   on("setup-reversed","click",()=>{navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:true});speakCurrentWord();});
   on("home-lists","click",()=>navigate("lists"));
-  on("home-new","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null}));
+  on("home-new","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null,pasteAutoGuessed:false}));
   on("home-settings","click",()=>navigate("settings"));
   on("home-mascot","click",()=>{
     clearTimeout(greetTimer);clearTimeout(greetHideTimer);
     setState({showGreeting:true,greetingHiding:false});
-    speak("Hi! I'm Poppins. Let's learn some language!","en-US");
+    speak(t("mascotGreeting"),TTS_LOCALE[state.uiLang]);
     greetTimer=setTimeout(()=>{
       setState({greetingHiding:true});
       greetHideTimer=setTimeout(()=>setState({showGreeting:false,greetingHiding:false}),180);
@@ -1180,11 +1393,11 @@ function bindEvents(){
   on("home-list-edit","click",()=>{
     const list=activeList(); if(!list)return;
     const text=list.words.map(w=>`${w[list.from]||w.sv} = ${w[list.to]||w.en}`).join("\n");
-    navigate("paste",{pasteName:list.name,pasteText:text,pasteParsed:[],pasteStep:"paste",editingListId:list.id});
+    navigate("paste",{pasteName:list.name,pasteText:text,pasteParsed:[],pasteStep:"paste",editingListId:list.id,pair:{from:list.from||"sv",to:list.to||"en"},pasteAutoGuessed:true});
   });
 
   on("lists-close","click",()=>navigate("home"));
-  on("lists-add","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null}));
+  on("lists-add","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null,pasteAutoGuessed:false}));
   document.querySelectorAll("[data-list-id]").forEach(el=>{
     el.addEventListener("click",e=>{
       if(e.target.closest(".list-delete"))return;
@@ -1203,9 +1416,13 @@ function bindEvents(){
   on("paste-cancel","click",()=>navigate(state.activeListId?"home":"lists"));
   on("paste-name","input",e=>setState({pasteName:e.target.value}));
   on("paste-text","input",e=>setState({pasteText:e.target.value}));
+  on("paste-from","change",e=>setState({pair:{...state.pair,from:e.target.value},pasteAutoGuessed:true}));
+  on("paste-to","change",e=>setState({pair:{...state.pair,to:e.target.value},pasteAutoGuessed:true}));
   on("paste-parse","click",()=>{
-    const parsed=parsePasteText(state.pasteText,state.pair);
-    setState({pasteParsed:parsed,pasteStep:"review"});
+    const guess=!state.pasteAutoGuessed&&guessPairFromText(state.pasteText);
+    const pair=guess||state.pair;
+    const parsed=parsePasteText(state.pasteText,pair);
+    setState({pasteParsed:parsed,pasteStep:"review",pair,pasteAutoGuessed:true});
   });
   on("paste-back","click",()=>setState({pasteStep:"paste"}));
   on("paste-save","click",()=>{
@@ -1231,6 +1448,9 @@ function bindEvents(){
   on("settings-logout","click",signOut);
   document.querySelectorAll(".avatar-swatch").forEach(el=>{
     el.addEventListener("click",()=>setState({avatar:el.dataset.avatar}));
+  });
+  document.querySelectorAll(".ui-lang-btn").forEach(el=>{
+    el.addEventListener("click",()=>setState({uiLang:el.dataset.lang}));
   });
   document.querySelectorAll(".switch[data-setting]").forEach(el=>{
     el.addEventListener("click",()=>{
