@@ -73,6 +73,20 @@ html,body{background:var(--paper);min-height:var(--app-height,100dvh);display:fl
   width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;outline:none;
 }
 
+/* ── Toggle switch ── */
+.switch{
+  width:44px;height:26px;border-radius:999px;border:var(--border-thin);
+  background:var(--paper-alt);position:relative;cursor:pointer;flex-shrink:0;
+  padding:0;outline:none;transition:background 150ms;
+}
+.switch[data-on="true"]{background:var(--mint);}
+.switch::after{
+  content:"";position:absolute;top:1.5px;left:1.5px;width:19px;height:19px;
+  border-radius:999px;background:#fff;border:1.5px solid var(--ink);
+  transition:transform 150ms;
+}
+.switch[data-on="true"]::after{transform:translateX(18px);}
+
 /* ── Inputs ── */
 .inp{
   width:100%;padding:14px 18px;border:var(--border);border-radius:var(--radius);
@@ -243,6 +257,7 @@ const LANGUAGES = {
   fr:{name:"French",  native:"Français",code:"FR", color:"#7FCFB0"},
   de:{name:"German",  native:"Deutsch", code:"DE", color:"#6FB3E3"},
 };
+const TTS_LOCALE={sv:"sv-SE",en:"en-US",es:"es-ES",fr:"fr-FR",de:"de-DE"};
 
 function langHelpers(list,reversed){
   const f0=(list&&list.from)||"sv", t0=(list&&list.to)||"en";
@@ -481,8 +496,28 @@ let state={
   showGreeting:false,greetingHiding:false,
   // avatar
   avatar:"ollie",
+  // practice settings
+  soundOn:true,pronunciationOn:true,reminderOn:false,reminderTime:"16:00",
 };
 let greetTimer=null, greetHideTimer=null;
+
+// ── SETTINGS PERSISTENCE ─────────────────────────────────────────
+const SETTINGS_KEY="poppins_settings_v1";
+const PERSISTED_KEYS=["avatar","soundOn","pronunciationOn","reminderOn","reminderTime"];
+function loadSettings(){
+  try{
+    const raw=localStorage.getItem(SETTINGS_KEY);
+    return raw?JSON.parse(raw):{};
+  }catch{return {};}
+}
+function saveSettings(){
+  try{
+    const out={};
+    PERSISTED_KEYS.forEach(k=>out[k]=state[k]);
+    localStorage.setItem(SETTINGS_KEY,JSON.stringify(out));
+  }catch{}
+}
+Object.assign(state,loadSettings());
 
 function speak(text,lang){
   try{
@@ -494,7 +529,48 @@ function speak(text,lang){
   }catch{}
 }
 
-function setState(patch){Object.assign(state,patch);render();}
+// ── SOUND EFFECTS (generated tones, no audio files needed) ───────
+let audioCtx=null;
+function getAudioCtx(){
+  if(!audioCtx){
+    try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch{}
+  }
+  return audioCtx;
+}
+function playTone(freq,duration,startTime,peak){
+  const ctx=getAudioCtx(); if(!ctx)return;
+  const osc=ctx.createOscillator(), gain=ctx.createGain();
+  osc.type="sine"; osc.frequency.value=freq;
+  const t0=ctx.currentTime+(startTime||0);
+  gain.gain.setValueAtTime(0,t0);
+  gain.gain.linearRampToValueAtTime(peak||0.2,t0+0.01);
+  gain.gain.exponentialRampToValueAtTime(0.001,t0+duration);
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.start(t0); osc.stop(t0+duration+0.02);
+}
+function playCorrectSound(){
+  if(!state.soundOn)return;
+  playTone(523.25,0.12,0,0.18);
+  playTone(783.99,0.16,0.09,0.18);
+}
+function playWrongSound(){
+  if(!state.soundOn)return;
+  playTone(220,0.22,0,0.16);
+}
+
+function speakCurrentWord(){
+  if(!state.pronunciationOn)return;
+  const list=activeList(); if(!list)return;
+  const lh=langHelpers(list,state.quizReversed);
+  const word=list.words[state.quizIdx]; if(!word)return;
+  speak(lh.src(word),TTS_LOCALE[lh.from]);
+}
+
+function setState(patch){
+  Object.assign(state,patch);
+  if(Object.keys(patch).some(k=>PERSISTED_KEYS.includes(k)))saveSettings();
+  render();
+}
 function activeList(){return state.lists.find(l=>l.id===state.activeListId);}
 
 // ── SCREEN LOADER ─────────────────────────────────────────────────
@@ -586,9 +662,11 @@ function quizSubmit(){
   const pool=ok?ANIM_CORRECT:ANIM_WRONG;
   const anim=pool[Math.floor(Math.random()*pool.length)];
   if(ok){
+    playCorrectSound();
     setState({quizRight:state.quizRight+1,quizFeedback:"correct",quizAnim:anim});
     setTimeout(quizAdvance,1200);
   }else{
+    playWrongSound();
     setState({quizWrong:state.quizWrong+1,quizFeedback:"wrong",quizAnim:anim});
     setTimeout(()=>setState({quizWriteMode:true}),1400);
   }
@@ -602,6 +680,7 @@ function quizAdvance(){
     return;
   }
   setState({quizIdx:nextIdx,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""]});
+  speakCurrentWord();
   setTimeout(()=>document.getElementById("quiz-input")?.focus(),50);
 }
 
@@ -987,11 +1066,18 @@ settings(){
       <div>
         <div class="label-caps" style="margin-bottom:8px;">Practice</div>
         <div class="card" style="padding:0;overflow:hidden;">
-          ${[["Daily reminder","Every day at 4pm"],["Sound effects","On"],["Show pronunciation","On"]].map(([l,v],i,a)=>`
-          <div style="padding:14px 16px;border-bottom:${i<a.length-1?`1.5px solid var(--paper-alt)`:"none"};display:flex;justify-content:space-between;align-items:center;" class="b-font">
-            <span style="font-weight:600;color:var(--ink);">${l}</span>
-            <span style="font-size:13px;color:var(--ink-soft);">${v}</span>
-          </div>`).join("")}
+          <div style="padding:14px 16px;border-bottom:1.5px solid var(--paper-alt);display:flex;justify-content:space-between;align-items:center;" class="b-font">
+            <span style="font-weight:600;color:var(--ink);">Daily reminder</span>
+            <span style="font-size:13px;color:var(--ink-soft);">Every day at 4pm</span>
+          </div>
+          <div style="padding:14px 16px;border-bottom:1.5px solid var(--paper-alt);display:flex;justify-content:space-between;align-items:center;" class="b-font">
+            <span style="font-weight:600;color:var(--ink);">Sound effects</span>
+            <button class="switch" data-setting="soundOn" data-on="${state.soundOn}"></button>
+          </div>
+          <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;" class="b-font">
+            <span style="font-weight:600;color:var(--ink);">Show pronunciation</span>
+            <button class="switch" data-setting="pronunciationOn" data-on="${state.pronunciationOn}"></button>
+          </div>
         </div>
       </div>
       <button id="settings-logout" class="btn btn-tertiary btn-full">Log out</button>
@@ -1040,8 +1126,8 @@ function bindEvents(){
   on("home-start","click",()=>{if(activeList())navigate("practiceSetup");});
 
   on("setup-close","click",()=>navigate("home"));
-  on("setup-normal","click",()=>navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:false}));
-  on("setup-reversed","click",()=>navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:true}));
+  on("setup-normal","click",()=>{navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:false});speakCurrentWord();});
+  on("setup-reversed","click",()=>{navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:true});speakCurrentWord();});
   on("home-lists","click",()=>navigate("lists"));
   on("home-new","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null}));
   on("home-settings","click",()=>navigate("settings"));
@@ -1102,12 +1188,18 @@ function bindEvents(){
   });
 
   on("done-home",  "click",()=>navigate("home"));
-  on("done-again", "click",()=>navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""]}));
+  on("done-again", "click",()=>{navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""]});speakCurrentWord();});
 
   on("settings-close", "click",()=>navigate("home"));
   on("settings-logout","click",signOut);
   document.querySelectorAll(".avatar-swatch").forEach(el=>{
     el.addEventListener("click",()=>setState({avatar:el.dataset.avatar}));
+  });
+  document.querySelectorAll(".switch[data-setting]").forEach(el=>{
+    el.addEventListener("click",()=>{
+      const key=el.dataset.setting;
+      setState({[key]:!state[key]});
+    });
   });
 }
 
