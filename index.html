@@ -274,7 +274,42 @@ const SAMPLE_LISTS=[
 ];
 
 const COLOR_MAP={rose:"#FFB0C8",butter:"#F2EE5B",sky:"#8AD7FF",mint:"#A8F08C",pink:"#B583E8"};
-const AVATAR_COLORS={pink:"#B583E8",rose:"#FFB0C8",sky:"#8AD7FF",mint:"#A8F08C",butter:"#F2EE5B"};
+const CHARACTERS={
+  poppins:{color:"#B583E8"},
+  ollie:{color:"#F2EE5B"},
+  luna:{color:"#8AD7FF"},
+  fin:{color:"#A8F08C"},
+  nova:{color:"#FFB0C8"},
+};
+const CHARACTER_FEATURES={
+  poppins:color=>`<g transform="translate(30 17) rotate(-8)">
+      <ellipse cx="-8" cy="0" rx="7" ry="5" fill="${color}" stroke="#241F3D" stroke-width="2"/>
+      <ellipse cx="8" cy="0" rx="7" ry="5" fill="${color}" stroke="#241F3D" stroke-width="2"/>
+      <circle cx="0" cy="0" r="3" fill="#F2EE5B" stroke="#241F3D" stroke-width="1.5"/>
+    </g>`,
+  ollie:color=>`<circle cx="16" cy="21" r="9" fill="${color}" stroke="#241F3D" stroke-width="2.5"/><circle cx="44" cy="21" r="9" fill="${color}" stroke="#241F3D" stroke-width="2.5"/>`,
+  luna:color=>`<path d="M14 28 L9 7 L27 21 Z" fill="${color}" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round"/><path d="M46 28 L51 7 L33 21 Z" fill="${color}" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round"/>`,
+  fin:color=>`<path d="M18 26 L22 9 L27 26 M27 26 L32 4 L37 26 M37 26 L42 11 L46 26" fill="${color}" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`,
+  nova:color=>`<line x1="30" y1="26" x2="30" y2="5" stroke="#241F3D" stroke-width="2.5" stroke-linecap="round"/><circle cx="30" cy="4" r="5.5" fill="${color}" stroke="#241F3D" stroke-width="2.5"/>`,
+};
+function characterSVG(kind,size){
+  const c=CHARACTERS[kind]||CHARACTERS.poppins;
+  const feature=(CHARACTER_FEATURES[kind]||CHARACTER_FEATURES.poppins)(c.color);
+  return `<svg width="${size}" height="${size*80/60}" viewBox="0 0 60 80">
+    ${feature}
+    <rect x="8" y="24" width="44" height="50" rx="22" fill="#fff" stroke="#241F3D" stroke-width="3"/>
+    <ellipse cx="16" cy="52" rx="4" ry="3" fill="#FFB0C8" opacity=".9"/>
+    <ellipse cx="44" cy="52" rx="4" ry="3" fill="#FFB0C8" opacity=".9"/>
+    <circle cx="22" cy="46" r="3.4" fill="#241F3D"/>
+    <circle cx="38" cy="46" r="3.4" fill="#241F3D"/>
+    <path d="M22 57 Q30 62 38 57" fill="none" stroke="#241F3D" stroke-width="2.6" stroke-linecap="round"/>
+  </svg>`;
+}
+function avatarButtonInner(kind,diameter){
+  const w=Math.round(diameter*0.64);
+  const topOffset=-Math.round(diameter*0.3);
+  return `<span style="position:absolute;top:${topOffset}px;left:50%;transform:translateX(-50%);line-height:0;">${characterSVG(kind,w)}</span>`;
+}
 
 // ── SVG ICONS (strings) ───────────────────────────────────────────
 const SVG={
@@ -376,7 +411,7 @@ let state={
   // mascot
   showGreeting:false,greetingHiding:false,
   // avatar
-  avatar:"pink",
+  avatar:"poppins",
 };
 let greetTimer=null, greetHideTimer=null;
 
@@ -615,7 +650,6 @@ home(){
         <button id="home-new" class="btn btn-tertiary btn-full">${SVG.plus(16,"#241F3D")} Paste my own</button>
       </div>
     </div>`;
-  const avatarColor=AVATAR_COLORS[state.avatar]||AVATAR_COLORS.pink;
   return `
     <div class="screen-pad">
       <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -623,13 +657,13 @@ home(){
           <span id="bloom-spin">${SVG.bloom(26,"#B583E8","#F2EE5B",true)}</span>
           <span class="h-font" style="font-size:24px;color:var(--ink);">Poppins</span>
         </div>
-        <button id="home-settings" title="Settings" style="width:38px;height:38px;border-radius:999px;background:var(--paper-alt);border:var(--border-thin);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;overflow:hidden;flex-shrink:0;">
-          ${mascotSVG(30,"happy",avatarColor)}
+        <button id="home-settings" title="Settings" style="position:relative;overflow:visible;width:38px;height:38px;border-radius:999px;background:var(--paper-alt);border:var(--border-thin);cursor:pointer;padding:0;flex-shrink:0;">
+          ${avatarButtonInner(state.avatar,38)}
         </button>
       </div>
       <div style="display:flex;justify-content:center;">
         <div style="position:relative;display:inline-block;">
-          <button id="home-mascot" title="Say hi" style="background:none;border:none;padding:0;cursor:pointer;">${mascotSVG(120,"happy",avatarColor)}</button>
+          <button id="home-mascot" title="Say hi" style="background:none;border:none;padding:0;cursor:pointer;">${mascotSVG(120,"happy")}</button>
           ${state.showGreeting?`
           <div class="speech-bubble b-font" style="animation:${state.greetingHiding?"pop-out 180ms ease-in forwards":"pop-in 200ms ease-out"};">
             Hi! I'm Poppins. Let's learn some language!
@@ -893,9 +927,9 @@ done(){
 
 settings(){
   const pair=state.pair;
-  const avatarSwatches=Object.entries(AVATAR_COLORS).map(([key,color])=>`
-    <button class="avatar-swatch" data-avatar="${key}" title="${key}" style="width:44px;height:44px;border-radius:999px;background:var(--paper-alt);border:${state.avatar===key?"3px solid var(--ink)":"var(--border-thin)"};display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;box-shadow:${state.avatar===key?"0 3px 0 var(--ink)":"none"};">
-      ${mascotSVG(32,"happy",color)}
+  const avatarSwatches=Object.keys(CHARACTERS).map(key=>`
+    <button class="avatar-swatch" data-avatar="${key}" title="${key}" style="position:relative;overflow:visible;width:44px;height:44px;border-radius:999px;background:var(--paper-alt);border:${state.avatar===key?"3px solid var(--ink)":"var(--border-thin)"};cursor:pointer;padding:0;box-shadow:${state.avatar===key?"0 3px 0 var(--ink)":"none"};">
+      ${avatarButtonInner(key,44)}
     </button>`).join("");
   return `
     <div class="screen-pad">
@@ -905,8 +939,8 @@ settings(){
       </div>
       <div class="card" style="background:var(--pink-soft);">
         <div style="display:flex;align-items:center;gap:14px;">
-          <div style="width:56px;height:56px;border-radius:999px;background:var(--paper);border:var(--border-thin);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            ${mascotSVG(48,"happy",AVATAR_COLORS[state.avatar]||AVATAR_COLORS.pink)}
+          <div style="position:relative;overflow:visible;width:56px;height:56px;border-radius:999px;background:var(--paper);border:var(--border-thin);flex-shrink:0;">
+            ${avatarButtonInner(state.avatar,56)}
           </div>
           <div>
             <div class="h-font" style="font-size:18px;color:var(--ink);">Hej there!</div>
