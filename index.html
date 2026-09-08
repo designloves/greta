@@ -92,9 +92,8 @@ html,body{background:var(--paper);min-height:var(--app-height,100dvh);display:fl
 .ink-soft{color:var(--ink-soft);}
 .label-caps{font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-soft);}
 
-/* ── Screen layout ── */
-.screen-pad{padding:10px 11px calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:18px;min-height:100%;}
-.screen-pad-sm{padding:8px 10px calc(10px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;min-height:100%;}
+/* ── Screen layout — one consistent padding scale for every screen ── */
+.screen-pad{padding:16px 16px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:16px;min-height:100%;}
 
 /* ── Dot progress bar ── */
 .dotbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
@@ -496,7 +495,6 @@ function speak(text,lang){
 }
 
 function setState(patch){Object.assign(state,patch);render();}
-function pairLists(){return state.lists.filter(l=>(l.from||"sv")===state.pair.from&&(l.to||"en")===state.pair.to);}
 function activeList(){return state.lists.find(l=>l.id===state.activeListId);}
 
 // ── SCREEN LOADER ─────────────────────────────────────────────────
@@ -658,7 +656,7 @@ const screens={
 login(){
   const {loginEmail,loginSent,loginErr,loginLoading}=state;
   if(!loginSent)return `
-    <div style="padding:28px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px;min-height:100%;justify-content:center;">
+    <div style="padding:24px 16px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px;min-height:100%;justify-content:center;">
       ${mascotSVG(140,"happy")}
       <div>
         <h1 class="h-font" style="font-size:44px;color:var(--ink);letter-spacing:-0.02em;line-height:1;">Hej!</h1>
@@ -678,7 +676,7 @@ login(){
       </div>
     </div>`;
   return `
-    <div style="padding:28px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:22px;min-height:100%;justify-content:center;">
+    <div style="padding:24px 16px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:22px;min-height:100%;justify-content:center;">
       ${mascotSVG(140,"cheer")}
       <div>
         <h1 class="h-font" style="font-size:36px;color:var(--ink);letter-spacing:-0.02em;line-height:1.05;">Check your inbox</h1>
@@ -693,7 +691,7 @@ login(){
 },
 
 home(){
-  const pl=pairLists(), list=activeList();
+  const list=activeList();
   const listCard=list?`
     <div class="card-lg" style="background:${COLOR_MAP[list.color]||"#FFB0C8"};position:relative;overflow:hidden;">
       <button id="home-list-edit" title="Edit list" style="position:absolute;top:15px;right:15px;background:var(--paper);border:var(--border-thin);border-radius:999px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;">${SVG.pencil(17,"#241F3D")}</button>
@@ -721,7 +719,7 @@ home(){
       </div>
     </div>`;
   return `
-    <div class="screen-pad">
+    <div class="screen-pad" style="padding-top:8px;">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div style="display:flex;align-items:center;gap:8px;">
           <span id="bloom-spin">${SVG.bloom(26,"#B583E8","#F2EE5B",true)}</span>
@@ -745,17 +743,17 @@ home(){
 },
 
 lists(){
-  const pl=pairLists();
-  const items=pl.map(l=>`
-    <div class="card" data-list-id="${l.id}" style="background:${COLOR_MAP[l.color]||"#FFB0C8"};padding:16px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;transform:${state.activeListId===l.id?"translateX(4px)":"translateX(0)"};transition:transform 120ms;">
-      <div style="width:48px;height:48px;border-radius:14px;background:var(--paper);border:var(--border-thin);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        ${SVG.bloom(28,"#241F3D",COLOR_MAP[l.color],false)}
+  const all=state.lists;
+  const items=all.map(l=>`
+    <div class="card" data-list-id="${l.id}" style="background:${COLOR_MAP[l.color]||"#FFB0C8"};padding:16px;display:flex;align-items:center;gap:14px;cursor:pointer;transform:${state.activeListId===l.id?"translateX(4px)":"translateX(0)"};transition:transform 120ms;">
+      <div style="width:44px;height:44px;border-radius:14px;background:var(--paper);border:var(--border-thin);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        ${SVG.bloom(26,"#241F3D",COLOR_MAP[l.color],false)}
       </div>
       <div style="flex:1;min-width:0;">
-        <div class="h-font" style="font-size:20px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(l.name)}</div>
-        <div class="m-font" style="font-size:12px;color:var(--ink);opacity:.7;margin-top:2px;">${l.words.length} words${state.activeListId===l.id?" · active":""}</div>
+        <div class="h-font" style="font-size:19px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(l.name)}</div>
+        <div class="m-font" style="font-size:12px;color:var(--ink);opacity:.7;margin-top:2px;">${l.words.length} words · ${LANGUAGES[l.from]?.code||"SV"} → ${LANGUAGES[l.to]?.code||"EN"}</div>
       </div>
-      ${state.activeListId===l.id?`<div style="background:var(--ink);border-radius:999px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${SVG.check(16,"#fff",4)}</div>`:""}
+      ${state.activeListId===l.id?`<div style="background:var(--ink);border-radius:999px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${SVG.check(14,"#fff",4)}</div>`:""}
       <button class="list-delete" data-delete-id="${l.id}" style="background:transparent;border:none;cursor:pointer;padding:4px;flex-shrink:0;">${SVG.trash(16,"#241F3D")}</button>
     </div>`).join("");
   return `
@@ -763,7 +761,7 @@ lists(){
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div>
           <h2 class="h-font" style="font-size:30px;color:var(--ink);">My lists</h2>
-          <div class="m-font" style="font-size:11px;color:var(--ink-soft);margin-top:4px;">${pl.length} list${pl.length!==1?"s":""}</div>
+          <div class="m-font" style="font-size:11px;color:var(--ink-soft);margin-top:4px;">${all.length} list${all.length!==1?"s":""}</div>
         </div>
         <button id="lists-close" class="icon-btn-plain">${SVG.cross(20,"#241F3D",3)}</button>
       </div>
@@ -821,41 +819,6 @@ paste(){
         <button id="paste-save" class="btn btn-primary" style="flex:1;" ${!pasteParsed.length?"disabled":""}>
           ${editingListId?"Save changes":"Save list"} ${SVG.arrowRight(16,"#fff")}
         </button>
-      </div>
-    </div>`;
-},
-
-langpicker(){
-  const lists=state.lists, pair=state.pair;
-  const seen=new Set(), pairs=[];
-  lists.forEach(l=>{if(!l.from||!l.to)return;const k=l.from+">"+l.to;if(seen.has(k))return;seen.add(k);pairs.push({from:l.from,to:l.to,count:lists.filter(x=>x.from===l.from&&x.to===l.to).length});});
-  const chip=(code,color)=>`<span style="width:32px;height:32px;border-radius:999px;border:var(--border);background:${color};display:inline-flex;align-items:center;justify-content:center;font-family:var(--m-font);font-size:11px;font-weight:800;color:var(--ink);box-shadow:0 2px 0 var(--ink);">${code}</span>`;
-  const items=pairs.map(p=>{
-    const fromL=LANGUAGES[p.from]||{code:p.from.toUpperCase(),color:"#ccc",name:p.from};
-    const toL  =LANGUAGES[p.to]  ||{code:p.to.toUpperCase()  ,color:"#ccc",name:p.to  };
-    const isActive=p.from===pair.from&&p.to===pair.to;
-    return `
-      <div class="lang-pair-row" data-from="${p.from}" data-to="${p.to}"
-        style="padding:14px 16px;background:${isActive?"var(--butter-soft)":"var(--paper)"};border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;gap:14px;">
-        ${chip(fromL.code,fromL.color)} ${SVG.arrowRight(16,"#241F3D")} ${chip(toL.code,toL.color)}
-        <div style="flex:1;margin-left:6px;">
-          <div class="h-font" style="font-size:18px;color:var(--ink);">${fromL.name} → ${toL.name}</div>
-          <div class="m-font" style="font-size:12px;color:var(--ink-soft);margin-top:2px;">${p.count} list${p.count!==1?"s":""}</div>
-        </div>
-        ${isActive?`<div style="background:var(--ink);border-radius:999px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;">${SVG.check(14,"#fff",4)}</div>`:""}
-      </div>`;}).join("");
-  return `
-    <div class="screen-pad">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h2 class="h-font" style="font-size:30px;color:var(--ink);">Which language?</h2>
-        <button id="lang-close" class="icon-btn-plain">${SVG.cross(20,"#241F3D",3)}</button>
-      </div>
-      <p class="b-font" style="color:var(--ink-soft);font-size:14px;">Pick a language you're learning from another.</p>
-      <div style="display:flex;flex-direction:column;gap:10px;flex:1;">
-        ${items||`<div class="b-font" style="color:var(--ink-soft);text-align:center;padding:32px 0;">Add some lists first!</div>`}
-      </div>
-      <div style="padding:12px 14px;background:var(--paper-alt);border:var(--border-thin);border-radius:var(--radius);font-size:13px;color:var(--ink-soft);" class="b-font">
-        <strong style="color:var(--ink);">Want a different pair?</strong> Paste a list in any language and Poppins will tag it automatically.
       </div>
     </div>`;
 },
@@ -937,7 +900,7 @@ quiz(){
   const inpBg=quizFeedback==="correct"?"var(--mint-soft)":quizFeedback==="wrong"?"var(--pink-soft)":"var(--paper)";
 
   return `
-    <div class="screen-pad-sm">
+    <div class="screen-pad">
       <div style="display:flex;align-items:center;gap:10px;">
         <button id="quiz-exit" class="icon-btn-sm">${SVG.arrowBack(14,"#241F3D")}</button>
         <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
@@ -978,7 +941,7 @@ done(){
       ${SVG.spark(26,s<=stars?"#241F3D":"#6B638A")}
     </div>`).join("");
   return `
-    <div style="padding:32px 22px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:18px;min-height:100%;justify-content:center;position:relative;overflow:hidden;">
+    <div style="padding:24px 16px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:18px;min-height:100%;justify-content:center;position:relative;overflow:hidden;">
       ${confetti}
       ${mascotSVG(150,"proud")}
       <div style="display:flex;gap:6px;">${starBtns}</div>
@@ -996,7 +959,6 @@ done(){
 },
 
 settings(){
-  const pair=state.pair;
   const avatarSwatches=Object.keys(CHARACTERS).map(key=>`
     <button class="avatar-swatch" data-avatar="${key}" title="${key}" style="position:relative;overflow:visible;width:52px;height:52px;border-radius:999px;background:var(--paper-alt);border:${state.avatar===key?"3px solid var(--ink)":"var(--border-thin)"};cursor:pointer;padding:0;box-shadow:${state.avatar===key?"0 3px 0 var(--ink)":"none"};flex-shrink:0;">
       ${avatarButtonInner(key,52)}
@@ -1021,18 +983,6 @@ settings(){
       <div>
         <div class="label-caps" style="margin-bottom:8px;">Avatar</div>
         <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;">${avatarSwatches}</div>
-      </div>
-      <div>
-        <div class="label-caps" style="margin-bottom:8px;">Language</div>
-        <div id="settings-lang" class="card" style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;">
-          <span style="width:32px;height:32px;border-radius:999px;border:var(--border);background:${LANGUAGES[pair.from]?.color||"#ccc"};display:inline-flex;align-items:center;justify-content:center;font-family:var(--m-font);font-size:11px;font-weight:800;">${LANGUAGES[pair.from]?.code||"SV"}</span>
-          ${SVG.arrowRight(14,"#241F3D")}
-          <span style="width:32px;height:32px;border-radius:999px;border:var(--border);background:${LANGUAGES[pair.to]?.color||"#ccc"};display:inline-flex;align-items:center;justify-content:center;font-family:var(--m-font);font-size:11px;font-weight:800;">${LANGUAGES[pair.to]?.code||"EN"}</span>
-          <div style="flex:1;margin-left:4px;">
-            <div class="b-font" style="font-weight:600;font-size:14px;color:var(--ink);">${LANGUAGES[pair.from]?.name||"Swedish"} → ${LANGUAGES[pair.to]?.name||"English"}</div>
-            <div class="m-font" style="font-size:11px;color:var(--ink-soft);">Tap to change</div>
-          </div>
-        </div>
       </div>
       <div>
         <div class="label-caps" style="margin-bottom:8px;">Practice</div>
@@ -1122,7 +1072,7 @@ function bindEvents(){
     el.addEventListener("click",e=>{
       e.stopPropagation();
       const list=state.lists.find(l=>l.id===el.dataset.deleteId);
-      if(list)deleteList(list);
+      if(list&&confirm("Permanently delete project?"))deleteList(list);
     });
   });
 
@@ -1143,15 +1093,6 @@ function bindEvents(){
     }
   });
 
-  on("lang-close","click",()=>navigate("home"));
-  document.querySelectorAll(".lang-pair-row").forEach(el=>{
-    el.addEventListener("click",()=>{
-      const from=el.dataset.from,to=el.dataset.to;
-      const firstList=state.lists.find(l=>l.from===from&&l.to===to);
-      setState({pair:{from,to},activeListId:firstList?firstList.id:null,screen:"home"});
-    });
-  });
-
   on("quiz-exit","click",()=>navigate("home"));
   const qi=document.getElementById("quiz-input");
   if(qi){qi.focus();qi.addEventListener("keydown",e=>{if(e.key==="Enter")quizSubmit();});qi.addEventListener("input",e=>setState({quizAnswer:e.target.value}));}
@@ -1165,7 +1106,6 @@ function bindEvents(){
 
   on("settings-close", "click",()=>navigate("home"));
   on("settings-logout","click",signOut);
-  on("settings-lang",  "click",()=>navigate("langpicker"));
   document.querySelectorAll(".avatar-swatch").forEach(el=>{
     el.addEventListener("click",()=>setState({avatar:el.dataset.avatar}));
   });
