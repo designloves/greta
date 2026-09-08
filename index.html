@@ -275,76 +275,80 @@ const SAMPLE_LISTS=[
 
 const COLOR_MAP={rose:"#FFB0C8",butter:"#F2EE5B",sky:"#8AD7FF",mint:"#A8F08C",pink:"#B583E8"};
 const CHARACTERS={ollie:1,luna:1,fin:1,nova:1,bramble:1,momo:1};
+// Shared round, chubby body (a rounded-square close to a circle) so every
+// character reads as one cute round family — only the head accessory,
+// face and color set them apart.
+const CHAR_BODY=(fill)=>`<rect x="7" y="27" width="56" height="59" rx="27" fill="${fill}" stroke="#241F3D" stroke-width="3"/>`;
 const CHARACTER_ART={
-  // Ollie — chubby round bear, tan fur, round ears, snout patch
-  ollie:size=>`<svg width="${size}" height="${size*84/70}" viewBox="0 0 70 84">
-    <circle cx="15" cy="17" r="10.5" fill="#D9A066" stroke="#241F3D" stroke-width="3"/>
-    <circle cx="55" cy="17" r="10.5" fill="#D9A066" stroke="#241F3D" stroke-width="3"/>
-    <circle cx="15" cy="17" r="4.5" fill="#8B5A2B"/>
-    <circle cx="55" cy="17" r="4.5" fill="#8B5A2B"/>
-    <path d="M35 80 C14 80 8 65 11 51 C6 47 6 32 17 27 C18 13 26 8 35 9 C44 8 52 13 53 27 C64 32 64 47 59 51 C62 65 56 80 35 80 Z" fill="#D9A066" stroke="#241F3D" stroke-width="3"/>
-    <ellipse cx="35" cy="54" rx="15" ry="12" fill="#F3DBB8" stroke="#241F3D" stroke-width="2.5"/>
-    <ellipse cx="35" cy="49" rx="4" ry="3" fill="#241F3D"/>
-    <circle cx="24" cy="38" r="3.4" fill="#241F3D"/>
-    <circle cx="46" cy="38" r="3.4" fill="#241F3D"/>
-    <path d="M28 58 Q35 63 42 58" fill="none" stroke="#241F3D" stroke-width="2.4" stroke-linecap="round"/>
-    <ellipse cx="17" cy="46" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
-    <ellipse cx="53" cy="46" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
-    <ellipse cx="24" cy="24" rx="4" ry="3" fill="#fff" opacity=".5"/>
+  // Ollie — chubby tan bear, round ears, snout patch
+  ollie:size=>`<svg width="${size}" height="${size*88/70}" viewBox="0 0 70 88">
+    <circle cx="16" cy="20" r="10.5" fill="#D9A066" stroke="#241F3D" stroke-width="3"/>
+    <circle cx="54" cy="20" r="10.5" fill="#D9A066" stroke="#241F3D" stroke-width="3"/>
+    <circle cx="16" cy="20" r="4.5" fill="#8B5A2B"/>
+    <circle cx="54" cy="20" r="4.5" fill="#8B5A2B"/>
+    ${CHAR_BODY("#D9A066")}
+    <ellipse cx="35" cy="63" rx="15" ry="12" fill="#F3DBB8" stroke="#241F3D" stroke-width="2.5"/>
+    <ellipse cx="35" cy="58" rx="4" ry="3" fill="#241F3D"/>
+    <circle cx="24" cy="48" r="3.4" fill="#241F3D"/>
+    <circle cx="46" cy="48" r="3.4" fill="#241F3D"/>
+    <path d="M28 67 Q35 72 42 67" fill="none" stroke="#241F3D" stroke-width="2.4" stroke-linecap="round"/>
+    <ellipse cx="17" cy="56" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="53" cy="56" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="23" cy="36" rx="4" ry="3" fill="#fff" opacity=".5"/>
   </svg>`,
   // Luna — sleek lilac cat, pointy ears, whiskers, almond eyes
-  luna:size=>`<svg width="${size}" height="${size*84/70}" viewBox="0 0 70 84">
-    <path d="M13 30 L6 6 L28 20 Z" fill="#C9B8F2" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round"/>
-    <path d="M57 30 L64 6 L42 20 Z" fill="#C9B8F2" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round"/>
-    <path d="M16 23 L12 11 L23 18 Z" fill="#FFB0C8"/>
-    <path d="M54 23 L58 11 L47 18 Z" fill="#FFB0C8"/>
-    <path d="M35 80 C16 80 9 64 12 49 C11 32 20 18 35 18 C50 18 59 32 58 49 C61 64 54 80 35 80 Z" fill="#C9B8F2" stroke="#241F3D" stroke-width="3"/>
-    <path d="M20 42 Q25 37 30 42" fill="none" stroke="#241F3D" stroke-width="2.6" stroke-linecap="round"/>
-    <path d="M40 42 Q45 37 50 42" fill="none" stroke="#241F3D" stroke-width="2.6" stroke-linecap="round"/>
-    <path d="M32 51 L38 51 L35 55 Z" fill="#241F3D"/>
-    <path d="M35 55 Q30 60 25 58 M35 55 Q40 60 45 58" fill="none" stroke="#241F3D" stroke-width="2.2" stroke-linecap="round"/>
-    <path d="M4 47 L18 45 M4 54 L18 52" stroke="#241F3D" stroke-width="1.6" stroke-linecap="round"/>
-    <path d="M66 47 L52 45 M66 54 L52 52" stroke="#241F3D" stroke-width="1.6" stroke-linecap="round"/>
-    <ellipse cx="19" cy="50" rx="3.4" ry="2.4" fill="#FFB0C8" opacity=".85"/>
-    <ellipse cx="51" cy="50" rx="3.4" ry="2.4" fill="#FFB0C8" opacity=".85"/>
-    <ellipse cx="27" cy="27" rx="4" ry="3" fill="#fff" opacity=".5"/>
+  luna:size=>`<svg width="${size}" height="${size*88/70}" viewBox="0 0 70 88">
+    <path d="M14 34 L7 8 L29 24 Z" fill="#C9B8F2" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M56 34 L63 8 L41 24 Z" fill="#C9B8F2" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M17 26 L13 14 L24 21 Z" fill="#FFB0C8"/>
+    <path d="M53 26 L57 14 L46 21 Z" fill="#FFB0C8"/>
+    ${CHAR_BODY("#C9B8F2")}
+    <path d="M20 52 Q25 47 30 52" fill="none" stroke="#241F3D" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M40 52 Q45 47 50 52" fill="none" stroke="#241F3D" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M32 61 L38 61 L35 65 Z" fill="#241F3D"/>
+    <path d="M35 65 Q30 70 25 68 M35 65 Q40 70 45 68" fill="none" stroke="#241F3D" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M2 58 L18 56 M2 65 L18 63" stroke="#241F3D" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M68 58 L52 56 M68 65 L52 63" stroke="#241F3D" stroke-width="1.6" stroke-linecap="round"/>
+    <ellipse cx="19" cy="60" rx="3.4" ry="2.4" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="51" cy="60" rx="3.4" ry="2.4" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="26" cy="37" rx="4" ry="3" fill="#fff" opacity=".5"/>
   </svg>`,
   // Fin — mint dino, back spikes, light belly patch
-  fin:size=>`<svg width="${size}" height="${size*84/70}" viewBox="0 0 70 84">
-    <path d="M20 26 L25 6 L30 26 M30 26 L35 2 L40 26 M40 26 L45 8 L50 26" fill="#5FBE7D" stroke="#241F3D" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
-    <path d="M35 80 C16 80 9 62 12 47 C7 42 9 30 18 25 C19 14 27 8 35 10 C43 8 51 14 52 25 C61 30 63 42 58 47 C61 62 54 80 35 80 Z" fill="#8FE0A8" stroke="#241F3D" stroke-width="3"/>
-    <ellipse cx="35" cy="58" rx="13" ry="15" fill="#D8F5DE"/>
-    <circle cx="25" cy="38" r="3.6" fill="#241F3D"/>
-    <circle cx="45" cy="38" r="3.6" fill="#241F3D"/>
-    <path d="M27 55 Q35 60 43 55" fill="none" stroke="#241F3D" stroke-width="2.4" stroke-linecap="round"/>
-    <ellipse cx="18" cy="45" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
-    <ellipse cx="52" cy="45" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
-    <ellipse cx="26" cy="24" rx="4" ry="3" fill="#fff" opacity=".5"/>
+  fin:size=>`<svg width="${size}" height="${size*88/70}" viewBox="0 0 70 88">
+    <path d="M21 30 L26 10 L31 30 M31 30 L36 6 L41 30 M41 30 L46 12 L51 30" fill="#5FBE7D" stroke="#241F3D" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    ${CHAR_BODY("#8FE0A8")}
+    <ellipse cx="35" cy="66" rx="13" ry="15" fill="#D8F5DE"/>
+    <circle cx="25" cy="48" r="3.6" fill="#241F3D"/>
+    <circle cx="45" cy="48" r="3.6" fill="#241F3D"/>
+    <path d="M27 65 Q35 70 43 65" fill="none" stroke="#241F3D" stroke-width="2.4" stroke-linecap="round"/>
+    <ellipse cx="18" cy="55" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="52" cy="55" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="25" cy="35" rx="4" ry="3" fill="#fff" opacity=".5"/>
   </svg>`,
   // Nova — pale-blue alien, antenna, big eyes
-  nova:size=>`<svg width="${size}" height="${size*84/70}" viewBox="0 0 70 84">
-    <line x1="35" y1="14" x2="35" y2="3" stroke="#241F3D" stroke-width="2.6" stroke-linecap="round"/>
-    <circle cx="35" cy="3" r="5" fill="#FFD66B" stroke="#241F3D" stroke-width="2.4"/>
-    <path d="M35 80 C18 80 11 64 14 47 C11 28 19 12 35 12 C51 12 59 28 56 47 C59 64 52 80 35 80 Z" fill="#A8D8FF" stroke="#241F3D" stroke-width="3"/>
-    <ellipse cx="24" cy="42" rx="6.4" ry="8.4" fill="#241F3D"/>
-    <ellipse cx="46" cy="42" rx="6.4" ry="8.4" fill="#241F3D"/>
-    <circle cx="26.5" cy="37" r="1.8" fill="#fff"/>
-    <circle cx="48.5" cy="37" r="1.8" fill="#fff"/>
-    <path d="M29 60 Q35 64 41 60" fill="none" stroke="#241F3D" stroke-width="2.2" stroke-linecap="round"/>
-    <ellipse cx="16" cy="52" rx="3.2" ry="2.2" fill="#FFB0C8" opacity=".8"/>
-    <ellipse cx="54" cy="52" rx="3.2" ry="2.2" fill="#FFB0C8" opacity=".8"/>
-    <ellipse cx="26" cy="26" rx="4" ry="3" fill="#fff" opacity=".4"/>
+  nova:size=>`<svg width="${size}" height="${size*88/70}" viewBox="0 0 70 88">
+    <line x1="35" y1="26" x2="35" y2="6" stroke="#241F3D" stroke-width="2.6" stroke-linecap="round"/>
+    <circle cx="35" cy="5" r="5.5" fill="#FFD66B" stroke="#241F3D" stroke-width="2.4"/>
+    ${CHAR_BODY("#A8D8FF")}
+    <ellipse cx="24" cy="52" rx="6.4" ry="8.4" fill="#241F3D"/>
+    <ellipse cx="46" cy="52" rx="6.4" ry="8.4" fill="#241F3D"/>
+    <circle cx="26.5" cy="47" r="1.8" fill="#fff"/>
+    <circle cx="48.5" cy="47" r="1.8" fill="#fff"/>
+    <path d="M29 70 Q35 74 41 70" fill="none" stroke="#241F3D" stroke-width="2.2" stroke-linecap="round"/>
+    <ellipse cx="16" cy="62" rx="3.2" ry="2.2" fill="#FFB0C8" opacity=".8"/>
+    <ellipse cx="54" cy="62" rx="3.2" ry="2.2" fill="#FFB0C8" opacity=".8"/>
+    <ellipse cx="25" cy="36" rx="4" ry="3" fill="#fff" opacity=".4"/>
   </svg>`,
   // Bramble — cream bunny, long ears, pink nose, tiny teeth
-  bramble:size=>`<svg width="${size}" height="${size*92/70}" viewBox="0 0 70 92">
-    <path d="M21 40 C13 26 12 4 21 1 C30 4 29 26 25 40 Z" fill="#F7F1E3" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round"/>
-    <path d="M49 40 C57 26 58 4 49 1 C40 4 41 26 45 40 Z" fill="#F7F1E3" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round"/>
-    <path d="M21 8 C25 9 25 24 23 36 Z" fill="#FFB0C8" opacity=".8"/>
-    <path d="M49 8 C45 9 45 24 47 36 Z" fill="#FFB0C8" opacity=".8"/>
-    <path d="M35 88 C16 88 9 72 12 57 C7 52 9 40 18 35 C19 24 27 18 35 19 C43 18 51 24 52 35 C61 40 63 52 58 57 C61 72 54 88 35 88 Z" fill="#F7F1E3" stroke="#241F3D" stroke-width="3"/>
+  bramble:size=>`<svg width="${size}" height="${size*88/70}" viewBox="0 0 70 88">
+    <path d="M22 32 C15 18 14 2 21 0 C28 2 27 18 26 32 Z" fill="#F7F1E3" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M48 32 C55 18 56 2 49 0 C42 2 43 18 44 32 Z" fill="#F7F1E3" stroke="#241F3D" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M21 6 C24 7 24 18 23 28 Z" fill="#FFB0C8" opacity=".8"/>
+    <path d="M49 6 C46 7 46 18 47 28 Z" fill="#FFB0C8" opacity=".8"/>
+    ${CHAR_BODY("#F7F1E3")}
     <circle cx="24" cy="52" r="3.4" fill="#241F3D"/>
     <circle cx="46" cy="52" r="3.4" fill="#241F3D"/>
-    <ellipse cx="35" cy="63" rx="4" ry="3" fill="#FFB0C8" stroke="#241F3D" stroke-width="2"/>
+    <ellipse cx="35" cy="62" rx="4" ry="3" fill="#FFB0C8" stroke="#241F3D" stroke-width="2"/>
     <path d="M28 70 Q35 74 42 70" fill="none" stroke="#241F3D" stroke-width="2.2" stroke-linecap="round"/>
     <rect x="32.2" y="70" width="2.6" height="4.5" rx="1" fill="#fff" stroke="#241F3D" stroke-width="1.2"/>
     <rect x="35.2" y="70" width="2.6" height="4.5" rx="1" fill="#fff" stroke="#241F3D" stroke-width="1.2"/>
@@ -353,21 +357,21 @@ const CHARACTER_ART={
     <ellipse cx="24" cy="38" rx="4" ry="3" fill="#fff" opacity=".5"/>
   </svg>`,
   // Momo — black-and-white panda, round ears, eye patches
-  momo:size=>`<svg width="${size}" height="${size*84/70}" viewBox="0 0 70 84">
-    <circle cx="15" cy="17" r="10.5" fill="#241F3D"/>
-    <circle cx="55" cy="17" r="10.5" fill="#241F3D"/>
-    <path d="M35 80 C14 80 8 65 11 51 C6 47 6 32 17 27 C18 13 26 8 35 9 C44 8 52 13 53 27 C64 32 64 47 59 51 C62 65 56 80 35 80 Z" fill="#fff" stroke="#241F3D" stroke-width="3"/>
-    <ellipse cx="24" cy="40" rx="7.2" ry="8.8" fill="#241F3D"/>
-    <ellipse cx="46" cy="40" rx="7.2" ry="8.8" fill="#241F3D"/>
-    <circle cx="24" cy="40" r="3" fill="#fff"/>
-    <circle cx="46" cy="40" r="3" fill="#fff"/>
-    <circle cx="24" cy="40" r="1.5" fill="#241F3D"/>
-    <circle cx="46" cy="40" r="1.5" fill="#241F3D"/>
-    <ellipse cx="35" cy="52" rx="3.6" ry="2.6" fill="#241F3D"/>
-    <path d="M28 58 Q35 63 42 58" fill="none" stroke="#241F3D" stroke-width="2.4" stroke-linecap="round"/>
-    <ellipse cx="17" cy="48" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
-    <ellipse cx="53" cy="48" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
-    <ellipse cx="24" cy="24" rx="4" ry="3" fill="#fff" opacity=".35"/>
+  momo:size=>`<svg width="${size}" height="${size*88/70}" viewBox="0 0 70 88">
+    <circle cx="16" cy="20" r="10.5" fill="#241F3D"/>
+    <circle cx="54" cy="20" r="10.5" fill="#241F3D"/>
+    ${CHAR_BODY("#fff")}
+    <ellipse cx="24" cy="50" rx="7.2" ry="8.8" fill="#241F3D"/>
+    <ellipse cx="46" cy="50" rx="7.2" ry="8.8" fill="#241F3D"/>
+    <circle cx="24" cy="50" r="3" fill="#fff"/>
+    <circle cx="46" cy="50" r="3" fill="#fff"/>
+    <circle cx="24" cy="50" r="1.5" fill="#241F3D"/>
+    <circle cx="46" cy="50" r="1.5" fill="#241F3D"/>
+    <ellipse cx="35" cy="62" rx="3.6" ry="2.6" fill="#241F3D"/>
+    <path d="M28 68 Q35 73 42 68" fill="none" stroke="#241F3D" stroke-width="2.4" stroke-linecap="round"/>
+    <ellipse cx="17" cy="58" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="53" cy="58" rx="3.6" ry="2.6" fill="#FFB0C8" opacity=".85"/>
+    <ellipse cx="23" cy="36" rx="4" ry="3" fill="#fff" opacity=".35"/>
   </svg>`,
 };
 function characterSVG(kind,size){
@@ -375,7 +379,7 @@ function characterSVG(kind,size){
 }
 function avatarButtonInner(kind,diameter){
   const w=Math.round(diameter*0.9);
-  const topOffset=-Math.round(diameter*0.32);
+  const topOffset=-Math.round(diameter*0.12);
   return `<span style="position:absolute;top:${topOffset}px;left:50%;transform:translateX(-50%);line-height:0;">${characterSVG(kind,w)}</span>`;
 }
 
