@@ -77,8 +77,10 @@ html,body{background:var(--paper);height:var(--app-height,100dvh);overflow:hidde
 .switch{
   width:44px;height:26px;border-radius:999px;border:var(--border-thin);
   background:var(--paper-alt);position:relative;cursor:pointer;flex-shrink:0;
-  padding:0;outline:none;transition:background 150ms;
+  padding:0;outline:none;transition:background 150ms, box-shadow 150ms, transform 150ms;
+  box-shadow:0 3px 0 var(--ink);
 }
+.switch:active{transform:translateY(3px);box-shadow:0 0 0 var(--ink);}
 .switch[data-on="true"]{background:var(--mint);}
 .switch::after{
   content:"";position:absolute;top:1.5px;left:1.5px;width:19px;height:19px;
@@ -86,6 +88,8 @@ html,body{background:var(--paper);height:var(--app-height,100dvh);overflow:hidde
   transition:transform 150ms;
 }
 .switch[data-on="true"]::after{transform:translateX(18px);}
+.avatar-swatch{transition:transform 150ms, box-shadow 150ms;}
+.avatar-swatch:active{transform:translateY(3px);box-shadow:0 0 0 var(--ink) !important;}
 
 /* ── Inputs ── */
 .inp{
@@ -961,7 +965,7 @@ login(){
 home(){
   const list=activeList();
   const listCard=list?`
-    <div class="card-lg" style="background:${COLOR_MAP[list.color]||"#FFB0C8"};position:relative;overflow:hidden;">
+    <div class="card-lg" style="background:${COLOR_MAP[list.color]||"#FFB0C8"};position:relative;overflow:hidden;padding:16px;">
       <button id="home-list-edit" title="${t("editList")}" style="position:absolute;top:15px;right:15px;background:var(--paper);border:var(--border-thin);border-radius:999px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;">${SVG.pencil(17,"#241F3D")}</button>
       <div style="padding-right:46px;">
         <div class="label-caps">${t("todaysList")}</div>
@@ -978,7 +982,7 @@ home(){
       <button id="home-lists" class="btn btn-tertiary">${SVG.books(16,"#241F3D")} ${t("myLists")}</button>
       <button id="home-new" class="btn btn-tertiary">${SVG.plus(16,"#241F3D")} ${t("newList")}</button>
     </div>`:
-    `<div class="card-lg" style="background:var(--butter-soft);text-align:center;padding:28px 22px;">
+    `<div class="card-lg" style="background:var(--butter-soft);text-align:center;padding:16px;">
       <h2 class="h-font" style="font-size:28px;color:var(--ink);">${t("noWordsYet")}</h2>
       <p class="b-font" style="color:var(--ink-soft);font-size:15px;margin:8px 0 16px;">${t("pickListOrPaste")}</p>
       <div style="display:flex;flex-direction:column;gap:10px;">
@@ -987,14 +991,14 @@ home(){
       </div>
     </div>`;
   return `
-    <div class="screen-pad" style="padding-top:8px;">
+    <div class="screen-pad" style="padding-top:4px;">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div style="display:flex;align-items:center;gap:8px;">
           <span id="bloom-spin">${SVG.bloom(26,"#B583E8","#F2EE5B",true)}</span>
           <span class="h-font" style="font-size:24px;color:var(--ink);">Poppins</span>
         </div>
-        <button id="home-settings" title="${t("settingsTitle")}" style="position:relative;overflow:visible;width:44px;height:44px;border-radius:999px;background:var(--paper-alt);border:var(--border-thin);cursor:pointer;padding:0;flex-shrink:0;">
-          ${avatarButtonInner(state.avatar,44)}
+        <button id="home-settings" title="${t("settingsTitle")}" style="position:relative;overflow:visible;width:40px;height:40px;border-radius:999px;background:var(--paper-alt);border:var(--border-thin);cursor:pointer;padding:0;flex-shrink:0;">
+          ${avatarButtonInner(state.avatar,40)}
         </button>
       </div>
       <div style="display:flex;justify-content:center;">
@@ -1049,18 +1053,6 @@ paste(){
         <button id="paste-close" class="icon-btn-plain">${SVG.cross(20,"#241F3D",3)}</button>
       </div>
       <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:18px;">
-        <div>
-          <div class="label-caps" style="margin-bottom:6px;">${t("language")}</div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <select id="paste-from" class="inp" style="flex:1;padding:10px 12px;font-size:14px;">
-              ${Object.keys(LANGUAGES).map(code=>`<option value="${code}" ${pair.from===code?"selected":""}>${langName(code)}</option>`).join("")}
-            </select>
-            ${SVG.arrowRight(16,"#241F3D")}
-            <select id="paste-to" class="inp" style="flex:1;padding:10px 12px;font-size:14px;">
-              ${Object.keys(LANGUAGES).map(code=>`<option value="${code}" ${pair.to===code?"selected":""}>${langName(code)}</option>`).join("")}
-            </select>
-          </div>
-        </div>
         <p class="b-font" style="color:var(--ink-soft);font-size:14px;line-height:1.6;">
           ${t("pasteInstructions",{from:`<strong style="color:var(--ink);">${langName(pair.from)}</strong>`,to:`<strong style="color:var(--ink);">${langName(pair.to)}</strong>`})} <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">=</code>
           <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">-</code>
@@ -1092,6 +1084,18 @@ paste(){
       <div style="background:var(--mint-soft);border:var(--border-thin);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:8px;">
         ${SVG.check(18,"#241F3D",4)}
         <span class="b-font" style="font-size:14px;color:var(--ink);font-weight:600;">${t("foundWords",{n:`<strong>${pasteParsed.length}</strong>`})}</span>
+      </div>
+      <div>
+        <div class="label-caps" style="margin-bottom:6px;">${t("language")}</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <select id="paste-from" class="inp" style="flex:1;padding:10px 12px;font-size:14px;">
+            ${Object.keys(LANGUAGES).map(code=>`<option value="${code}" ${pair.from===code?"selected":""}>${langName(code)}</option>`).join("")}
+          </select>
+          ${SVG.arrowRight(16,"#241F3D")}
+          <select id="paste-to" class="inp" style="flex:1;padding:10px 12px;font-size:14px;">
+            ${Object.keys(LANGUAGES).map(code=>`<option value="${code}" ${pair.to===code?"selected":""}>${langName(code)}</option>`).join("")}
+          </select>
+        </div>
       </div>
       <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">${reviewItems}</div>
       <div style="display:flex;gap:10px;">
@@ -1240,7 +1244,7 @@ done(){
 
 settings(){
   const avatarSwatches=Object.keys(CHARACTERS).map(key=>`
-    <button class="avatar-swatch" data-avatar="${key}" title="${key}" style="position:relative;overflow:visible;width:52px;height:52px;border-radius:999px;background:var(--paper-alt);border:${state.avatar===key?"3px solid var(--ink)":"var(--border-thin)"};cursor:pointer;padding:0;box-shadow:${state.avatar===key?"0 3px 0 var(--ink)":"none"};flex-shrink:0;">
+    <button class="avatar-swatch" data-avatar="${key}" title="${key}" style="position:relative;overflow:visible;width:52px;height:52px;border-radius:999px;background:var(--paper-alt);border:${state.avatar===key?"3px solid var(--ink)":"var(--border-thin)"};cursor:pointer;padding:0;box-shadow:0 3px 0 var(--ink);flex-shrink:0;">
       ${avatarButtonInner(key,52)}
     </button>`).join("");
   const langBtn=(code,label)=>`<button class="ui-lang-btn" data-lang="${code}" style="flex:1;padding:12px;border-radius:var(--radius);border:${state.uiLang===code?"var(--border)":"var(--border-thin)"};background:${state.uiLang===code?"var(--butter-soft)":"var(--paper)"};font-family:var(--b-font);font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;box-shadow:${state.uiLang===code?"0 3px 0 var(--ink)":"none"};">${label}</button>`;
@@ -1371,8 +1375,14 @@ function bindEvents(){
   on("paste-cancel","click",()=>navigate(state.activeListId?"home":"lists"));
   on("paste-name","input",e=>setState({pasteName:e.target.value}));
   on("paste-text","input",e=>setState({pasteText:e.target.value}));
-  on("paste-from","change",e=>setState({pair:{...state.pair,from:e.target.value},pasteAutoGuessed:true}));
-  on("paste-to","change",e=>setState({pair:{...state.pair,to:e.target.value},pasteAutoGuessed:true}));
+  on("paste-from","change",e=>{
+    const pair={...state.pair,from:e.target.value};
+    setState({pair,pasteAutoGuessed:true,pasteParsed:parsePasteText(state.pasteText,pair)});
+  });
+  on("paste-to","change",e=>{
+    const pair={...state.pair,to:e.target.value};
+    setState({pair,pasteAutoGuessed:true,pasteParsed:parsePasteText(state.pasteText,pair)});
+  });
   on("paste-parse","click",()=>{
     const guess=!state.pasteAutoGuessed&&guessPairFromText(state.pasteText);
     const pair=guess||state.pair;
