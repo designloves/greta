@@ -1239,7 +1239,7 @@ quiz(){
       </div>
       <input id="quiz-input" class="inp" value="${quizAnswer}" placeholder="${t("typeInLang",{lang:lh.tgtLang})}"
         style="font-size:18px;font-weight:600;background:${inpBg};transition:background 250ms;text-align:${quizFeedback?"center":"left"};"
-        ${quizFeedback?"disabled":""}/>
+        ${quizFeedback?"readonly":""}/>
     </div>`;
 },
 
@@ -1330,7 +1330,7 @@ settings(){
           </div>
         </div>
       </div>
-      <button id="settings-logout" class="btn btn-tertiary btn-full">${t("logOut")}</button>
+      ${currentUser?`<button id="settings-logout" class="btn btn-tertiary btn-full">${t("logOut")}</button>`:""}
       <div style="text-align:center;font-size:11px;color:var(--ink-soft);margin-top:auto;" class="m-font">
         ${t("madeWith")} ${SVG.heart(12,"#B583E8")}
       </div>
@@ -1435,7 +1435,7 @@ function bindEvents(){
 
   on("quiz-exit","click",()=>navigate("home"));
   const qi=document.getElementById("quiz-input");
-  if(qi){qi.focus();qi.addEventListener("keydown",e=>{if(e.key==="Enter")quizSubmit();});qi.addEventListener("input",e=>setState({quizAnswer:e.target.value}));}
+  if(qi){qi.focus();qi.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();quizSubmit();}});qi.addEventListener("input",e=>{state.quizAnswer=e.target.value;});}
   on("w5-done","click",quizAdvance);
   document.querySelectorAll("[data-w5]").forEach(el=>{
     el.addEventListener("input",e=>write5Check(parseInt(el.dataset.w5),e.target.value));
