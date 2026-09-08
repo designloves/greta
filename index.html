@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{background:var(--paper);min-height:var(--app-height,100dvh);display:flex;align-items:flex-start;justify-content:center;font-family:'Space Grotesk',system-ui,sans-serif;}
+html,body{background:var(--paper);height:var(--app-height,100dvh);overflow:hidden;display:flex;align-items:flex-start;justify-content:center;font-family:'Space Grotesk',system-ui,sans-serif;}
 
 /* ── Gummy Tech tokens ── */
 :root{
@@ -236,12 +236,30 @@ function syncAppHeight(){
     document.documentElement.style.setProperty('--app-height',h+'px');
   }catch{}
 }
+// Some mobile browsers scroll the outer document itself when a focused
+// input is covered by the keyboard, even with html/body set to
+// overflow:hidden — snap it back so only the inner #screen ever scrolls.
+function resetOuterScroll(){
+  try{
+    window.scrollTo(0,0);
+    document.documentElement.scrollTop=0;
+    document.body.scrollTop=0;
+  }catch{}
+}
 syncAppHeight();
 window.addEventListener('resize',syncAppHeight);
+window.addEventListener('resize',resetOuterScroll);
 if(window.visualViewport){
   window.visualViewport.addEventListener('resize',syncAppHeight);
   window.visualViewport.addEventListener('scroll',syncAppHeight);
+  window.visualViewport.addEventListener('resize',resetOuterScroll);
 }
+document.addEventListener('focusin',e=>{
+  if(e.target&&(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')){
+    setTimeout(resetOuterScroll,50);
+    setTimeout(resetOuterScroll,300);
+  }
+});
 
 function esc(s){
   return String(s==null?"":s)
@@ -503,7 +521,7 @@ let greetTimer=null, greetHideTimer=null;
 
 // ── SETTINGS PERSISTENCE ─────────────────────────────────────────
 const SETTINGS_KEY="poppins_settings_v1";
-const PERSISTED_KEYS=["avatar","soundOn","pronunciationOn","reminderOn","reminderTime","reminderLastFired"];
+const PERSISTED_KEYS=["avatar","soundOn","pronunciationOn","reminderOn","reminderTime","reminderLastFired","pair"];
 function loadSettings(){
   try{
     const raw=localStorage.getItem(SETTINGS_KEY);
@@ -890,14 +908,26 @@ paste(){
         <button id="paste-close" class="icon-btn-plain">${SVG.cross(20,"#241F3D",3)}</button>
       </div>
       <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:18px;">
+        <div>
+          <div class="label-caps" style="margin-bottom:6px;">Language</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <select id="paste-from" class="inp" style="flex:1;padding:10px 12px;font-size:14px;">
+              ${Object.entries(LANGUAGES).map(([code,l])=>`<option value="${code}" ${pair.from===code?"selected":""}>${l.name}</option>`).join("")}
+            </select>
+            ${SVG.arrowRight(16,"#241F3D")}
+            <select id="paste-to" class="inp" style="flex:1;padding:10px 12px;font-size:14px;">
+              ${Object.entries(LANGUAGES).map(([code,l])=>`<option value="${code}" ${pair.to===code?"selected":""}>${l.name}</option>`).join("")}
+            </select>
+          </div>
+        </div>
         <p class="b-font" style="color:var(--ink-soft);font-size:14px;line-height:1.6;">
-          Copy from anywhere. Use any separator: <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">=</code>
+          Paste with <strong style="color:var(--ink);">${LANGUAGES[pair.from]?.name||"Swedish"}</strong> on the left, <strong style="color:var(--ink);">${LANGUAGES[pair.to]?.name||"English"}</strong> on the right. Use any separator: <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">=</code>
           <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">-</code>
           <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">:</code>
           <code style="font-family:var(--m-font);background:var(--paper-alt);padding:1px 6px;border-radius:6px;">→</code>
         </p>
         <input id="paste-name" class="inp inp-header" placeholder="What's this list called?" value="${pasteName}"/>
-        <textarea id="paste-text" class="inp inp-mono" rows="9" placeholder="katt = cat&#10;hund - dog&#10;häst → horse">${pasteText}</textarea>
+        <textarea id="paste-text" class="inp inp-mono" rows="9" placeholder="word = translation">${pasteText}</textarea>
       </div>
       <div style="display:flex;gap:10px;">
         <button id="paste-cancel" class="btn btn-tertiary">Cancel</button>
@@ -1180,7 +1210,7 @@ function bindEvents(){
   on("home-list-edit","click",()=>{
     const list=activeList(); if(!list)return;
     const text=list.words.map(w=>`${w[list.from]||w.sv} = ${w[list.to]||w.en}`).join("\n");
-    navigate("paste",{pasteName:list.name,pasteText:text,pasteParsed:[],pasteStep:"paste",editingListId:list.id});
+    navigate("paste",{pasteName:list.name,pasteText:text,pasteParsed:[],pasteStep:"paste",editingListId:list.id,pair:{from:list.from||"sv",to:list.to||"en"}});
   });
 
   on("lists-close","click",()=>navigate("home"));
@@ -1203,6 +1233,8 @@ function bindEvents(){
   on("paste-cancel","click",()=>navigate(state.activeListId?"home":"lists"));
   on("paste-name","input",e=>setState({pasteName:e.target.value}));
   on("paste-text","input",e=>setState({pasteText:e.target.value}));
+  on("paste-from","change",e=>setState({pair:{...state.pair,from:e.target.value}}));
+  on("paste-to","change",e=>setState({pair:{...state.pair,to:e.target.value}}));
   on("paste-parse","click",()=>{
     const parsed=parsePasteText(state.pasteText,state.pair);
     setState({pasteParsed:parsed,pasteStep:"review"});
