@@ -976,7 +976,7 @@ login(){
         <button id="login-submit" class="btn btn-primary btn-lg btn-full" ${loginLoading?"disabled":""}>
           ${SVG.spark(18,"#fff")} ${loginLoading?t("sending"):t("sendMagicLink")}
         </button>
-        <button id="login-skip" style="background:none;border:none;color:var(--ink-soft);font-size:14px;cursor:pointer;text-decoration:underline;">
+        <button id="login-skip" style="background:none;border:none;color:var(--ink-soft);font-size:14px;cursor:pointer;text-decoration:underline;margin-top:12px;">
           ${t("skipTryFirst")}
         </button>
       </div>
@@ -1299,6 +1299,9 @@ settings(){
           </div>
         </div>
       </div>
+      ${currentUser
+        ?`<button id="settings-logout" class="btn btn-tertiary btn-full">${t("logOut")}</button>`
+        :`<button id="settings-login" class="btn btn-primary btn-full">${SVG.spark(16,"#fff")} ${t("logIn")}</button>`}
       <div>
         <div class="label-caps" style="margin-bottom:8px;">${t("avatar")}</div>
         <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;">${avatarSwatches}</div>
@@ -1323,9 +1326,6 @@ settings(){
           </div>
         </div>
       </div>
-      ${currentUser
-        ?`<button id="settings-logout" class="btn btn-tertiary btn-full">${t("logOut")}</button>`
-        :`<button id="settings-login" class="btn btn-primary btn-full">${SVG.spark(16,"#fff")} ${t("logIn")}</button>`}
       <div style="text-align:center;font-size:11px;color:var(--ink-soft);margin-top:auto;" class="m-font">
         ${t("madeWith")} ${SVG.heart(12,"#B583E8")}
       </div>
