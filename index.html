@@ -57,6 +57,7 @@ html,body{background:var(--paper);height:var(--app-height,100dvh);overflow:hidde
 .btn-primary{background:var(--pink);color:#fff;box-shadow:0 4px 0 var(--ink);}
 .btn-secondary{background:var(--butter);color:var(--ink);box-shadow:0 4px 0 var(--ink);}
 .btn-tertiary{background:var(--paper);color:var(--ink);box-shadow:0 4px 0 var(--ink);}
+.btn-danger{background:var(--wrong);color:#fff;box-shadow:0 4px 0 var(--ink);}
 .btn-lg{padding:16px 24px;font-size:18px;box-shadow:0 6px 0 var(--ink) !important;}
 .btn-full{width:100%;}
 .btn:not(:disabled):active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink) !important;}
@@ -214,6 +215,21 @@ html,body{background:var(--paper);height:var(--app-height,100dvh);overflow:hidde
 @keyframes greta-droplet-fall{0%{transform:scale(0);opacity:0;}20%{transform:scale(1);opacity:1;}100%{transform:translateY(28px) scale(.8);opacity:0;}}
 @keyframes greta-glow-pulse{0%{box-shadow:inset 0 0 0 0 rgba(168,240,140,.55);}40%{box-shadow:inset 0 0 60px 10px rgba(168,240,140,.45);}100%{box-shadow:inset 0 0 0 0 rgba(168,240,140,0);}}
 @keyframes greta-twinkle{0%{transform:scale(0) rotate(0);opacity:0;}40%{transform:scale(1.3) rotate(25deg);opacity:1;}100%{transform:scale(.4) rotate(50deg);opacity:0;}}
+@keyframes greta-fx-fall{
+  0%  {transform:translateY(-8vh) rotate(0deg);opacity:0;}
+  10% {opacity:1;}
+  100%{transform:translateY(108vh) rotate(560deg);opacity:.9;}
+}
+@keyframes greta-heart-rise{
+  0%  {transform:translateY(0) scale(.4);opacity:0;}
+  18% {transform:translateY(-12vh) scale(1);opacity:1;}
+  100%{transform:translateY(-95vh) scale(.7) rotate(12deg);opacity:0;}
+}
+@keyframes greta-firework-spark{
+  0%  {transform:translate(0,0) scale(0);opacity:0;}
+  25% {transform:translate(calc(var(--dx,0px)*.4),calc(var(--dy,0px)*.4)) scale(1.3);opacity:1;}
+  100%{transform:translate(var(--dx,0px),var(--dy,0px)) scale(.3);opacity:0;}
+}
 @keyframes greta-qmark-pop{0%{transform:scale(0) rotate(-20deg);opacity:0;}35%{transform:scale(1.3) rotate(8deg);opacity:1;}100%{transform:scale(1.15) translateY(-12px) rotate(0);opacity:0;}}
 @keyframes greta-puff{0%{transform:scale(0);opacity:0;}40%{transform:scale(1.2);opacity:.85;}100%{transform:scale(1.6);opacity:0;}}
 @keyframes greta-answer-rise{from{transform:translateY(14px);opacity:0;}to{transform:translateY(0);opacity:1;}}
@@ -236,6 +252,7 @@ select.inp{
   <div id="shell">
     <div id="screen"></div>
   </div>
+  <div id="fx-layer" style="position:absolute;inset:0;pointer-events:none;z-index:40;overflow:hidden;"></div>
 </div>
 
 <script>
@@ -333,6 +350,8 @@ const UI_STRINGS={
     cancel:"Cancel",
     back:"Back",
     exitGameConfirm:"Quit this round? Your progress on it won't be saved.",
+    exitGame:"Exit",
+    returnToGame:"Return to game",
     sortItOut:"Sort it out",
     lookRight:"Look right?",
     foundWords:"Found {n} words",
@@ -394,6 +413,8 @@ const UI_STRINGS={
     cancel:"Avbryt",
     back:"Tillbaka",
     exitGameConfirm:"Avsluta den här omgången? Ditt resultat sparas inte.",
+    exitGame:"Avsluta",
+    returnToGame:"Fortsätt spela",
     sortItOut:"Sortera ut det",
     lookRight:"Ser det rätt ut?",
     foundWords:"Hittade {n} ord",
@@ -590,6 +611,7 @@ const SVG={
   trash:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>`,
   books:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>`,
   confetti:(size,color,rot)=>`<svg width="${size}" height="${size*1.6}" viewBox="0 0 10 16" style="transform:rotate(${rot}deg)"><rect x="0" y="0" width="10" height="16" rx="2" fill="${color}"/></svg>`,
+  curl:(size,color,rot)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" style="transform:rotate(${rot}deg)"><path d="M3 12c3-8 9-8 9 0s6 8 9 0"/></svg>`,
 };
 
 // ── MASCOT ────────────────────────────────────────────────────────
@@ -662,7 +684,7 @@ let state={
   activeListId:"djur",
   result:null,
   // quiz
-  quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:false,quizWords:[],
+  quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:false,quizWords:[],showExitConfirm:false,
   // paste
   pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null,pasteAutoGuessed:false,
   // login
@@ -884,6 +906,7 @@ function quizSubmit(){
   if(ok){
     playCorrectSound();
     setState({quizRight:state.quizRight+1,quizFeedback:"correct",quizAnim:anim});
+    playScreenFX(SCREEN_FX[Math.floor(Math.random()*SCREEN_FX.length)]);
     if(state.pronunciationOn)setTimeout(()=>speak(lh.tgt(word),TTS_LOCALE[lh.to]),300);
     setTimeout(quizAdvance,1200);
   }else{
@@ -898,6 +921,7 @@ function quizAdvance(){
   const list=activeList(); if(!list)return;
   const nextIdx=state.quizIdx+1;
   if(nextIdx>=state.quizWords.length){
+    clearScreenFX();
     setState({screen:"done",result:{right:state.quizRight,wrong:state.quizWrong,total:state.quizWords.length}});
     return;
   }
@@ -1188,7 +1212,7 @@ practiceSetup(){
 
 quiz(){
   const list=activeList(); if(!list)return screens.home();
-  const {quizIdx,quizRight,quizWrong,quizAnswer,quizFeedback,quizAnim,quizWriteMode,quizReps,quizReversed,quizWords}=state;
+  const {quizIdx,quizRight,quizWrong,quizAnswer,quizFeedback,quizAnim,quizWriteMode,quizReps,quizReversed,quizWords,showExitConfirm}=state;
   const lh=langHelpers(list,quizReversed), word=quizWords[quizIdx], total=quizWords.length;
 
   if(quizWriteMode){
@@ -1267,6 +1291,16 @@ quiz(){
       <input id="quiz-input" class="inp" value="${quizAnswer}" placeholder="${t("typeInLang")}"
         style="font-size:18px;font-weight:600;background:${inpBg};transition:background 250ms;text-align:${quizFeedback?"center":"left"};"
         ${quizFeedback?"readonly":""}/>
+      ${showExitConfirm?`
+      <div style="position:absolute;inset:0;background:rgba(36,31,61,.5);z-index:50;display:flex;align-items:center;justify-content:center;padding:24px;">
+        <div class="card-lg" style="max-width:320px;width:100%;text-align:center;">
+          <p class="b-font" style="font-size:16px;color:var(--ink);line-height:1.5;margin-bottom:18px;">${t("exitGameConfirm")}</p>
+          <div style="display:flex;gap:10px;">
+            <button id="exit-confirm-yes" class="btn btn-danger" style="flex:1;">${t("exitGame")}</button>
+            <button id="exit-confirm-no" class="btn btn-primary" style="flex:1;">${t("returnToGame")}</button>
+          </div>
+        </div>
+      </div>`:""}
     </div>`;
 },
 
@@ -1362,34 +1396,62 @@ function animName(a){
   return {kiss:"greta-kiss 1100ms cubic-bezier(.4,1.4,.6,1)",tada:"greta-tada 950ms ease-in-out",bigbounce:"greta-bigbounce 1100ms ease-out",cartwheel:"greta-cartwheel 1000ms cubic-bezier(.5,.9,.5,1)",shake:"greta-oops 620ms ease-in-out",sink:"greta-sink 900ms ease-in-out",headtilt:"greta-headtilt 950ms ease-in-out",spin:"greta-spin-shrink 850ms cubic-bezier(.5,1.4,.5,1)"}[a]||"none";
 }
 
-// ── FEEDBACK BURST HTML ───────────────────────────────────────────
+// ── FEEDBACK BURST HTML (in-card, small reactions) ────────────────
 function feedbackBurst(feedback,anim){
   if(!feedback||!anim)return"";
+  if(feedback==="correct"){
+    return`<div style="position:absolute;inset:0;pointer-events:none;z-index:2;border-radius:inherit;animation:greta-glow-pulse 650ms ease-out both;"></div>`;
+  }
+  if(anim==="sink")return`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;"><div style="position:absolute;bottom:38px;right:62px;animation:greta-droplet-fall 1000ms ease-in 200ms both;"><svg width="14" height="20" viewBox="0 0 14 20"><path d="M7 1 C 11 9 13 13 13 16 a6 6 0 0 1 -12 0 C 1 13 3 9 7 1 Z" fill="#8AD7FF"/><ellipse cx="9" cy="13" rx="1.5" ry="3" fill="#fff" opacity=".6"/></svg></div></div>`;
+  if(anim==="headtilt")return`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;"><div style="position:absolute;bottom:80px;right:26px;animation:greta-qmark-pop 1000ms ease-out 100ms both;font-family:var(--h-font);font-size:36px;color:var(--wrong);font-weight:700;">?</div></div>`;
+  if(anim==="spin")return`<div style="position:absolute;inset:0;pointer-events:none;z-index:2;"><div style="position:absolute;bottom:-8px;right:-8px;width:110px;height:110px;border-radius:50%;background:var(--ink-soft);animation:greta-puff 850ms ease-out both;opacity:.5;"></div></div>`;
+  return"";
+}
+
+// ── FULL-SCREEN CELEBRATION FX ────────────────────────────────────
+const SCREEN_FX=["confetti","hearts","fireworks","curls","flowers"];
+function screenFX(kind){
   const colors=["#B583E8","#F2EE5B","#8AD7FF","#A8F08C","#FFB0C8"];
-  let specific="";
-  if(anim==="kiss")specific=`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;"><div style="position:absolute;bottom:78px;left:50%;margin-left:-14px;animation:greta-heart-burst 1100ms ease-out 250ms both;">${SVG.heart(32,"#B583E8")}</div></div>`;
-  else if(anim==="tada"){
-    const dirs=[{dx:-55,dy:-40},{dx:55,dy:-40},{dx:-70,dy:0},{dx:70,dy:0},{dx:0,dy:-65}];
-    specific=`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;">${dirs.map((d,i)=>`<div style="position:absolute;left:50%;top:50%;--dx:${d.dx}px;--dy:${d.dy}px;animation:greta-sparkle-arc 900ms ease-out ${i*50}ms both;">${SVG.spark(22,colors[i])}</div>`).join("")}</div>`;
+  if(kind==="confetti"){
+    const pieces=Array.from({length:30}).map((_,i)=>({left:(i*33)%100,delay:(i*23)%450,dur:1100+(i*37)%500,rot:(i*47)%360,color:colors[i%colors.length]}));
+    return pieces.map(p=>`<div style="position:absolute;top:-24px;left:${p.left}%;animation:greta-fx-fall ${p.dur}ms ${p.delay}ms ease-in both;">${SVG.confetti(11,p.color,p.rot)}</div>`).join("");
   }
-  else if(anim==="bigbounce"){
-    const pieces=Array.from({length:18}).map((_,i)=>({cdx:(i*47)%320+"px",cdx2:(((i*13)%60)-30)+"px",delay:(i*35)%400,rot:(i*47)%360,color:colors[i%colors.length]}));
-    specific=`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;overflow:hidden;">${pieces.map(p=>`<div style="position:absolute;top:0;left:0;--cdx:${p.cdx};--cdx2:${p.cdx2};animation:greta-confetti-rain 1200ms ease-in ${p.delay}ms both;">${SVG.confetti(9,p.color,p.rot)}</div>`).join("")}</div>`;
+  if(kind==="hearts"){
+    const pieces=Array.from({length:16}).map((_,i)=>({left:4+(i*19)%92,delay:(i*55)%400,dur:1100+(i*41)%450,size:16+(i%3)*6,color:colors[i%colors.length]}));
+    return pieces.map(p=>`<div style="position:absolute;bottom:6%;left:${p.left}%;animation:greta-heart-rise ${p.dur}ms ${p.delay}ms ease-out both;">${SVG.heart(p.size,p.color)}</div>`).join("");
   }
-  else if(anim==="cartwheel"){
-    const dirs=[{dx:-10,dy:-10,rot:0},{dx:-30,dy:-30,rot:40},{dx:-50,dy:-50,rot:80},{dx:-70,dy:-55,rot:120},{dx:-85,dy:-45,rot:160}];
-    specific=`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;">${dirs.map((d,i)=>`<div style="position:absolute;bottom:24px;right:24px;--dx:${d.dx}px;--dy:${d.dy}px;--rot:${d.rot}deg;animation:greta-petal-trail 1000ms ease-out ${i*80}ms both;">${SVG.bloom(20,colors[i%colors.length],"#F4F1E8",false)}</div>`).join("")}</div>`;
+  if(kind==="fireworks"){
+    const origins=[{x:20,y:32},{x:78,y:24},{x:48,y:48}];
+    return origins.map((o,oi)=>{
+      const sparks=Array.from({length:10}).map((_,i)=>{
+        const ang=(i/10)*Math.PI*2, dist=55+oi*8;
+        return{dx:Math.round(Math.cos(ang)*dist),dy:Math.round(Math.sin(ang)*dist),color:colors[(i+oi)%colors.length]};
+      });
+      return`<div style="position:absolute;left:${o.x}%;top:${o.y}%;">${sparks.map((s,i)=>`<div style="position:absolute;--dx:${s.dx}px;--dy:${s.dy}px;animation:greta-firework-spark 800ms ease-out ${oi*220+i*8}ms both;">${SVG.spark(16,s.color)}</div>`).join("")}</div>`;
+    }).join("");
   }
-  else if(anim==="sink")specific=`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;"><div style="position:absolute;bottom:38px;right:62px;animation:greta-droplet-fall 1000ms ease-in 200ms both;"><svg width="14" height="20" viewBox="0 0 14 20"><path d="M7 1 C 11 9 13 13 13 16 a6 6 0 0 1 -12 0 C 1 13 3 9 7 1 Z" fill="#8AD7FF"/><ellipse cx="9" cy="13" rx="1.5" ry="3" fill="#fff" opacity=".6"/></svg></div></div>`;
-  else if(anim==="headtilt")specific=`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;"><div style="position:absolute;bottom:80px;right:26px;animation:greta-qmark-pop 1000ms ease-out 100ms both;font-family:var(--h-font);font-size:36px;color:var(--wrong);font-weight:700;">?</div></div>`;
-  else if(anim==="spin")specific=`<div style="position:absolute;inset:0;pointer-events:none;z-index:2;"><div style="position:absolute;bottom:-8px;right:-8px;width:110px;height:110px;border-radius:50%;background:var(--ink-soft);animation:greta-puff 850ms ease-out both;opacity:.5;"></div></div>`;
-  if(feedback!=="correct")return specific;
-  const sparklePieces=Array.from({length:7}).map((_,i)=>({
-    left:8+(i*13)%84,top:10+(i*31)%75,delay:i*40,color:colors[i%colors.length],
-  }));
-  const glow=`<div style="position:absolute;inset:0;pointer-events:none;z-index:2;border-radius:inherit;animation:greta-glow-pulse 650ms ease-out both;"></div>`;
-  const sparkles=sparklePieces.map(p=>`<div style="position:absolute;left:${p.left}%;top:${p.top}%;pointer-events:none;z-index:3;animation:greta-twinkle 700ms ease-out ${p.delay}ms both;">${SVG.spark(14,p.color)}</div>`).join("");
-  return glow+sparkles+specific;
+  if(kind==="curls"){
+    const pieces=Array.from({length:20}).map((_,i)=>({left:(i*37)%100,delay:(i*33)%450,dur:1200+(i*43)%500,rot:(i*53)%360,color:colors[i%colors.length]}));
+    return pieces.map(p=>`<div style="position:absolute;top:-24px;left:${p.left}%;animation:greta-fx-fall ${p.dur}ms ${p.delay}ms ease-in both;">${SVG.curl(22,p.color,p.rot)}</div>`).join("");
+  }
+  if(kind==="flowers"){
+    const pieces=Array.from({length:20}).map((_,i)=>({left:(i*39)%100,delay:(i*31)%450,dur:1200+(i*53)%550,color:colors[i%colors.length]}));
+    return pieces.map(p=>`<div style="position:absolute;top:-24px;left:${p.left}%;animation:greta-fx-fall ${p.dur}ms ${p.delay}ms ease-in both;">${SVG.bloom(20,p.color,"#F4F1E8",false)}</div>`).join("");
+  }
+  return"";
+}
+let screenFXTimer=null;
+function playScreenFX(kind){
+  const layer=document.getElementById("fx-layer");
+  if(!layer)return;
+  layer.innerHTML=screenFX(kind);
+  clearTimeout(screenFXTimer);
+  screenFXTimer=setTimeout(()=>{layer.innerHTML="";},1700);
+}
+function clearScreenFX(){
+  clearTimeout(screenFXTimer);
+  const layer=document.getElementById("fx-layer");
+  if(layer)layer.innerHTML="";
 }
 
 // ── EVENT BINDING ─────────────────────────────────────────────────
@@ -1464,7 +1526,9 @@ function bindEvents(){
     }
   });
 
-  on("quiz-exit","click",()=>{if(confirm(t("exitGameConfirm")))navigate("home");});
+  on("quiz-exit","click",()=>setState({showExitConfirm:true}));
+  on("exit-confirm-yes","click",()=>{clearScreenFX();navigate("home",{showExitConfirm:false});});
+  on("exit-confirm-no","click",()=>setState({showExitConfirm:false}));
   const qi=document.getElementById("quiz-input");
   if(qi){qi.focus();qi.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();quizSubmit();}});qi.addEventListener("input",e=>{state.quizAnswer=e.target.value;});}
   on("w5-done","click",quizAdvance);
