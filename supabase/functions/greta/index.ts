@@ -52,11 +52,12 @@ Deno.serve(async (req: Request) => {
   const url  = new URL(req.url)
   const path = url.pathname
 
-  if (req.method === 'GET'    && path.endsWith('/sets'))   return getSets(req)
-  if (req.method === 'GET'    && path.includes('/sets/'))  return getSet(url)
-  if (req.method === 'POST'   && path.endsWith('/sets'))   return saveSet(req)
-  if (req.method === 'PATCH'  && path.includes('/sets/'))  return updateSet(req, url)
-  if (req.method === 'DELETE' && path.includes('/sets/'))  return deleteSet(req, url)
+  if (req.method === 'GET'    && path.endsWith('/sets'))      return getSets(req)
+  if (req.method === 'GET'    && path.includes('/sets/'))     return getSet(url)
+  if (req.method === 'POST'   && path.endsWith('/sets'))      return saveSet(req)
+  if (req.method === 'PATCH'  && path.includes('/sets/'))     return updateSet(req, url)
+  if (req.method === 'DELETE' && path.includes('/sets/'))     return deleteSet(req, url)
+  if (req.method === 'POST'   && path.endsWith('/translate')) return translateWords(req)
 
   return err('Not found', 404)
 })
@@ -152,6 +153,85 @@ async function updateSet(req: Request, url: URL) {
   if (error) return err(error.message, 500)
   if (!data) return err('Set not found', 404)
   return json({ id: data.id })
+}
+
+// ── POST /translate — no auth required, translate a word list ──
+// Requires an ANTHROPIC_API_KEY secret (supabase secrets set ANTHROPIC_API_KEY=sk-ant-...)
+
+const LANG_NAMES: Record<string, string> = {
+  sv: 'Swedish', en: 'English', es: 'Spanish', fr: 'French', de: 'German',
+}
+
+async function translateWords(req: Request) {
+  let body: { words?: unknown[]; from?: string; to?: string }
+  try { body = await req.json() }
+  catch { return err('Invalid JSON', 400) }
+
+  const words = (body.words ?? [])
+    .map((w) => String(w).trim())
+    .filter(Boolean)
+    .slice(0, MAX_WORDS)
+  if (!words.length) return err('No words provided', 400)
+
+  const apiKey = Deno.env.get('ANTHROPIC_API_KEY')
+  if (!apiKey) return err('Translation is not configured on this server', 503)
+
+  const fromName = body.from && LANG_NAMES[body.from] ? LANG_NAMES[body.from] : null
+  const toName   = body.to   && LANG_NAMES[body.to]   ? LANG_NAMES[body.to]   : null
+
+  const instructions = fromName && toName
+    ? `The words below are in ${fromName}. Translate each one to ${toName}.`
+    : toName
+    ? `Detect the language the words below are written in, then translate each one to ${toName}.`
+    : `Detect the language the words below are written in. If it is English, translate each word to Swedish. Otherwise, translate each word to English.`
+
+  const prompt = `${instructions}
+
+Return ONLY a JSON object with this exact shape and nothing else — no markdown, no explanation:
+{"from":"<source language code>","to":"<target language code>","translations":["<translation 1>","<translation 2>"]}
+
+Language codes must be one of: sv, en, es, fr, de.
+The "translations" array must have exactly ${words.length} items, in the same order as the words below, each a single word or short phrase (not a full sentence).
+
+Words:
+${words.map((w, i) => `${i + 1}. ${w}`).join('\n')}`
+
+  let res: Response
+  try {
+    res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1024,
+        messages: [{ role: 'user', content: prompt }],
+      }),
+    })
+  } catch {
+    return err('Could not reach translation service', 502)
+  }
+  if (!res.ok) return err('Translation service error', 502)
+
+  const data = await res.json()
+  const text: string = data?.content?.[0]?.text ?? ''
+  let parsed: { from?: string; to?: string; translations?: unknown[] }
+  try {
+    const match = text.match(/\{[\s\S]*\}/)
+    parsed = JSON.parse(match ? match[0] : text)
+  } catch {
+    return err('Could not parse translation response', 502)
+  }
+
+  if (!Array.isArray(parsed.translations) || parsed.translations.length !== words.length) {
+    return err('Translation response did not match the word count', 502)
+  }
+  const from = parsed.from && LANG_NAMES[parsed.from] ? parsed.from : (body.from || 'en')
+  const to   = parsed.to   && LANG_NAMES[parsed.to]   ? parsed.to   : (body.to   || 'sv')
+  return json({ from, to, translations: parsed.translations.map((t) => String(t)) })
 }
 
 // ── DELETE /sets/:id — auth required, only own sets ─────
