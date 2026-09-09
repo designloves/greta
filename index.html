@@ -212,6 +212,8 @@ html,body{background:var(--paper);height:var(--app-height,100dvh);overflow:hidde
   100%{transform:translate(calc(var(--dx,0)*1.4),calc(var(--dy,0)*1.4 + 24px)) scale(.6) rotate(calc(var(--rot,0deg) + 120deg));opacity:0;}
 }
 @keyframes greta-droplet-fall{0%{transform:scale(0);opacity:0;}20%{transform:scale(1);opacity:1;}100%{transform:translateY(28px) scale(.8);opacity:0;}}
+@keyframes greta-glow-pulse{0%{box-shadow:inset 0 0 0 0 rgba(168,240,140,.55);}40%{box-shadow:inset 0 0 60px 10px rgba(168,240,140,.45);}100%{box-shadow:inset 0 0 0 0 rgba(168,240,140,0);}}
+@keyframes greta-twinkle{0%{transform:scale(0) rotate(0);opacity:0;}40%{transform:scale(1.3) rotate(25deg);opacity:1;}100%{transform:scale(.4) rotate(50deg);opacity:0;}}
 @keyframes greta-qmark-pop{0%{transform:scale(0) rotate(-20deg);opacity:0;}35%{transform:scale(1.3) rotate(8deg);opacity:1;}100%{transform:scale(1.15) translateY(-12px) rotate(0);opacity:0;}}
 @keyframes greta-puff{0%{transform:scale(0);opacity:0;}40%{transform:scale(1.2);opacity:.85;}100%{transform:scale(1.6);opacity:0;}}
 @keyframes greta-answer-rise{from{transform:translateY(14px);opacity:0;}to{transform:translateY(0);opacity:1;}}
@@ -330,6 +332,7 @@ const UI_STRINGS={
     wordTranslationPlaceholder:"word = translation",
     cancel:"Cancel",
     back:"Back",
+    exitGameConfirm:"Quit this round? Your progress on it won't be saved.",
     sortItOut:"Sort it out",
     lookRight:"Look right?",
     foundWords:"Found {n} words",
@@ -390,6 +393,7 @@ const UI_STRINGS={
     wordTranslationPlaceholder:"ord = översättning",
     cancel:"Avbryt",
     back:"Tillbaka",
+    exitGameConfirm:"Avsluta den här omgången? Ditt resultat sparas inte.",
     sortItOut:"Sortera ut det",
     lookRight:"Ser det rätt ut?",
     foundWords:"Hittade {n} ord",
@@ -658,7 +662,7 @@ let state={
   activeListId:"djur",
   result:null,
   // quiz
-  quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:false,
+  quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:false,quizWords:[],
   // paste
   pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null,pasteAutoGuessed:false,
   // login
@@ -735,8 +739,11 @@ function playTone(freq,duration,startTime,peak){
 }
 function playCorrectSound(){
   if(!state.soundOn)return;
-  playTone(523.25,0.12,0,0.18);
-  playTone(783.99,0.16,0.09,0.18);
+  playTone(523.25,0.1,0,0.16);
+  playTone(659.25,0.1,0.07,0.16);
+  playTone(783.99,0.1,0.14,0.16);
+  playTone(1046.5,0.22,0.21,0.2);
+  try{navigator.vibrate?.(30);}catch{}
 }
 function playWrongSound(){
   if(!state.soundOn)return;
@@ -747,7 +754,7 @@ function speakCurrentWord(){
   if(!state.pronunciationOn)return;
   const list=activeList(); if(!list)return;
   const lh=langHelpers(list,state.quizReversed);
-  const word=list.words[state.quizIdx]; if(!word)return;
+  const word=state.quizWords[state.quizIdx]; if(!word)return;
   speak(lh.src(word),TTS_LOCALE[lh.from]);
 }
 
@@ -758,6 +765,14 @@ function setState(patch){
   render();
 }
 function activeList(){return state.lists.find(l=>l.id===state.activeListId);}
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
 
 // ── SCREEN LOADER ─────────────────────────────────────────────────
 function navigate(screen,extra={}){setState({screen,...extra});}
@@ -862,17 +877,19 @@ function quizSubmit(){
   const list=activeList(); if(!list||state.quizFeedback)return;
   const answer=state.quizAnswer.trim(); if(!answer)return;
   const lh=langHelpers(list,state.quizReversed);
-  const word=list.words[state.quizIdx];
+  const word=state.quizWords[state.quizIdx];
   const ok=answer.toLowerCase()===lh.tgt(word).toLowerCase();
   const pool=ok?ANIM_CORRECT:ANIM_WRONG;
   const anim=pool[Math.floor(Math.random()*pool.length)];
   if(ok){
     playCorrectSound();
     setState({quizRight:state.quizRight+1,quizFeedback:"correct",quizAnim:anim});
+    if(state.pronunciationOn)setTimeout(()=>speak(lh.tgt(word),TTS_LOCALE[lh.to]),300);
     setTimeout(quizAdvance,1200);
   }else{
     playWrongSound();
     setState({quizWrong:state.quizWrong+1,quizFeedback:"wrong",quizAnim:anim});
+    if(state.pronunciationOn)setTimeout(()=>speak(lh.tgt(word),TTS_LOCALE[lh.to]),300);
     setTimeout(()=>setState({quizWriteMode:true}),1400);
   }
 }
@@ -880,23 +897,24 @@ function quizSubmit(){
 function quizAdvance(){
   const list=activeList(); if(!list)return;
   const nextIdx=state.quizIdx+1;
-  if(nextIdx>=list.words.length){
-    setState({screen:"done",result:{right:state.quizRight,wrong:state.quizWrong,total:list.words.length}});
+  if(nextIdx>=state.quizWords.length){
+    setState({screen:"done",result:{right:state.quizRight,wrong:state.quizWrong,total:state.quizWords.length}});
     return;
   }
   setState({quizIdx:nextIdx,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""]});
   speakCurrentWord();
-  setTimeout(()=>document.getElementById("quiz-input")?.focus(),50);
+  document.getElementById("quiz-input")?.focus();
 }
 
 function write5Check(i,val){
   const list=activeList(); if(!list)return;
   const lh=langHelpers(list,state.quizReversed);
-  const word=list.words[state.quizIdx];
+  const word=state.quizWords[state.quizIdx];
   const target=lh.tgt(word).toLowerCase();
-  const newReps=[...state.quizReps]; newReps[i]=val; setState({quizReps:newReps});
-  if(val.trim().toLowerCase()===target&&i<4){
-    setTimeout(()=>document.getElementById(`w5-${i+1}`)?.focus(),100);
+  state.quizReps[i]=val;
+  if(val.trim().toLowerCase()===target){
+    setState({quizReps:[...state.quizReps]});
+    if(i<4)document.getElementById(`w5-${i+1}`)?.focus();
   }
 }
 
@@ -1170,8 +1188,8 @@ practiceSetup(){
 
 quiz(){
   const list=activeList(); if(!list)return screens.home();
-  const {quizIdx,quizRight,quizWrong,quizAnswer,quizFeedback,quizAnim,quizWriteMode,quizReps,quizReversed}=state;
-  const lh=langHelpers(list,quizReversed), word=list.words[quizIdx], total=list.words.length;
+  const {quizIdx,quizRight,quizWrong,quizAnswer,quizFeedback,quizAnim,quizWriteMode,quizReps,quizReversed,quizWords}=state;
+  const lh=langHelpers(list,quizReversed), word=quizWords[quizIdx], total=quizWords.length;
 
   if(quizWriteMode){
     const target=lh.tgt(word);
@@ -1226,18 +1244,16 @@ quiz(){
 
   return `
     <div class="screen-pad">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
-          <div class="dotbar">${dots}</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;font-family:var(--m-font);font-size:22px;font-weight:700;color:var(--ink);">
-            <span>${quizIdx+1} / ${total}</span>
-            <span style="display:flex;gap:14px;">
-              <span style="display:flex;align-items:center;gap:3px;">${SVG.arrowUp(20,"#241F3D")}${quizRight}</span>
-              <span style="display:flex;align-items:center;gap:3px;">${SVG.arrowDown(20,"#241F3D")}${quizWrong}</span>
-            </span>
-          </div>
+      <div style="position:relative;display:flex;flex-direction:column;gap:12px;padding-right:28px;">
+        <div class="dotbar">${dots}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-family:var(--m-font);font-size:22px;font-weight:700;color:var(--ink);">
+          <span>${quizIdx+1} / ${total}</span>
+          <span style="display:flex;gap:14px;">
+            <span style="display:flex;align-items:center;gap:3px;">${SVG.arrowUp(20,"#241F3D")}${quizRight}</span>
+            <span style="display:flex;align-items:center;gap:3px;">${SVG.arrowDown(20,"#241F3D")}${quizWrong}</span>
+          </span>
         </div>
-        <button id="quiz-exit" class="icon-btn-plain" style="align-self:center;">${SVG.cross(20,"#241F3D",3)}</button>
+        <button id="quiz-exit" class="icon-btn-plain" style="position:absolute;right:-12px;top:50%;transform:translateY(-50%);">${SVG.cross(20,"#241F3D",3)}</button>
       </div>
       <div class="card-lg" style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;padding:clamp(12px,4vh,24px) 24px;background:${fbBg};transition:background 250ms;position:relative;overflow:hidden;animation:${cardAnim};">
         <div style="display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;min-height:0;overflow-y:auto;">
@@ -1350,23 +1366,30 @@ function animName(a){
 function feedbackBurst(feedback,anim){
   if(!feedback||!anim)return"";
   const colors=["#B583E8","#F2EE5B","#8AD7FF","#A8F08C","#FFB0C8"];
-  if(anim==="kiss")return`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;"><div style="position:absolute;bottom:78px;left:50%;margin-left:-14px;animation:greta-heart-burst 1100ms ease-out 250ms both;">${SVG.heart(32,"#B583E8")}</div></div>`;
-  if(anim==="tada"){
+  let specific="";
+  if(anim==="kiss")specific=`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;"><div style="position:absolute;bottom:78px;left:50%;margin-left:-14px;animation:greta-heart-burst 1100ms ease-out 250ms both;">${SVG.heart(32,"#B583E8")}</div></div>`;
+  else if(anim==="tada"){
     const dirs=[{dx:-55,dy:-40},{dx:55,dy:-40},{dx:-70,dy:0},{dx:70,dy:0},{dx:0,dy:-65}];
-    return`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;">${dirs.map((d,i)=>`<div style="position:absolute;left:50%;top:50%;--dx:${d.dx}px;--dy:${d.dy}px;animation:greta-sparkle-arc 900ms ease-out ${i*50}ms both;">${SVG.spark(22,colors[i])}</div>`).join("")}</div>`;
+    specific=`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;">${dirs.map((d,i)=>`<div style="position:absolute;left:50%;top:50%;--dx:${d.dx}px;--dy:${d.dy}px;animation:greta-sparkle-arc 900ms ease-out ${i*50}ms both;">${SVG.spark(22,colors[i])}</div>`).join("")}</div>`;
   }
-  if(anim==="bigbounce"){
+  else if(anim==="bigbounce"){
     const pieces=Array.from({length:18}).map((_,i)=>({cdx:(i*47)%320+"px",cdx2:(((i*13)%60)-30)+"px",delay:(i*35)%400,rot:(i*47)%360,color:colors[i%colors.length]}));
-    return`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;overflow:hidden;">${pieces.map(p=>`<div style="position:absolute;top:0;left:0;--cdx:${p.cdx};--cdx2:${p.cdx2};animation:greta-confetti-rain 1200ms ease-in ${p.delay}ms both;">${SVG.confetti(9,p.color,p.rot)}</div>`).join("")}</div>`;
+    specific=`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;overflow:hidden;">${pieces.map(p=>`<div style="position:absolute;top:0;left:0;--cdx:${p.cdx};--cdx2:${p.cdx2};animation:greta-confetti-rain 1200ms ease-in ${p.delay}ms both;">${SVG.confetti(9,p.color,p.rot)}</div>`).join("")}</div>`;
   }
-  if(anim==="cartwheel"){
+  else if(anim==="cartwheel"){
     const dirs=[{dx:-10,dy:-10,rot:0},{dx:-30,dy:-30,rot:40},{dx:-50,dy:-50,rot:80},{dx:-70,dy:-55,rot:120},{dx:-85,dy:-45,rot:160}];
-    return`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;">${dirs.map((d,i)=>`<div style="position:absolute;bottom:24px;right:24px;--dx:${d.dx}px;--dy:${d.dy}px;--rot:${d.rot}deg;animation:greta-petal-trail 1000ms ease-out ${i*80}ms both;">${SVG.bloom(20,colors[i%colors.length],"#F4F1E8",false)}</div>`).join("")}</div>`;
+    specific=`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;">${dirs.map((d,i)=>`<div style="position:absolute;bottom:24px;right:24px;--dx:${d.dx}px;--dy:${d.dy}px;--rot:${d.rot}deg;animation:greta-petal-trail 1000ms ease-out ${i*80}ms both;">${SVG.bloom(20,colors[i%colors.length],"#F4F1E8",false)}</div>`).join("")}</div>`;
   }
-  if(anim==="sink")return`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;"><div style="position:absolute;bottom:38px;right:62px;animation:greta-droplet-fall 1000ms ease-in 200ms both;"><svg width="14" height="20" viewBox="0 0 14 20"><path d="M7 1 C 11 9 13 13 13 16 a6 6 0 0 1 -12 0 C 1 13 3 9 7 1 Z" fill="#8AD7FF"/><ellipse cx="9" cy="13" rx="1.5" ry="3" fill="#fff" opacity=".6"/></svg></div></div>`;
-  if(anim==="headtilt")return`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;"><div style="position:absolute;bottom:80px;right:26px;animation:greta-qmark-pop 1000ms ease-out 100ms both;font-family:var(--h-font);font-size:36px;color:var(--wrong);font-weight:700;">?</div></div>`;
-  if(anim==="spin")return`<div style="position:absolute;inset:0;pointer-events:none;z-index:2;"><div style="position:absolute;bottom:-8px;right:-8px;width:110px;height:110px;border-radius:50%;background:var(--ink-soft);animation:greta-puff 850ms ease-out both;opacity:.5;"></div></div>`;
-  return"";
+  else if(anim==="sink")specific=`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;"><div style="position:absolute;bottom:38px;right:62px;animation:greta-droplet-fall 1000ms ease-in 200ms both;"><svg width="14" height="20" viewBox="0 0 14 20"><path d="M7 1 C 11 9 13 13 13 16 a6 6 0 0 1 -12 0 C 1 13 3 9 7 1 Z" fill="#8AD7FF"/><ellipse cx="9" cy="13" rx="1.5" ry="3" fill="#fff" opacity=".6"/></svg></div></div>`;
+  else if(anim==="headtilt")specific=`<div style="position:absolute;inset:0;pointer-events:none;z-index:4;"><div style="position:absolute;bottom:80px;right:26px;animation:greta-qmark-pop 1000ms ease-out 100ms both;font-family:var(--h-font);font-size:36px;color:var(--wrong);font-weight:700;">?</div></div>`;
+  else if(anim==="spin")specific=`<div style="position:absolute;inset:0;pointer-events:none;z-index:2;"><div style="position:absolute;bottom:-8px;right:-8px;width:110px;height:110px;border-radius:50%;background:var(--ink-soft);animation:greta-puff 850ms ease-out both;opacity:.5;"></div></div>`;
+  if(feedback!=="correct")return specific;
+  const sparklePieces=Array.from({length:7}).map((_,i)=>({
+    left:8+(i*13)%84,top:10+(i*31)%75,delay:i*40,color:colors[i%colors.length],
+  }));
+  const glow=`<div style="position:absolute;inset:0;pointer-events:none;z-index:2;border-radius:inherit;animation:greta-glow-pulse 650ms ease-out both;"></div>`;
+  const sparkles=sparklePieces.map(p=>`<div style="position:absolute;left:${p.left}%;top:${p.top}%;pointer-events:none;z-index:3;animation:greta-twinkle 700ms ease-out ${p.delay}ms both;">${SVG.spark(14,p.color)}</div>`).join("");
+  return glow+sparkles+specific;
 }
 
 // ── EVENT BINDING ─────────────────────────────────────────────────
@@ -1378,8 +1401,8 @@ function bindEvents(){
   on("home-start","click",()=>{if(activeList())navigate("practiceSetup");});
 
   on("setup-close","click",()=>navigate("home"));
-  on("setup-normal","click",()=>{navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:false});speakCurrentWord();});
-  on("setup-reversed","click",()=>{navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:true});speakCurrentWord();});
+  on("setup-normal","click",()=>{navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:false,quizWords:shuffle(activeList().words)});speakCurrentWord();});
+  on("setup-reversed","click",()=>{navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:true,quizWords:shuffle(activeList().words)});speakCurrentWord();});
   on("home-lists","click",()=>navigate("lists"));
   on("home-new","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null,pasteAutoGuessed:false}));
   on("home-settings","click",()=>navigate("settings"));
@@ -1441,7 +1464,7 @@ function bindEvents(){
     }
   });
 
-  on("quiz-exit","click",()=>navigate("home"));
+  on("quiz-exit","click",()=>{if(confirm(t("exitGameConfirm")))navigate("home");});
   const qi=document.getElementById("quiz-input");
   if(qi){qi.focus();qi.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();quizSubmit();}});qi.addEventListener("input",e=>{state.quizAnswer=e.target.value;});}
   on("w5-done","click",quizAdvance);
@@ -1450,7 +1473,7 @@ function bindEvents(){
   });
 
   on("done-home",  "click",()=>navigate("home"));
-  on("done-again", "click",()=>{navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""]});speakCurrentWord();});
+  on("done-again", "click",()=>{navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizWords:shuffle(activeList().words)});speakCurrentWord();});
 
   on("settings-close", "click",()=>navigate("home"));
   on("settings-logout","click",signOut);
