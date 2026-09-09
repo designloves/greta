@@ -67,7 +67,6 @@ html,body{background:var(--paper);height:var(--app-height,100dvh);overflow:hidde
   background:var(--paper-alt);border:var(--border-thin);border-radius:999px;
   width:38px;height:38px;cursor:pointer;display:flex;align-items:center;justify-content:center;outline:none;
 }
-.icon-btn-sm{width:34px;height:34px;}
 .icon-btn-plain{
   background:none;border:none;box-shadow:none;
   width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;outline:none;
@@ -119,7 +118,7 @@ html,body{background:var(--paper);height:var(--app-height,100dvh);overflow:hidde
 .screen-pad{padding:16px 16px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:32px;min-height:100%;}
 
 /* ── Dot progress bar ── */
-.dotbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.dotbar{display:flex;justify-content:space-between;gap:6px;align-items:center;flex-wrap:wrap;}
 .dot{height:10px;border-radius:6px;border:2px solid var(--ink);background:var(--paper-alt);transition:all 200ms;}
 .dot-current{width:28px;background:var(--butter);}
 .dot-done{width:10px;background:var(--mint);}
@@ -346,7 +345,7 @@ const UI_STRINGS={
     gotItKeepGoing:"Got it — keep going",
     doneOfFive:"{n} / 5 done",
     whatMeanIn:"What does this mean in {lang}?",
-    typeInLang:"type in {lang}, then press enter…",
+    typeInLang:"Answer and hit enter",
     youDidIt:"You did it!",
     resultLine:"{pct}% right · {fraction} on the first try",
     home:"Home",
@@ -406,7 +405,7 @@ const UI_STRINGS={
     gotItKeepGoing:"Fixat — fortsätt",
     doneOfFive:"{n} / 5 klara",
     whatMeanIn:"Vad betyder detta på {lang}?",
-    typeInLang:"skriv på {lang}, tryck sedan enter…",
+    typeInLang:"Svara och tryck enter",
     youDidIt:"Du klarade det!",
     resultLine:"{pct}% rätt · {fraction} på första försöket",
     home:"Hem",
@@ -581,6 +580,8 @@ const SVG={
   plus:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>`,
   arrowRight:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`,
   arrowBack:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>`,
+  arrowUp:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>`,
+  arrowDown:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>`,
   pencil:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .622.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>`,
   trash:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>`,
   books:(size,color)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>`,
@@ -667,7 +668,7 @@ let state={
   // avatar
   avatar:"ollie",
   // practice settings
-  soundOn:true,pronunciationOn:true,
+  soundOn:false,pronunciationOn:false,
   // ui language
   uiLang:"sv",
 };
@@ -1226,17 +1227,17 @@ quiz(){
   return `
     <div class="screen-pad">
       <div style="display:flex;align-items:center;gap:10px;">
-        <button id="quiz-exit" class="icon-btn-sm">${SVG.arrowBack(14,"#241F3D")}</button>
         <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
           <div class="dotbar">${dots}</div>
-          <div style="display:flex;justify-content:space-between;font-family:var(--m-font);font-size:11px;color:var(--ink-soft);">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-family:var(--m-font);font-size:22px;font-weight:700;color:var(--ink);">
             <span>${quizIdx+1} / ${total}</span>
-            <span style="display:flex;gap:10px;">
-              <span style="color:var(--correct);font-weight:700;">✓${quizRight}</span>
-              <span style="color:var(--wrong);font-weight:700;">✗${quizWrong}</span>
+            <span style="display:flex;gap:14px;">
+              <span style="display:flex;align-items:center;gap:3px;">${SVG.arrowUp(20,"#241F3D")}${quizRight}</span>
+              <span style="display:flex;align-items:center;gap:3px;">${SVG.arrowDown(20,"#241F3D")}${quizWrong}</span>
             </span>
           </div>
         </div>
+        <button id="quiz-exit" class="icon-btn-plain" style="align-self:center;">${SVG.cross(20,"#241F3D",3)}</button>
       </div>
       <div class="card-lg" style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;padding:clamp(12px,4vh,24px) 24px;background:${fbBg};transition:background 250ms;position:relative;overflow:hidden;animation:${cardAnim};">
         <div style="display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;min-height:0;overflow-y:auto;">
@@ -1247,7 +1248,7 @@ quiz(){
         ${burst}
         <div style="${mascotStyle}">${mascotSVG(86,mascotMood)}</div>
       </div>
-      <input id="quiz-input" class="inp" value="${quizAnswer}" placeholder="${t("typeInLang",{lang:lh.tgtLang})}"
+      <input id="quiz-input" class="inp" value="${quizAnswer}" placeholder="${t("typeInLang")}"
         style="font-size:18px;font-weight:600;background:${inpBg};transition:background 250ms;text-align:${quizFeedback?"center":"left"};"
         ${quizFeedback?"readonly":""}/>
     </div>`;
