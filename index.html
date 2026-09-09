@@ -120,6 +120,8 @@ html,body{background:var(--paper);height:var(--app-height,100dvh);overflow:hidde
 
 /* ── Dot progress bar ── */
 .dotbar{display:flex;justify-content:space-between;gap:6px;align-items:center;flex-wrap:wrap;}
+.quiz-hint{display:contents;}
+.short-viewport .quiz-hint{display:none;}
 .dot{height:10px;border-radius:6px;border:2px solid var(--ink);background:var(--paper-alt);transition:all 200ms;}
 .dot-current{width:28px;background:var(--butter);}
 .dot-done{width:10px;background:var(--mint);}
@@ -266,6 +268,10 @@ function syncAppHeight(){
   try{
     const h=window.visualViewport?window.visualViewport.height:window.innerHeight;
     document.documentElement.style.setProperty('--app-height',h+'px');
+    // A short visible height (typically a small phone with the keyboard
+    // open) means room is tight — some non-essential content hides itself
+    // via the .short-viewport class rather than forcing a scroll.
+    document.documentElement.classList.toggle('short-viewport',h<560);
   }catch{}
 }
 // Some mobile browsers scroll the outer document itself when a focused
@@ -910,7 +916,7 @@ function quizSubmit(){
     setState({quizRight:state.quizRight+1,quizFeedback:"correct",quizAnim:anim});
     playScreenFX(SCREEN_FX[Math.floor(Math.random()*SCREEN_FX.length)]);
     if(state.pronunciationOn)setTimeout(()=>speak(lh.tgt(word),TTS_LOCALE[lh.to]),300);
-    setTimeout(quizAdvance,1200);
+    setTimeout(quizAdvance,1800);
   }else{
     playWrongSound();
     setState({quizWrong:state.quizWrong+1,quizFeedback:"wrong",quizAnim:anim});
@@ -1301,7 +1307,7 @@ quiz(){
   const burst=feedbackBurst(quizFeedback,quizAnim);
 
   const wrongAnswer=quizFeedback==="wrong"?`<div class="h-font" style="font-size:30px;color:var(--wrong);animation:greta-answer-rise 360ms ease-out both;">= ${esc(lh.tgt(word))}</div>`:"";
-  const hint=!quizFeedback?`<div class="b-font" style="font-size:14px;color:var(--ink);opacity:.7;">${t("whatMeanIn",{lang:lh.tgtLang})}</div><div style="height:1px;width:40px;background:var(--ink);opacity:.2;"></div>`:"";
+  const hint=!quizFeedback?`<div class="quiz-hint"><div class="b-font" style="font-size:14px;color:var(--ink);opacity:.7;">${t("whatMeanIn",{lang:lh.tgtLang})}</div><div style="height:1px;width:40px;background:var(--ink);opacity:.2;"></div></div>`:"";
   const inpBg=quizFeedback==="correct"?"var(--mint-soft)":quizFeedback==="wrong"?"var(--pink-soft)":"var(--paper)";
 
   return `
@@ -1483,7 +1489,7 @@ function playScreenFX(kind){
   if(!layer)return;
   layer.innerHTML=screenFX(kind);
   clearTimeout(screenFXTimer);
-  screenFXTimer=setTimeout(()=>{layer.innerHTML="";},1700);
+  screenFXTimer=setTimeout(()=>{layer.innerHTML="";},1900);
 }
 function clearScreenFX(){
   clearTimeout(screenFXTimer);
