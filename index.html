@@ -83,8 +83,8 @@ html,body{background:var(--paper);height:var(--app-height,100dvh);overflow:hidde
 .switch:active{transform:translateY(3px);box-shadow:0 0 0 var(--ink);}
 .switch[data-on="true"]{background:var(--mint);}
 .switch::after{
-  content:"";position:absolute;top:1.5px;left:1.5px;width:19px;height:19px;
-  border-radius:999px;background:#fff;border:1.5px solid var(--ink);
+  content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;
+  border-radius:999px;background:#fff;border:var(--border-thin);
   transition:transform 150ms;
 }
 .switch[data-on="true"]::after{transform:translateX(18px);}
@@ -1250,7 +1250,7 @@ settings(){
   const langBtn=(code,label)=>`<button class="ui-lang-btn" data-lang="${code}" style="flex:1;padding:12px;border-radius:var(--radius);border:${state.uiLang===code?"var(--border)":"var(--border-thin)"};background:${state.uiLang===code?"var(--butter-soft)":"var(--paper)"};font-family:var(--b-font);font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;box-shadow:${state.uiLang===code?"0 3px 0 var(--ink)":"none"};">${label}</button>`;
   return `
     <div class="screen-pad">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:0 -8px;">
         <h2 class="h-font" style="font-size:30px;color:var(--ink);">${t("settingsTitle")}</h2>
         <button id="settings-close" class="icon-btn-plain">${SVG.cross(20,"#241F3D",3)}</button>
       </div>
