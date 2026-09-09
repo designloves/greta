@@ -344,7 +344,7 @@ const UI_STRINGS={
     editList:"Edit list",
     pasteWordList:"New list",
     language:"Language",
-    pasteInstructions:"Type or paste words with their translation next to them. It doesn't matter what character you put between the words, or which order the languages are in — you can practice in both directions.",
+    pasteInstructions:"Type or paste words with their translation next to them. It doesn't matter what character you put between the words, or which order the languages are in — you can practice in both directions. Or just type words in one language and we'll translate them for you.",
     listNamePlaceholder:"What's this list called?",
     wordTranslationPlaceholder:"word = translation",
     cancel:"Cancel",
@@ -353,6 +353,7 @@ const UI_STRINGS={
     exitGame:"Exit",
     returnToGame:"Return to game",
     sortItOut:"Sort it out",
+    translating:"Translating…",
     lookRight:"Look right?",
     foundWords:"Found {n} words",
     edit:"Edit",
@@ -379,7 +380,7 @@ const UI_STRINGS={
     soundEffects:"Sound effects",
     showPronunciation:"Show pronunciation",
     logOut:"Log out",
-    logIn:"Log in to save your lists",
+    logIn:"Log in",
     madeWith:"Poppins v1 · made with",
   },
   sv:{
@@ -407,7 +408,7 @@ const UI_STRINGS={
     editList:"Redigera lista",
     pasteWordList:"Ny lista",
     language:"Språk",
-    pasteInstructions:"Skriv eller klistra in glosor med översättning bredvid. Det spelar ingen roll vilket tecken du har mellan orden eller vilken ordning språken sätts i, man kan träna åt båda hållen.",
+    pasteInstructions:"Skriv eller klistra in glosor med översättning bredvid. Det spelar ingen roll vilket tecken du har mellan orden eller vilken ordning språken sätts i, man kan träna åt båda hållen. Eller skriv bara ord på ett språk, så översätter vi automatiskt.",
     listNamePlaceholder:"Vad ska listan heta?",
     wordTranslationPlaceholder:"ord = översättning",
     cancel:"Avbryt",
@@ -416,6 +417,7 @@ const UI_STRINGS={
     exitGame:"Avsluta",
     returnToGame:"Fortsätt spela",
     sortItOut:"Sortera ut det",
+    translating:"Översätter…",
     lookRight:"Ser det rätt ut?",
     foundWords:"Hittade {n} ord",
     edit:"Redigera",
@@ -442,7 +444,7 @@ const UI_STRINGS={
     soundEffects:"Ljudeffekter",
     showPronunciation:"Visa uttal",
     logOut:"Logga ut",
-    logIn:"Logga in för att spara dina listor",
+    logIn:"Logga in",
     madeWith:"Poppins v1 · gjord med",
   },
 };
@@ -686,7 +688,7 @@ let state={
   // quiz
   quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:false,quizWords:[],showExitConfirm:false,
   // paste
-  pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null,pasteAutoGuessed:false,
+  pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null,pasteAutoGuessed:false,pasteAutoTranslated:false,pasteLoading:false,
   // login
   loginEmail:"",loginSent:false,loginErr:"",loginLoading:false,
   // mascot
@@ -986,6 +988,42 @@ function guessPairFromText(text){
   return null;
 }
 
+// One word per line (no "word = translation" separator) means the user
+// wants auto-translation rather than pasted pairs.
+function looksLikeSingleWords(text){
+  const lines=text.split("\n").map(l=>l.trim()).filter(Boolean);
+  if(!lines.length)return false;
+  return !splitPasteLine(lines[0]);
+}
+
+// Calls the backend's /translate endpoint (Claude-powered). Throws on
+// failure so callers can show the error instead of silently proceeding.
+async function translateWords(words,from,to){
+  const res=await fetch(`${API}/translate`,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({words,...(from?{from}:{}),...(to?{to}:{})}),
+  });
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok)throw new Error(data.error||"Translation failed");
+  return data;
+}
+
+// Re-runs translation for the raw (single-word) paste text against a new
+// language pair — used when the From/To pickers change on the review step.
+async function reTranslateReview(pair){
+  setState({pair,pasteAutoGuessed:true,pasteLoading:true});
+  try{
+    const rawWords=state.pasteText.split("\n").map(l=>l.trim()).filter(Boolean);
+    const{translations}=await translateWords(rawWords,pair.from,pair.to);
+    const parsed=rawWords.map((w,i)=>({[pair.from]:w,[pair.to]:translations[i]}));
+    setState({pasteParsed:parsed,pasteLoading:false});
+  }catch(e){
+    setState({pasteLoading:false});
+    alert(e.message||"Could not translate — try again.");
+  }
+}
+
 // ── RENDER ────────────────────────────────────────────────────────
 function render(){
   const sc=document.getElementById("screen");
@@ -1128,7 +1166,7 @@ lists(){
 },
 
 paste(){
-  const {pasteName,pasteText,pasteParsed,pasteStep,pair,editingListId}=state;
+  const {pasteName,pasteText,pasteParsed,pasteStep,pair,editingListId,pasteLoading}=state;
   if(pasteStep==="paste")return `
     <div class="screen-pad">
       <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -1147,8 +1185,8 @@ paste(){
       </div>
       <div style="display:flex;gap:10px;">
         <button id="paste-cancel" class="btn btn-tertiary">${t("cancel")}</button>
-        <button id="paste-parse" class="btn btn-primary" style="flex:1;" ${!pasteText.trim()?"disabled":""}>
-          ${SVG.spark(16,"#fff")} ${t("sortItOut")}
+        <button id="paste-parse" class="btn btn-primary" style="flex:1;" ${!pasteText.trim()||pasteLoading?"disabled":""}>
+          ${pasteLoading?t("translating"):`${SVG.spark(16,"#fff")} ${t("sortItOut")}`}
         </button>
       </div>
     </div>`;
@@ -1166,16 +1204,16 @@ paste(){
       </div>
       <div style="background:var(--mint-soft);border:var(--border-thin);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:8px;">
         ${SVG.check(18,"#241F3D",4)}
-        <span class="b-font" style="font-size:14px;color:var(--ink);font-weight:600;">${t("foundWords",{n:`<strong>${pasteParsed.length}</strong>`})}</span>
+        <span class="b-font" style="font-size:14px;color:var(--ink);font-weight:600;">${pasteLoading?t("translating"):t("foundWords",{n:`<strong>${pasteParsed.length}</strong>`})}</span>
       </div>
       <div>
         <div class="label-caps" style="margin-bottom:6px;">${t("language")}</div>
         <div style="display:flex;align-items:center;gap:8px;">
-          <select id="paste-from" class="inp" style="flex:1;padding:10px 12px;font-size:14px;">
+          <select id="paste-from" class="inp" style="flex:1;padding:10px 12px;font-size:14px;" ${pasteLoading?"disabled":""}>
             ${Object.keys(LANGUAGES).map(code=>`<option value="${code}" ${pair.from===code?"selected":""}>${langName(code)}</option>`).join("")}
           </select>
           ${SVG.arrowRight(16,"#241F3D")}
-          <select id="paste-to" class="inp" style="flex:1;padding:10px 12px;font-size:14px;">
+          <select id="paste-to" class="inp" style="flex:1;padding:10px 12px;font-size:14px;" ${pasteLoading?"disabled":""}>
             ${Object.keys(LANGUAGES).map(code=>`<option value="${code}" ${pair.to===code?"selected":""}>${langName(code)}</option>`).join("")}
           </select>
         </div>
@@ -1183,7 +1221,7 @@ paste(){
       <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">${reviewItems}</div>
       <div style="display:flex;gap:10px;">
         <button id="paste-back" class="btn btn-tertiary">${t("edit")}</button>
-        <button id="paste-save" class="btn btn-primary" style="flex:1;" ${!pasteParsed.length?"disabled":""}>
+        <button id="paste-save" class="btn btn-primary" style="flex:1;" ${!pasteParsed.length||pasteLoading?"disabled":""}>
           ${editingListId?t("saveChanges"):t("saveList")} ${SVG.arrowRight(16,"#fff")}
         </button>
       </div>
@@ -1350,15 +1388,14 @@ settings(){
           <div style="position:relative;overflow:visible;width:64px;height:64px;border-radius:999px;background:var(--paper);border:var(--border-thin);flex-shrink:0;">
             ${avatarButtonInner(state.avatar,64)}
           </div>
-          <div>
+          <div style="flex:1;min-width:0;">
             <div class="h-font" style="font-size:18px;color:var(--ink);">${t("hejThere")}</div>
             <div class="m-font" style="font-size:12px;color:var(--ink-soft);">${esc(currentUser?.email||t("notSignedIn"))}</div>
           </div>
+          ${!currentUser?`<button id="settings-login" class="btn btn-primary" style="flex-shrink:0;padding:10px 16px;font-size:14px;">${t("logIn")}</button>`:""}
         </div>
       </div>
-      ${currentUser
-        ?`<button id="settings-logout" class="btn btn-tertiary btn-full">${t("logOut")}</button>`
-        :`<button id="settings-login" class="btn btn-primary btn-full">${SVG.spark(16,"#fff")} ${t("logIn")}</button>`}
+      ${currentUser?`<button id="settings-logout" class="btn btn-tertiary btn-full">${t("logOut")}</button>`:""}
       <div>
         <div class="label-caps" style="margin-bottom:8px;">${t("avatar")}</div>
         <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;">${avatarSwatches}</div>
@@ -1466,7 +1503,7 @@ function bindEvents(){
   on("setup-normal","click",()=>{navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:false,quizWords:shuffle(activeList().words)});speakCurrentWord();});
   on("setup-reversed","click",()=>{navigate("quiz",{quizIdx:0,quizRight:0,quizWrong:0,quizAnswer:"",quizFeedback:null,quizAnim:null,quizWriteMode:false,quizReps:["","","","",""],quizReversed:true,quizWords:shuffle(activeList().words)});speakCurrentWord();});
   on("home-lists","click",()=>navigate("lists"));
-  on("home-new","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null,pasteAutoGuessed:false}));
+  on("home-new","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null,pasteAutoGuessed:false,pasteAutoTranslated:false}));
   on("home-settings","click",()=>navigate("settings"));
   on("home-mascot","click",()=>{
     clearTimeout(greetTimer);clearTimeout(greetHideTimer);
@@ -1480,11 +1517,11 @@ function bindEvents(){
   on("home-list-edit","click",()=>{
     const list=activeList(); if(!list)return;
     const text=list.words.map(w=>`${w[list.from]||w.sv} = ${w[list.to]||w.en}`).join("\n");
-    navigate("paste",{pasteName:list.name,pasteText:text,pasteParsed:[],pasteStep:"paste",editingListId:list.id,pair:{from:list.from||"sv",to:list.to||"en"},pasteAutoGuessed:true});
+    navigate("paste",{pasteName:list.name,pasteText:text,pasteParsed:[],pasteStep:"paste",editingListId:list.id,pair:{from:list.from||"sv",to:list.to||"en"},pasteAutoGuessed:true,pasteAutoTranslated:false});
   });
 
   on("lists-close","click",()=>navigate("home"));
-  on("lists-add","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null,pasteAutoGuessed:false}));
+  on("lists-add","click",()=>navigate("paste",{pasteName:"",pasteText:"",pasteParsed:[],pasteStep:"paste",editingListId:null,pasteAutoGuessed:false,pasteAutoTranslated:false}));
   document.querySelectorAll("[data-list-id]").forEach(el=>{
     el.addEventListener("click",e=>{
       if(e.target.closest(".list-delete"))return;
@@ -1505,17 +1542,34 @@ function bindEvents(){
   on("paste-text","input",e=>setState({pasteText:e.target.value}));
   on("paste-from","change",e=>{
     const pair={...state.pair,from:e.target.value};
-    setState({pair,pasteAutoGuessed:true,pasteParsed:parsePasteText(state.pasteText,pair)});
+    if(state.pasteAutoTranslated)reTranslateReview(pair);
+    else setState({pair,pasteAutoGuessed:true,pasteParsed:parsePasteText(state.pasteText,pair)});
   });
   on("paste-to","change",e=>{
     const pair={...state.pair,to:e.target.value};
-    setState({pair,pasteAutoGuessed:true,pasteParsed:parsePasteText(state.pasteText,pair)});
+    if(state.pasteAutoTranslated)reTranslateReview(pair);
+    else setState({pair,pasteAutoGuessed:true,pasteParsed:parsePasteText(state.pasteText,pair)});
   });
-  on("paste-parse","click",()=>{
-    const guess=!state.pasteAutoGuessed&&guessPairFromText(state.pasteText);
+  on("paste-parse","click",async()=>{
+    const text=state.pasteText;
+    if(looksLikeSingleWords(text)){
+      const rawWords=text.split("\n").map(l=>l.trim()).filter(Boolean);
+      setState({pasteLoading:true});
+      try{
+        const{from,to,translations}=await translateWords(rawWords);
+        const pair={from,to};
+        const parsed=rawWords.map((w,i)=>({[from]:w,[to]:translations[i]}));
+        setState({pasteParsed:parsed,pasteStep:"review",pair,pasteAutoGuessed:true,pasteAutoTranslated:true,pasteLoading:false});
+      }catch(e){
+        setState({pasteLoading:false});
+        alert(e.message||"Could not translate — try again.");
+      }
+      return;
+    }
+    const guess=!state.pasteAutoGuessed&&guessPairFromText(text);
     const pair=guess||state.pair;
-    const parsed=parsePasteText(state.pasteText,pair);
-    setState({pasteParsed:parsed,pasteStep:"review",pair,pasteAutoGuessed:true});
+    const parsed=parsePasteText(text,pair);
+    setState({pasteParsed:parsed,pasteStep:"review",pair,pasteAutoGuessed:true,pasteAutoTranslated:false});
   });
   on("paste-back","click",()=>setState({pasteStep:"paste"}));
   on("paste-save","click",()=>{
