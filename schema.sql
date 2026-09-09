@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS word_sets (
   user_id    UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   topic      TEXT NOT NULL CHECK (char_length(topic) <= 40),
   vocab      JSONB NOT NULL,
+  lang_from  TEXT NOT NULL DEFAULT 'sv',
+  lang_to    TEXT NOT NULL DEFAULT 'en',
   word_count INTEGER NOT NULL DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -27,6 +29,10 @@ CREATE POLICY "Users read own sets"
 -- Authenticated users can insert their own sets
 CREATE POLICY "Users insert own sets"
   ON word_sets FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Users can update their own sets (editing an existing list)
+CREATE POLICY "Users update own sets"
+  ON word_sets FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 -- Users can delete their own sets
 CREATE POLICY "Users delete own sets"
@@ -45,3 +51,14 @@ CREATE POLICY "Users delete own sets"
 -- CREATE POLICY "Users read own sets"   ON word_sets FOR SELECT USING (auth.uid() = user_id);
 -- CREATE POLICY "Users insert own sets" ON word_sets FOR INSERT WITH CHECK (auth.uid() = user_id);
 -- CREATE POLICY "Users delete own sets" ON word_sets FOR DELETE USING (auth.uid() = user_id);
+
+
+-- ── Upgrading from v2? Run these instead ─────────────────
+-- (Adds per-list language pair + lets users edit their own sets)
+--
+-- ALTER TABLE word_sets ADD COLUMN IF NOT EXISTS lang_from TEXT NOT NULL DEFAULT 'sv';
+-- ALTER TABLE word_sets ADD COLUMN IF NOT EXISTS lang_to   TEXT NOT NULL DEFAULT 'en';
+--
+-- DROP POLICY IF EXISTS "Users update own sets" ON word_sets;
+-- CREATE POLICY "Users update own sets"
+--   ON word_sets FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
