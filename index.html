@@ -352,6 +352,7 @@ const UI_STRINGS={
     soundEffects:"Sound effects",
     showPronunciation:"Show pronunciation",
     logOut:"Log out",
+    logIn:"Log in to save your lists",
     madeWith:"Poppins v1 · made with",
   },
   sv:{
@@ -410,6 +411,7 @@ const UI_STRINGS={
     soundEffects:"Ljudeffekter",
     showPronunciation:"Visa uttal",
     logOut:"Logga ut",
+    logIn:"Logga in för att spara dina listor",
     madeWith:"Poppins v1 · gjord med",
   },
 };
@@ -610,8 +612,8 @@ let currentUser=null, sessionToken=null;
 
 function parseJWT(t){try{return JSON.parse(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));}catch{return null;}}
 function tokenExpired(t){const p=parseJWT(t);return!p?.exp||Date.now()/1000>p.exp-60;}
-function saveSession(t,r){try{sessionStorage.setItem("greta_session",JSON.stringify({token:t,refresh:r}));}catch{}}
-function clearSession(){try{sessionStorage.removeItem("greta_session");}catch{}currentUser=null;sessionToken=null;}
+function saveSession(t,r){try{localStorage.setItem("greta_session",JSON.stringify({token:t,refresh:r}));}catch{}}
+function clearSession(){try{localStorage.removeItem("greta_session");}catch{}currentUser=null;sessionToken=null;}
 
 function applySession(token,refresh){
   const p=parseJWT(token);
@@ -625,7 +627,7 @@ async function initAuth(){
   const ht=params.get("access_token"), hr=params.get("refresh_token");
   if(ht){applySession(ht,hr);try{history.replaceState(null,"",location.pathname+location.search);}catch{}return;}
   try{
-    const saved=sessionStorage.getItem("greta_session");
+    const saved=localStorage.getItem("greta_session");
     if(!saved)return;
     let{token,refresh}=JSON.parse(saved);
     if(tokenExpired(token)&&refresh){
@@ -682,6 +684,18 @@ function saveSettings(){
 }
 Object.assign(state,loadSettings());
 
+// ── GUEST LIST PERSISTENCE (signed-out users only; the server is source of truth once signed in) ──
+const GUEST_LISTS_KEY="poppins_guest_lists_v1";
+function loadGuestLists(){
+  try{
+    const raw=localStorage.getItem(GUEST_LISTS_KEY);
+    return raw?JSON.parse(raw):null;
+  }catch{return null;}
+}
+function saveGuestLists(){
+  try{localStorage.setItem(GUEST_LISTS_KEY,JSON.stringify({lists:state.lists,activeListId:state.activeListId}));}catch{}
+}
+
 function speak(text,lang){
   try{
     if(!window.speechSynthesis)return;
@@ -732,6 +746,7 @@ function speakCurrentWord(){
 function setState(patch){
   Object.assign(state,patch);
   if(Object.keys(patch).some(k=>PERSISTED_KEYS.includes(k)))saveSettings();
+  if(!sessionToken&&("lists" in patch||"activeListId" in patch))saveGuestLists();
   render();
 }
 function activeList(){return state.lists.find(l=>l.id===state.activeListId);}
@@ -763,15 +778,14 @@ async function loadUserLists(){
     const COLORS=["rose","butter","sky","mint","pink"];
     const mapped=sets.map((s,i)=>({
       id:s.id,name:s.topic,color:COLORS[i%COLORS.length],
-      words:(s.vocab||[]).map(p=>({sv:p.sv,en:typeof p.en==="string"&&p.en.includes("|")?p.en.split("|").map(x=>x.trim()):p.en})),
-      from:"sv",to:"en",
+      words:s.vocab||[],
+      from:s.lang_from||"sv",to:s.lang_to||"en",
     }));
     if(mapped.length>0)setState({lists:mapped,activeListId:mapped[0].id});
   }catch{}
 }
 
 async function saveList(newList){
-  const words=newList.words.map(w=>({sv:w[newList.from]||w.sv,en:w[newList.to]||w.en}));
   if(!sessionToken){
     setState({lists:[...state.lists,newList],activeListId:newList.id,screen:"home"});
     return;
@@ -780,28 +794,45 @@ async function saveList(newList){
     const res=await fetch(`${API}/sets`,{
       method:"POST",
       headers:{"Content-Type":"application/json","Authorization":`Bearer ${sessionToken}`},
-      body:JSON.stringify({topic:newList.name,vocab:words}),
+      body:JSON.stringify({topic:newList.name,vocab:newList.words,lang_from:newList.from,lang_to:newList.to}),
     });
     const saved=await res.json();
     if(!res.ok)throw new Error(saved.error||"Save failed");
     const stamped={...newList,id:saved.id};
     setState({lists:[...state.lists,stamped],activeListId:stamped.id,screen:"home"});
-  }catch{
+  }catch(e){
     setState({lists:[...state.lists,newList],activeListId:newList.id,screen:"home"});
+    alert(`${e.message||"Could not save to your account"} — kept on this device for now.`);
   }
 }
 
-function updateList(id,patch){
+async function updateList(id,patch){
   const lists=state.lists.map(l=>l.id===id?{...l,...patch}:l);
   setState({lists,activeListId:id,editingListId:null,screen:"home"});
+  if(!sessionToken)return;
+  const updated=lists.find(l=>l.id===id);
+  try{
+    const res=await fetch(`${API}/sets/${id}`,{
+      method:"PATCH",
+      headers:{"Content-Type":"application/json","Authorization":`Bearer ${sessionToken}`},
+      body:JSON.stringify({topic:updated.name,vocab:updated.words,lang_from:updated.from,lang_to:updated.to}),
+    });
+    if(!res.ok){const d=await res.json().catch(()=>({}));throw new Error(d.error||"Could not save changes");}
+  }catch(e){
+    alert(`${e.message||"Could not save changes to your account"} — kept on this device for now.`);
+  }
 }
 
 async function deleteList(list){
-  if(sessionToken){
-    fetch(`${API}/sets/${list.id}`,{method:"DELETE",headers:{"Authorization":`Bearer ${sessionToken}`}}).catch(()=>{});
-  }
   const newLists=state.lists.filter(x=>x.id!==list.id);
   setState({lists:newLists,activeListId:state.activeListId===list.id?null:state.activeListId});
+  if(!sessionToken)return;
+  try{
+    const res=await fetch(`${API}/sets/${list.id}`,{method:"DELETE",headers:{"Authorization":`Bearer ${sessionToken}`}});
+    if(!res.ok){const d=await res.json().catch(()=>({}));throw new Error(d.error||"Could not delete");}
+  }catch(e){
+    alert(`${e.message||"Could not delete from your account"} — it may reappear next time your lists load.`);
+  }
 }
 
 async function signOut(){
@@ -809,7 +840,10 @@ async function signOut(){
     fetch(`${SUPABASE_URL}/auth/v1/logout`,{method:"POST",headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":`Bearer ${sessionToken}`}}).catch(()=>{});
   }
   clearSession();
-  setState({lists:[...SAMPLE_LISTS],activeListId:"djur",screen:"home"});
+  const guest=loadGuestLists();
+  const lists=guest?.lists?.length?guest.lists:[...SAMPLE_LISTS];
+  const activeListId=guest?.lists?.length?guest.activeListId:"djur";
+  setState({lists,activeListId,screen:"home"});
 }
 
 // ── QUIZ LOGIC ────────────────────────────────────────────────────
@@ -942,7 +976,7 @@ login(){
         <button id="login-submit" class="btn btn-primary btn-lg btn-full" ${loginLoading?"disabled":""}>
           ${SVG.spark(18,"#fff")} ${loginLoading?t("sending"):t("sendMagicLink")}
         </button>
-        <button id="login-skip" style="background:none;border:none;color:var(--ink-soft);font-size:14px;cursor:pointer;text-decoration:underline;">
+        <button id="login-skip" style="background:none;border:none;color:var(--ink-soft);font-size:14px;cursor:pointer;text-decoration:underline;margin-top:12px;">
           ${t("skipTryFirst")}
         </button>
       </div>
@@ -1265,6 +1299,9 @@ settings(){
           </div>
         </div>
       </div>
+      ${currentUser
+        ?`<button id="settings-logout" class="btn btn-tertiary btn-full">${t("logOut")}</button>`
+        :`<button id="settings-login" class="btn btn-primary btn-full">${SVG.spark(16,"#fff")} ${t("logIn")}</button>`}
       <div>
         <div class="label-caps" style="margin-bottom:8px;">${t("avatar")}</div>
         <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;">${avatarSwatches}</div>
@@ -1289,7 +1326,6 @@ settings(){
           </div>
         </div>
       </div>
-      ${currentUser?`<button id="settings-logout" class="btn btn-tertiary btn-full">${t("logOut")}</button>`:""}
       <div style="text-align:center;font-size:11px;color:var(--ink-soft);margin-top:auto;" class="m-font">
         ${t("madeWith")} ${SVG.heart(12,"#B583E8")}
       </div>
@@ -1411,6 +1447,7 @@ function bindEvents(){
 
   on("settings-close", "click",()=>navigate("home"));
   on("settings-logout","click",signOut);
+  on("settings-login","click",()=>navigate("login",{loginEmail:"",loginSent:false,loginErr:""}));
   document.querySelectorAll(".avatar-swatch").forEach(el=>{
     el.addEventListener("click",()=>setState({avatar:el.dataset.avatar}));
   });
@@ -1436,7 +1473,12 @@ window.addEventListener('unhandledrejection',e=>{
 
 (async()=>{
   try{await initAuth();}catch{}
-  try{if(sessionToken)await loadUserLists();}catch{}
+  if(sessionToken){
+    try{await loadUserLists();}catch{}
+  }else{
+    const guest=loadGuestLists();
+    if(guest?.lists?.length)Object.assign(state,guest);
+  }
   try{render();}catch(e){console.error('[Poppins] render error:',e);}
 })().catch(e=>console.error('[Poppins] boot error:',e));
 </script>
