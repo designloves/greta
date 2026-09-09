@@ -1226,18 +1226,16 @@ quiz(){
 
   return `
     <div class="screen-pad">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
-          <div class="dotbar">${dots}</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;font-family:var(--m-font);font-size:22px;font-weight:700;color:var(--ink);">
-            <span>${quizIdx+1} / ${total}</span>
-            <span style="display:flex;gap:14px;">
-              <span style="display:flex;align-items:center;gap:3px;">${SVG.arrowUp(20,"#241F3D")}${quizRight}</span>
-              <span style="display:flex;align-items:center;gap:3px;">${SVG.arrowDown(20,"#241F3D")}${quizWrong}</span>
-            </span>
-          </div>
+      <div style="position:relative;display:flex;flex-direction:column;gap:12px;padding-right:28px;">
+        <div class="dotbar">${dots}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-family:var(--m-font);font-size:22px;font-weight:700;color:var(--ink);">
+          <span>${quizIdx+1} / ${total}</span>
+          <span style="display:flex;gap:14px;">
+            <span style="display:flex;align-items:center;gap:3px;">${SVG.arrowUp(20,"#241F3D")}${quizRight}</span>
+            <span style="display:flex;align-items:center;gap:3px;">${SVG.arrowDown(20,"#241F3D")}${quizWrong}</span>
+          </span>
         </div>
-        <button id="quiz-exit" class="icon-btn-plain" style="align-self:center;">${SVG.cross(20,"#241F3D",3)}</button>
+        <button id="quiz-exit" class="icon-btn-plain" style="position:absolute;right:-12px;top:50%;transform:translateY(-50%);">${SVG.cross(20,"#241F3D",3)}</button>
       </div>
       <div class="card-lg" style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;padding:clamp(12px,4vh,24px) 24px;background:${fbBg};transition:background 250ms;position:relative;overflow:hidden;animation:${cardAnim};">
         <div style="display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;min-height:0;overflow-y:auto;">
