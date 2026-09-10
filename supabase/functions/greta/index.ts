@@ -49,17 +49,24 @@ async function getUser(req: Request) {
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: CORS })
 
-  const url  = new URL(req.url)
-  const path = url.pathname
+  try {
+    const url  = new URL(req.url)
+    const path = url.pathname
 
-  if (req.method === 'GET'    && path.endsWith('/sets'))      return getSets(req)
-  if (req.method === 'GET'    && path.includes('/sets/'))     return getSet(url)
-  if (req.method === 'POST'   && path.endsWith('/sets'))      return saveSet(req)
-  if (req.method === 'PATCH'  && path.includes('/sets/'))     return updateSet(req, url)
-  if (req.method === 'DELETE' && path.includes('/sets/'))     return deleteSet(req, url)
-  if (req.method === 'POST'   && path.endsWith('/translate')) return translateWords(req)
+    if (req.method === 'GET'    && path.endsWith('/sets'))      return await getSets(req)
+    if (req.method === 'GET'    && path.includes('/sets/'))     return await getSet(url)
+    if (req.method === 'POST'   && path.endsWith('/sets'))      return await saveSet(req)
+    if (req.method === 'PATCH'  && path.includes('/sets/'))     return await updateSet(req, url)
+    if (req.method === 'DELETE' && path.includes('/sets/'))     return await deleteSet(req, url)
+    if (req.method === 'POST'   && path.endsWith('/translate')) return await translateWords(req)
 
-  return err('Not found', 404)
+    return err('Not found', 404)
+  } catch (e) {
+    // Guarantee every response — including an unexpected crash — is JSON
+    // with CORS headers, so the client always gets a real error message
+    // instead of an opaque platform-level failure it can't parse.
+    return err(`Server error: ${e instanceof Error ? e.message : String(e)}`, 500)
+  }
 })
 
 // ── GET /sets — auth required, returns the current user's sets ──
@@ -198,32 +205,46 @@ ${words.map((w, i) => `${i + 1}. ${w}`).join('\n')}`
 
   let res: Response
   try {
-    res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1024,
-        messages: [{ role: 'user', content: prompt }],
-      }),
-    })
-  } catch {
-    return err('Could not reach translation service', 502)
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 20000)
+    try {
+      res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 1024,
+          messages: [{ role: 'user', content: prompt }],
+        }),
+        signal: controller.signal,
+      })
+    } finally {
+      clearTimeout(timeout)
+    }
+  } catch (e) {
+    if (e instanceof Error && e.name === 'AbortError') return err('Translation timed out — try again', 504)
+    return err(`Could not reach translation service: ${e instanceof Error ? e.message : String(e)}`, 502)
   }
-  if (!res.ok) return err('Translation service error', 502)
+  if (!res.ok) {
+    const detail = await res.text().catch(() => '')
+    return err(`Translation service error (${res.status}): ${detail.slice(0, 300)}`, 502)
+  }
 
-  const data = await res.json()
-  const text: string = data?.content?.[0]?.text ?? ''
+  let data: unknown
+  try { data = await res.json() }
+  catch { return err('Translation service returned an unreadable response', 502) }
+
+  const text: string = (data as { content?: Array<{ text?: string }> })?.content?.[0]?.text ?? ''
   let parsed: { from?: string; to?: string; translations?: unknown[] }
   try {
     const match = text.match(/\{[\s\S]*\}/)
     parsed = JSON.parse(match ? match[0] : text)
   } catch {
-    return err('Could not parse translation response', 502)
+    return err(`Could not parse translation response: ${text.slice(0, 200)}`, 502)
   }
 
   if (!Array.isArray(parsed.translations) || parsed.translations.length !== words.length) {
